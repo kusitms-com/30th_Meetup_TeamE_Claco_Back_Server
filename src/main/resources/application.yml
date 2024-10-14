@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: claco
+  profiles:
+    active:
+      - prod
+    group:
+      local:
+        - local
+      prod:
+        - prod
