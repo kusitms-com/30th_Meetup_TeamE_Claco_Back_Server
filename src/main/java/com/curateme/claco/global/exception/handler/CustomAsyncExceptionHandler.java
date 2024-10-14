@@ -1,4 +1,4 @@
-package com.curateme.claco.global.exception;
+package com.curateme.claco.global.exception.handler;
 
 import java.lang.reflect.Method;
 import lombok.extern.slf4j.Slf4j;
