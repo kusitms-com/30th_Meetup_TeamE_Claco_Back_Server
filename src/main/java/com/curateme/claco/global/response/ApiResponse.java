@@ -1,38 +1,38 @@
 package com.curateme.claco.global.response;
 
-import com.curateme.claco.global.response.code.BaseCode;
-import com.curateme.claco.global.response.code.status.SuccessStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * @packageName : com.curateme.claco.global.response
+ * @fileName    : ApiResponse.java
+ * @author      : 이 건
+ * @date        : 2024.10.14
+ * @author devkeon(devkeon123@gmail.com)
+ * ===========================================================
+ * DATE               AUTHOR        NOTE
+ * -----------------------------------------------------------
+ * 	2024.10.14   	   이 건        간단하게 수정
+ */
 @Getter
-@AllArgsConstructor
-@JsonPropertyOrder({"isSuccess", "code", "message", "result"})
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ApiResponse<T> {
 
-    @JsonProperty("isSuccess")
-    private final Boolean isSuccess;
     private final String code;
     private final String message;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T result;
 
     // 성공한 경우 응답 생성
-    public static <T> ApiResponse<T> onSuccess(T result) {
-        return new ApiResponse<>(true, SuccessStatus._OK.getCode(), SuccessStatus._OK.getMessage(),
-            result);
-    }
-
-    public static <T> ApiResponse<T> of(BaseCode code, T result) {
-        return new ApiResponse<>(true, code.getReasonHttpStatus().getCode(),
-            code.getReasonHttpStatus().getMessage(), result);
+    public static <T> ApiResponse<T> ok(T result) {
+        return new ApiResponse<>(ApiStatus.OK.getCode(), ApiStatus.OK.getMessage(), result);
     }
 
     // 실패한 경우 응답 생성
-    public static <T> ApiResponse<T> onFailure(String code, String message, T data) {
-        return new ApiResponse<>(false, code, message, data);
+    public static <T> ApiResponse<T> fail(String code, String message) {
+        return new ApiResponse<>(code, message, null);
     }
 }
