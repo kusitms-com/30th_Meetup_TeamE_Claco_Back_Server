@@ -9,3 +9,5 @@ spring:
         - local
       prod:
         - prod
+    include:
+      - oauth
