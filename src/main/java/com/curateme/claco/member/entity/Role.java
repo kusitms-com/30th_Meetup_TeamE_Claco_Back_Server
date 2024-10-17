@@ -15,6 +15,7 @@ import lombok.Getter;
  * -----------------------------------------------------------
  * 	2024.10.15   	   이 건        최초 생성
  * 	2024.10.16		   이 건		   명칭 변경 (MemberType -> MemberRole)
+ * 	2024.10.17		   이 건		   명칭 변경 (MemberRoke -> Role)
  */
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

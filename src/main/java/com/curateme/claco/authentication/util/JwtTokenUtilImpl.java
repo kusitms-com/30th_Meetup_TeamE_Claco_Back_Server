@@ -32,6 +32,17 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * @packageName : com.curateme.claco.authentication.util
+ * @fileName    : JwtTokenUtilImpl.java
+ * @author      : 이 건
+ * @date        : 2024.10.17
+ * @author devkeon(devkeon123@gmail.com)
+ * ===========================================================
+ * DATE               AUTHOR        NOTE
+ * -----------------------------------------------------------
+ * 	2024.10.17   	   이 건        최초 생성
+ */
 @Slf4j
 @Component
 public class JwtTokenUtilImpl implements JwtTokenUtil{
@@ -52,6 +63,7 @@ public class JwtTokenUtilImpl implements JwtTokenUtil{
 		this.memberRepository = repository;
 	}
 
+	// Authentication 으로부터 엑세스 토큰 발급
 	@Override
 	public String generateAccessToken(Authentication authentication) {
 
@@ -70,6 +82,7 @@ public class JwtTokenUtilImpl implements JwtTokenUtil{
 			.compact();
 	}
 
+	// RefreshToken 생성
 	@Override
 	public String generateRefreshToken() {
 
@@ -80,6 +93,7 @@ public class JwtTokenUtilImpl implements JwtTokenUtil{
 			.compact();
 	}
 
+	// AccessToken 으로부터 Authentication 발급
 	@Override
 	public Authentication getAuthentication(String accessToken) {
 
@@ -111,6 +125,7 @@ public class JwtTokenUtilImpl implements JwtTokenUtil{
 		return new UsernamePasswordAuthenticationToken(jwtMemberDetail, null, authorities);
 	}
 
+	// Member 엔티티로부터 Authentication 발급
 	@Override
 	public Authentication createAuthentication(Member member) {
 
@@ -128,6 +143,7 @@ public class JwtTokenUtilImpl implements JwtTokenUtil{
 
 	}
 
+	// HttpServletRequest 로부터 엑세스 토큰 추출
 	@Override
 	public Optional<String> extractAccessToken(HttpServletRequest request) {
 		return Optional.ofNullable(request.getHeader("Authorization"))
@@ -148,6 +164,7 @@ public class JwtTokenUtilImpl implements JwtTokenUtil{
 			.map(Cookie::getValue);
 	}
 
+	// 토큰 유효성 검증 메서드
 	@Override
 	public boolean validate(String token) {
 

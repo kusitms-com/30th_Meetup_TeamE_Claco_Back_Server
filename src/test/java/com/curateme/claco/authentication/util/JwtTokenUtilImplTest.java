@@ -4,10 +4,8 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 import javax.crypto.SecretKey;
@@ -31,6 +29,17 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * @packageName : com.curateme.claco.authentication.util
+ * @fileName    : JwtTokenUtilImplTest.java
+ * @author      : 이 건
+ * @date        : 2024.10.17
+ * @author devkeon(devkeon123@gmail.com)
+ * ===========================================================
+ * DATE               AUTHOR        NOTE
+ * -----------------------------------------------------------
+ * 	2024.10.17   	   이 건        최초 생성
+ */
 @Slf4j
 class JwtTokenUtilImplTest {
 
