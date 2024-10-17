@@ -14,14 +14,15 @@ import lombok.Getter;
  * DATE               AUTHOR        NOTE
  * -----------------------------------------------------------
  * 	2024.10.15   	   이 건        최초 생성
+ * 	2024.10.16		   이 건		   명칭 변경 (MemberType -> MemberRole)
  */
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public enum MemberType {
+public enum Role {
 
 	// 소셜 (회원 가입 중), 회원 (회원 가입 완료), 관리자
 	SOCIAL("SOCIAL"), MEMBER("MEMBER"), ADMIN("ADMIN");
 
-	private final String memberType;
+	private final String role;
 
 }
