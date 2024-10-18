@@ -1,4 +1,4 @@
-package com.curateme.claco.member.domain.response;
+package com.curateme.claco.member.domain.dto.response;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

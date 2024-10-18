@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class StatePreferenceVO {
+public class TypePreferenceVO {
 
-	private String preferenceState;
+	private String preferenceType;
 
 }
