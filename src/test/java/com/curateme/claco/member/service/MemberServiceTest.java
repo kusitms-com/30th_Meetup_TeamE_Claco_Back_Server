@@ -16,13 +16,16 @@ import com.curateme.claco.member.domain.entity.Role;
 import com.curateme.claco.member.domain.response.NicknameValidResponse;
 import com.curateme.claco.member.repository.MemberRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
 
 	@Mock
 	private MemberRepository memberRepository;
 	@InjectMocks
-	private MemberService memberService;
+	private MemberServiceV1 memberService;
 
 	private final String testString = "test";
 	private final Long testLong = 1L;
