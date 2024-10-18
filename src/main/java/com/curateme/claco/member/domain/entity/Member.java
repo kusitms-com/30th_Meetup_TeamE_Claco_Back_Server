@@ -25,9 +25,10 @@ import lombok.NoArgsConstructor;
  * ===========================================================
  * DATE               AUTHOR        NOTE
  * -----------------------------------------------------------
- * 	2024.10.15   	   이 건        최초 생성
- * 	2024.10.16    	   이 건		   빌더 추가 및 MemberType 명칭 변경
- * 	2024.10.17		   이 건		   엔티티 필드 제약 조건 변경
+ * 2024.10.15   	   이 건        최초 생성
+ * 2024.10.16    	   이 건		   빌더 추가 및 MemberType 명칭 변경
+ * 2024.10.17		   이 건		   엔티티 필드 제약 조건 변경
+ * 2024.10.18		   이 건		   성별 필드 추가 (Gender)
  */
 @Entity
 @Getter
@@ -53,8 +54,12 @@ public class Member extends BaseEntity {
 	@NotNull
 	@Enumerated(value = EnumType.STRING)
 	private Role role;
+	// 성별
+	@Enumerated(value = EnumType.STRING)
+	private Gender gender;
 	// 프로필 이미지 url
 	private String profileImage;
+	// refresh token
 	private String refreshToken;
 
 	public void updateRefreshToken(String refreshToken) {
