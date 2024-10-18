@@ -1,5 +1,7 @@
 package com.curateme.claco.member.service;
 
+import com.curateme.claco.member.domain.response.NicknameValidResponse;
+
 /**
  * @author      : 이 건
  * @date        : 2024.10.18
@@ -16,6 +18,6 @@ public interface MemberService {
 	 * @param nickname : 검사하고자 하는 닉네임
 	 * @return : True=사용 가능, False=사용 불가
 	 */
-	Boolean checkNicknameValid(String nickname);
+	NicknameValidResponse checkNicknameValid(String nickname);
 
 }
