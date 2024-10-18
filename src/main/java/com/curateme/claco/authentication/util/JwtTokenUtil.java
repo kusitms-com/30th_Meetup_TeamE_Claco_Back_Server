@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
 
-import com.curateme.claco.member.entity.Member;
+import com.curateme.claco.member.domain.entity.Member;
 
 import jakarta.servlet.http.HttpServletRequest;
 

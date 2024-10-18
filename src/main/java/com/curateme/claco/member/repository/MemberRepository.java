@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.curateme.claco.member.entity.Member;
+import com.curateme.claco.member.domain.entity.Member;
 
 /**
  * @packageName : com.curateme.claco.member.repository

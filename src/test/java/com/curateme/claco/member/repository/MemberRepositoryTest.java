@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.curateme.claco.member.entity.Member;
-import com.curateme.claco.member.entity.Role;
+import com.curateme.claco.member.domain.entity.Member;
+import com.curateme.claco.member.domain.entity.Role;
 
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;

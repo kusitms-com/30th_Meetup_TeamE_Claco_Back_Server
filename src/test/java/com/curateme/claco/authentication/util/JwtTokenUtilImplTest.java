@@ -17,8 +17,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import com.curateme.claco.authentication.domain.JwtMemberDetail;
-import com.curateme.claco.member.entity.Member;
-import com.curateme.claco.member.entity.Role;
+import com.curateme.claco.member.domain.entity.Member;
+import com.curateme.claco.member.domain.entity.Role;
 import com.curateme.claco.member.repository.MemberRepository;
 
 import io.jsonwebtoken.Claims;
