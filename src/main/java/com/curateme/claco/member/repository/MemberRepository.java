@@ -15,7 +15,8 @@ import com.curateme.claco.member.entity.Member;
  * ===========================================================
  * DATE               AUTHOR        NOTE
  * -----------------------------------------------------------
- * 	2024.10.17   	   이 건        최초 생성
+ * 2024.10.17   	   이 건        최초 생성
+ * 2024.10.18   	   이 건        nickname 메서드 추가
  */
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
@@ -25,5 +26,12 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	 * @return : Optional Member
 	 */
 	Optional<Member> findMemberBySocialId(Long socialId);
+
+	/**
+	 * 닉네임으로 Member 찾는 메서드
+	 * @param nickname : 찾고자 하는 닉네임
+	 * @return : Optional Member
+	 */
+	Optional<Member> findMemberByNickname(String nickname);
 
 }
