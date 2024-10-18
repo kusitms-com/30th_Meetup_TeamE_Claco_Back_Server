@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author      : 이 건
- * @date        : 2024.10.17
+ * @date        : 2024.10.18
  * @author devkeon(devkeon123@gmail.com)
  * ===========================================================
  * DATE               AUTHOR        NOTE
