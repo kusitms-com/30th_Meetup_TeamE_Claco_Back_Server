@@ -30,8 +30,9 @@ public class KakaoOAuthAttribute {
 	private String nameAttributeKey; // OAuth2 로그인 진행 시 키가 되는 필드 값, PK와 같은 의미
 	private Oauth2UserInfo oauth2UserInfo;
 	private PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-	@Value("")
-	private String baseProfileImage;
+	// @Value("")
+	// TODO: 미동의 시 기본 프로필 이미지 Url 추가
+	private String baseProfileImage = "test";
 
 	@Builder
 	private KakaoOAuthAttribute(String nameAttributeKey, Oauth2UserInfo oauth2UserInfo) {
