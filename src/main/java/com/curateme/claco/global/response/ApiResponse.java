@@ -35,4 +35,8 @@ public class ApiResponse<T> {
     public static <T> ApiResponse<T> fail(String code, String message) {
         return new ApiResponse<>(code, message, null);
     }
+
+    public static <T> ApiResponse<T> fail(ApiStatus apiStatus) {
+        return new ApiResponse<>(apiStatus.getCode(), apiStatus.getMessage(), null);
+    }
 }

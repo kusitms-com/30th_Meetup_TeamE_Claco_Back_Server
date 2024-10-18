@@ -4,12 +4,15 @@ import com.curateme.claco.global.entity.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,9 +26,12 @@ import lombok.NoArgsConstructor;
  * DATE               AUTHOR        NOTE
  * -----------------------------------------------------------
  * 	2024.10.15   	   이 건        최초 생성
+ * 	2024.10.16    	   이 건		   빌더 추가 및 MemberType 명칭 변경
+ * 	2024.10.17		   이 건		   엔티티 필드 제약 조건 변경
  */
 @Entity
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseEntity {
@@ -34,17 +40,25 @@ public class Member extends BaseEntity {
 	@Id @Column(name = "member_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	// 닉네임 (15글자 제약)
 	@NotNull
+	private String email;
+	// 닉네임 (15글자 제약)
 	@Column(unique = true, length = 15)
 	private String nickname;
 	// 소셜 id (카카오)
 	@NotNull
+	@Column(unique = true)
 	private Long socialId;
 	// 가입 타입
 	@NotNull
-	private MemberType memberType;
+	@Enumerated(value = EnumType.STRING)
+	private Role role;
 	// 프로필 이미지 url
 	private String profileImage;
+	private String refreshToken;
+
+	public void updateRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
+	}
 
 }
