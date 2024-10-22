@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -56,6 +57,7 @@ class MemberServiceTest {
 	private final Long testLong = 1L;
 
 	@Test
+	@DisplayName("닉네임 중복 체크")
 	void checkNicknameValid() {
 		// Given
 		Member testMember = Member.builder()
@@ -79,6 +81,7 @@ class MemberServiceTest {
 	}
 
 	@Test
+	@DisplayName("회원가입 테스트")
 	void signUpTest() {
 		// Given
 		List<String> stringList = List.of("test1", "test2", "test3", "test4", "test5");
