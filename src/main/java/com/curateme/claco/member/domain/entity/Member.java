@@ -1,7 +1,9 @@
 package com.curateme.claco.member.domain.entity;
 
 import com.curateme.claco.global.entity.BaseEntity;
+import com.curateme.claco.preference.domain.entity.Preference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -9,6 +11,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -28,7 +33,8 @@ import lombok.NoArgsConstructor;
  * 2024.10.15   	   이 건        최초 생성
  * 2024.10.16    	   이 건		   빌더 추가 및 MemberType 명칭 변경
  * 2024.10.17		   이 건		   엔티티 필드 제약 조건 변경
- * 2024.10.18		   이 건		   성별 필드 추가 (Gender)
+ * 2024.10.18		   이 건		   성별 필드 추가 (Gender) 및 Preference 관계 매핑
+ * 2024.10.22		   이 건		   나이 필드 추가 및 Preference 매핑 condition 수정
  */
 @Entity
 @Getter
@@ -41,7 +47,15 @@ public class Member extends BaseEntity {
 	@Id @Column(name = "member_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	// Preference 일대일 양방향 매핑 (주 테이블)
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "preference_id")
+	private Preference preference;
+
+	// email
 	@NotNull
+	@Email
 	private String email;
 	// 닉네임 (15글자 제약)
 	@Column(unique = true, length = 15)
@@ -57,6 +71,9 @@ public class Member extends BaseEntity {
 	// 성별
 	@Enumerated(value = EnumType.STRING)
 	private Gender gender;
+	// 나이대 (10, 20, 30, 40, 50, 60)
+	@Column(length = 2)
+	private Integer age;
 	// 프로필 이미지 url
 	private String profileImage;
 	// refresh token
@@ -64,6 +81,26 @@ public class Member extends BaseEntity {
 
 	public void updateRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;
+	}
+
+	public void updateNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
+	public void updateGender(Gender gender) {
+		this.gender = gender;
+	}
+
+	public void updatePreference(Preference preference) {
+		this.preference = preference;
+	}
+
+	public void updateAge(Integer age) {
+		this.age = age;
+	}
+
+	public void updateRole() {
+		this.role = Role.MEMBER;
 	}
 
 }
