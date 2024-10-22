@@ -35,12 +35,13 @@ public class TypePreference extends BaseEntity {
 	@Column(name = "type_preference_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	// 선택한 타입 내용
 	private String typeContent;
-
+	// 다대일 매핑
 	@ManyToOne
 	@JoinColumn(name = "preference_id")
 	private Preference preference;
-
+	// 정적 팩토리 메서드
 	public static TypePreference of(String typeContent) {
 		TypePreference typePreference = new TypePreference();
 		typePreference.typeContent = typeContent;

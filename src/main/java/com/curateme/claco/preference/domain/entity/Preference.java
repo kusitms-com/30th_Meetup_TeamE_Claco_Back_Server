@@ -46,11 +46,11 @@ public class Preference extends BaseEntity {
 	// Member 일대일 양방향 매핑 (대상 테이블)
 	@OneToOne(mappedBy = "preference", fetch = FetchType.LAZY)
 	private Member member;
-
+	// 다대일 매핑
 	@Builder.Default
 	@OneToMany(mappedBy = "preference", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<TypePreference> typePreferences= new ArrayList<>();
-
+	// 다대일 매핑
 	@Builder.Default
 	@OneToMany(mappedBy = "preference", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<RegionPreference> regionPreferences = new ArrayList<>();
@@ -74,7 +74,7 @@ public class Preference extends BaseEntity {
 			typePreference.updatePreference(this);
 		}
 	}
-
+	// 연관관계 편의 메서드
 	public void addRegionPreference(RegionPreference regionPreference) {
 		if (!this.regionPreferences.contains(regionPreference)) {
 			this.regionPreferences.add(regionPreference);

@@ -34,12 +34,13 @@ public class RegionPreference extends BaseEntity {
 	@Id @Column(name = "region_preference_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
+	// 지역 이름
 	private String regionName;
 	@ManyToOne
 	@JoinColumn(name = "preference_id")
 	private Preference preference;
 
+	// 정적 팩토리 메서드
 	public static RegionPreference of(String regionName) {
 		RegionPreference regionPreference = new RegionPreference();
 		regionPreference.regionName = regionName;
