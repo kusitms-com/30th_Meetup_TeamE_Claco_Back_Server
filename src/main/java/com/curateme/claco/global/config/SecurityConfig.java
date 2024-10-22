@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -65,7 +66,9 @@ public class SecurityConfig {
 					.requestMatchers("/probe", "/oauth2/authorization/kakao",
 						"/login/oauth2/code/kakao", "/favicon.ico")
 					.permitAll()
-					.requestMatchers("/api/sign-up", "/api/nickname")
+					.requestMatchers(HttpMethod.POST, "/api/members")
+					.hasAnyRole(Role.SOCIAL.getRole(), Role.ADMIN.getRole())
+					.requestMatchers(HttpMethod.GET, "/api/members/check-nickname")
 					.hasAnyRole(Role.SOCIAL.getRole(), Role.ADMIN.getRole())
 					.requestMatchers("/api/**")
 					.hasAnyRole(Role.MEMBER.getRole(), Role.ADMIN.getRole())
