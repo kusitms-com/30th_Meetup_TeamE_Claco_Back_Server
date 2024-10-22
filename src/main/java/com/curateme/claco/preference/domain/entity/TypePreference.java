@@ -15,6 +15,15 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * @author      : 이 건
+ * @date        : 2024.10.22
+ * @author devkeon(devkeon123@gmail.com)
+ * ===========================================================
+ * DATE               AUTHOR        NOTE
+ * -----------------------------------------------------------
+ * 2024.10.22   	   이 건        최초 생성
+ */
 @Entity
 @Getter
 @Builder
