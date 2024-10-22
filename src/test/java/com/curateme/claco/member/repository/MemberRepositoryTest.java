@@ -44,7 +44,7 @@ class MemberRepositoryTest {
 	void findMemberBySocialId() {
 		// Given
 		Member testMember = Member.builder()
-			.email(testString)
+			.email("test@test.com")
 			.nickname(testString)
 			.role(testRole)
 			.socialId(testLong)
@@ -68,7 +68,7 @@ class MemberRepositoryTest {
 	void findMemberByNickname() {
 		// Given
 		Member testMember = Member.builder()
-			.email(testString)
+			.email("test@test.com")
 			.nickname(testString)
 			.role(testRole)
 			.socialId(testLong)
