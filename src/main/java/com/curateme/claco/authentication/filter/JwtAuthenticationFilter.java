@@ -12,7 +12,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.curateme.claco.authentication.util.JwtTokenUtil;
 import com.curateme.claco.global.exception.BusinessException;
 import com.curateme.claco.global.response.ApiStatus;
-import com.curateme.claco.member.entity.Member;
+import com.curateme.claco.member.domain.entity.Member;
 import com.curateme.claco.member.repository.MemberRepository;
 
 import io.jsonwebtoken.Claims;
@@ -46,7 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private static String GRANT_TYPE = "Bearer ";
 
-	protected List<String> filterPassList = List.of("/api", "/probe", "/oauth2/authorization/kakao",
+	protected List<String> filterPassList = List.of("/oauth2/authorization/kakao",
 		"/login/oauth2/code/kakao", "/favicon.ico");
 
 	@Override

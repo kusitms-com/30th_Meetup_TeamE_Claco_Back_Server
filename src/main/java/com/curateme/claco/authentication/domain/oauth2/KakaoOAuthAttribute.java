@@ -2,14 +2,13 @@ package com.curateme.claco.authentication.domain.oauth2;
 
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.curateme.claco.global.exception.BusinessException;
 import com.curateme.claco.global.response.ApiStatus;
-import com.curateme.claco.member.entity.Member;
-import com.curateme.claco.member.entity.Role;
+import com.curateme.claco.member.domain.entity.Member;
+import com.curateme.claco.member.domain.entity.Role;
 
 import lombok.Builder;
 import lombok.Getter;

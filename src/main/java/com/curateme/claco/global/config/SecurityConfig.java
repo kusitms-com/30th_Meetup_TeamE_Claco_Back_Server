@@ -20,7 +20,7 @@ import com.curateme.claco.authentication.handler.oauth.OAuthLoginFailureHandler;
 import com.curateme.claco.authentication.handler.oauth.OAuthLoginSuccessHandler;
 import com.curateme.claco.authentication.service.CustomOAuth2UserService;
 import com.curateme.claco.authentication.util.JwtTokenUtil;
-import com.curateme.claco.member.entity.Role;
+import com.curateme.claco.member.domain.entity.Role;
 import com.curateme.claco.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -65,7 +65,7 @@ public class SecurityConfig {
 					.requestMatchers("/probe", "/oauth2/authorization/kakao",
 						"/login/oauth2/code/kakao", "/favicon.ico")
 					.permitAll()
-					.requestMatchers("/api/sign-up/**")
+					.requestMatchers("/api/sign-up", "/api/nickname")
 					.hasAnyRole(Role.SOCIAL.getRole(), Role.ADMIN.getRole())
 					.requestMatchers("/api/**")
 					.hasAnyRole(Role.MEMBER.getRole(), Role.ADMIN.getRole())

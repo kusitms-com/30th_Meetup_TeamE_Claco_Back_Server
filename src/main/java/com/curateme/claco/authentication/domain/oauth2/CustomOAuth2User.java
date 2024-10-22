@@ -6,7 +6,7 @@ import java.util.Map;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 
-import com.curateme.claco.member.entity.Member;
+import com.curateme.claco.member.domain.entity.Member;
 
 import lombok.Getter;
 
