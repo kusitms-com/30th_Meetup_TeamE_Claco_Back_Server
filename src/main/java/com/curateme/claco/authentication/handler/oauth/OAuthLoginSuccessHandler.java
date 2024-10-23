@@ -15,8 +15,8 @@ import com.curateme.claco.authentication.domain.oauth2.CustomOAuth2User;
 import com.curateme.claco.authentication.util.JwtTokenUtil;
 import com.curateme.claco.global.exception.BusinessException;
 import com.curateme.claco.global.response.ApiStatus;
-import com.curateme.claco.member.entity.Member;
-import com.curateme.claco.member.entity.Role;
+import com.curateme.claco.member.domain.entity.Member;
+import com.curateme.claco.member.domain.entity.Role;
 import com.curateme.claco.member.repository.MemberRepository;
 
 import jakarta.servlet.ServletException;

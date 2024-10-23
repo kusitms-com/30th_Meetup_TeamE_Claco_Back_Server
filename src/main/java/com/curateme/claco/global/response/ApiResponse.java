@@ -15,7 +15,8 @@ import lombok.Getter;
  * ===========================================================
  * DATE               AUTHOR        NOTE
  * -----------------------------------------------------------
- * 	2024.10.14   	   이 건        간단하게 수정
+ * 2024.10.14   	   이 건        간단하게 수정
+ * 2024.10.22   	   이 건        ok 응답 오버로딩 메서드 추가 (result 없음)
  */
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -25,6 +26,10 @@ public class ApiResponse<T> {
     private final String message;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T result;
+
+    public static ApiResponse<Void> ok() {
+        return new ApiResponse<>(ApiStatus.OK.getCode(), ApiStatus.OK.getMessage(), null);
+    }
 
     // 성공한 경우 응답 생성
     public static <T> ApiResponse<T> ok(T result) {

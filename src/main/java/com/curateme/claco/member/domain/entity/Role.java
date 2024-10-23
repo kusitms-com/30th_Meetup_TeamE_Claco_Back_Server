@@ -1,4 +1,4 @@
-package com.curateme.claco.member.entity;
+package com.curateme.claco.member.domain.entity;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.curateme.claco.authentication.domain.oauth2.CustomOAuth2User;
 import com.curateme.claco.authentication.domain.oauth2.KakaoOAuthAttribute;
-import com.curateme.claco.member.entity.Member;
+import com.curateme.claco.member.domain.entity.Member;
 import com.curateme.claco.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;

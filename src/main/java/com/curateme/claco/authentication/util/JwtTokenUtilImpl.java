@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 import com.curateme.claco.authentication.domain.JwtMemberDetail;
 import com.curateme.claco.global.exception.BusinessException;
 import com.curateme.claco.global.response.ApiStatus;
-import com.curateme.claco.member.entity.Member;
+import com.curateme.claco.member.domain.entity.Member;
 import com.curateme.claco.member.repository.MemberRepository;
 
 import io.jsonwebtoken.Claims;

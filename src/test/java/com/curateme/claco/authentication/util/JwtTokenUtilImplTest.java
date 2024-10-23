@@ -11,14 +11,15 @@ import java.util.Optional;
 import javax.crypto.SecretKey;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import com.curateme.claco.authentication.domain.JwtMemberDetail;
-import com.curateme.claco.member.entity.Member;
-import com.curateme.claco.member.entity.Role;
+import com.curateme.claco.member.domain.entity.Member;
+import com.curateme.claco.member.domain.entity.Role;
 import com.curateme.claco.member.repository.MemberRepository;
 
 import io.jsonwebtoken.Claims;
@@ -56,6 +57,7 @@ class JwtTokenUtilImplTest {
 	}
 
 	@Test
+	@DisplayName("엑세스 토큰 생성")
 	void generateAccessToken() {
 
 		// Given
@@ -97,6 +99,7 @@ class JwtTokenUtilImplTest {
 	}
 
 	@Test
+	@DisplayName("리프레시 토큰 생성")
 	void generateRefreshToken() {
 
 		// When
@@ -122,6 +125,7 @@ class JwtTokenUtilImplTest {
 	}
 
 	@Test
+	@DisplayName("엑세스 토큰으로부터 인증(Authentication) 정보 얻기")
 	void getAuthentication() {
 
 		// Given
@@ -162,6 +166,7 @@ class JwtTokenUtilImplTest {
 	}
 
 	@Test
+	@DisplayName("인증(Authentication) 정보 생성")
 	void createAuthentication() {
 
 		// Given
@@ -191,6 +196,7 @@ class JwtTokenUtilImplTest {
 	}
 
 	@Test
+	@DisplayName("Request Header 로부터 엑세스 토큰 추출")
 	void extractAccessToken() {
 
 		// Given
@@ -215,6 +221,7 @@ class JwtTokenUtilImplTest {
 	}
 
 	@Test
+	@DisplayName("쿠키로부터 리프레시 토큰 추출")
 	void extractRefreshToken() {
 
 		// Given
@@ -242,6 +249,7 @@ class JwtTokenUtilImplTest {
 
 	// 이전 시간 토큰에 대한 검증
 	@Test
+	@DisplayName("토큰에 대한 검증(시간, 유효성)")
 	void validateExpire() {
 
 		// Given

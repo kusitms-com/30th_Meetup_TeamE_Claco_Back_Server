@@ -23,7 +23,7 @@ import lombok.Getter;
 public enum ApiStatus {
 
 	// 성공 응답
-	OK(HttpStatus.OK, "COM-000", "Success request"),
+	OK(HttpStatus.OK, "COM-000", "Ok"),
 
 	// 서버 에러
 	EXCEPTION_OCCUR(HttpStatus.INTERNAL_SERVER_ERROR, "DBG-500", "Something went wrong."),
@@ -31,6 +31,7 @@ public enum ApiStatus {
 
 	// 멤버 에러
 	MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEM-001", "Member not found."),
+	MEMBER_NICKNAME_DUPLICATE(HttpStatus.CONFLICT, "MEM-009", "Nickname is duplicated. Try again."),
 
 	// 로그인 에러
 	ACCESS_TOKEN_NOT_FOUND(HttpStatus.BAD_REQUEST, "ACT-001", "AccessToken not found."),
