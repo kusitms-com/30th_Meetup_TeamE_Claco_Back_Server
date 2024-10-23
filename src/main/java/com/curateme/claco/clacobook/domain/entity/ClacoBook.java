@@ -35,8 +35,10 @@ public class ClacoBook {
 	@Id @Column(name = "claco_book_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	// 제목
 	@NotNull
 	private String title;
+	// 클라코북 색깔
 	@NotNull
 	private String color;
 
