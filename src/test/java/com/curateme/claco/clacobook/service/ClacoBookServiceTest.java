@@ -10,6 +10,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.AdditionalAnswers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -39,12 +40,13 @@ class ClacoBookServiceTest {
 	@Mock
 	private SecurityContextUtil securityContextUtil;
 	@InjectMocks
-	private ClacoBookService clacoBookService;
+	private ClacoBookServiceImpl clacoBookService;
 
 	private final Long testId = 1L;
 	private final String testString = "test";
 
 	@Test
+	@DisplayName("ClacoBook 생성")
 	void createClacoBook() {
 		// Given
 
@@ -57,17 +59,10 @@ class ClacoBookServiceTest {
 			.socialId(testId)
 			.build();
 
-		ClacoBook testBook = ClacoBook.builder()
-			.member(testMember)
-			.id(testId)
-			.title(testString)
-			.color(testString)
-			.build();
-
 		when(securityContextUtil.getContextMemberInfo()).thenReturn(jwtMemberDetailMock);
 		when(jwtMemberDetailMock.getMemberId()).thenReturn(testId);
 		when(memberRepository.findById(testId)).thenReturn(Optional.of(testMember));
-		when(clacoBookRepository.save(any(ClacoBook.class))).thenReturn(testBook);
+		when(clacoBookRepository.save(any(ClacoBook.class))).then(AdditionalAnswers.returnsFirstArg());
 
 		// When
 		ClacoBookResponse result = clacoBookService.createClacoBook();
@@ -80,14 +75,14 @@ class ClacoBookServiceTest {
 		String bookTitle = "test님의 이야기";
 		String bookColor = "#8F9AF8";
 
-		assertThat(result.getId()).isEqualTo(testId);
+		assertThat(result.getId()).isNull();
 		assertThat(result.getTitle()).isEqualTo(bookTitle);
 		assertThat(result.getColor()).isEqualTo(bookColor);
 
 	}
 
 	@Test
-	@DisplayName("사용자가 접근했을 때")
+	@DisplayName("ClacoBook 리스트 조회")
 	void readClacoBooks() {
 		// Given
 		Member testMember = Member.builder()
@@ -117,6 +112,7 @@ class ClacoBookServiceTest {
 
 		JwtMemberDetail jwtMemberDetailMock = mock(JwtMemberDetail.class);
 
+		when(securityContextUtil.getContextMemberInfo()).thenReturn(jwtMemberDetailMock);
 		when(jwtMemberDetailMock.getMemberId()).thenReturn(testId);
 		when(memberRepository.findMemberByIdWithClacoBook(testId)).thenReturn(Optional.of(testMember));
 
@@ -132,6 +128,7 @@ class ClacoBookServiceTest {
 	}
 
 	@Test
+	@DisplayName("ClacoBook 수정")
 	void updateClacoBook() {
 		// Given
 		Member testMember = Member.builder()
@@ -153,6 +150,7 @@ class ClacoBookServiceTest {
 
 		JwtMemberDetail jwtMemberDetailMock = mock(JwtMemberDetail.class);
 
+		when(securityContextUtil.getContextMemberInfo()).thenReturn(jwtMemberDetailMock);
 		when(jwtMemberDetailMock.getMemberId()).thenReturn(testId);
 		when(clacoBookRepository.findClacoBookById(testId)).thenReturn(Optional.of(testBook1));
 
@@ -178,6 +176,7 @@ class ClacoBookServiceTest {
 	}
 
 	@Test
+	@DisplayName("ClacoBook 삭제")
 	void deleteClacoBook() {
 		// Given
 		Member testMember = Member.builder()
@@ -199,6 +198,7 @@ class ClacoBookServiceTest {
 
 		JwtMemberDetail jwtMemberDetailMock = mock(JwtMemberDetail.class);
 
+		when(securityContextUtil.getContextMemberInfo()).thenReturn(jwtMemberDetailMock);
 		when(jwtMemberDetailMock.getMemberId()).thenReturn(testId);
 		when(clacoBookRepository.findClacoBookById(testId)).thenReturn(Optional.of(testBook1));
 
