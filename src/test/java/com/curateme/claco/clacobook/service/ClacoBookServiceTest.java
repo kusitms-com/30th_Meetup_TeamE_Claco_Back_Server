@@ -61,7 +61,7 @@ class ClacoBookServiceTest {
 
 		when(securityContextUtil.getContextMemberInfo()).thenReturn(jwtMemberDetailMock);
 		when(jwtMemberDetailMock.getMemberId()).thenReturn(testId);
-		when(memberRepository.findById(testId)).thenReturn(Optional.of(testMember));
+		when(memberRepository.findMemberByIdWithClacoBook(testId)).thenReturn(Optional.of(testMember));
 		when(clacoBookRepository.save(any(ClacoBook.class))).then(AdditionalAnswers.returnsFirstArg());
 
 		// When
@@ -70,7 +70,7 @@ class ClacoBookServiceTest {
 		// Then
 		verify(securityContextUtil).getContextMemberInfo();
 		verify(jwtMemberDetailMock).getMemberId();
-		verify(memberRepository).findById(testId);
+		verify(memberRepository).findMemberByIdWithClacoBook(testId);
 
 		String bookTitle = "test님의 이야기";
 		String bookColor = "#8F9AF8";
