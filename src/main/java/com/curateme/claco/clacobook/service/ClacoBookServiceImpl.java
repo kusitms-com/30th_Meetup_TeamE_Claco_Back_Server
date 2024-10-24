@@ -40,9 +40,14 @@ public class ClacoBookServiceImpl implements ClacoBookService {
 	@Override
 	public ClacoBookResponse createClacoBook() {
 		// 접근 사용자의 ClacoBook 생성
-		Member member = memberRepository.findById(securityContextUtil.getContextMemberInfo().getMemberId()).stream()
+		Member member = memberRepository.findMemberByIdWithClacoBook(
+				securityContextUtil.getContextMemberInfo().getMemberId()).stream()
 			.findAny()
 			.orElseThrow(() -> new BusinessException(ApiStatus.MEMBER_NOT_FOUND));
+
+		if (member.getClacoBooks().size() >= 5) {
+			throw new BusinessException(ApiStatus.CLACO_BOOK_CREATION_LIMIT);
+		}
 
 		ClacoBook clacoBook = ClacoBook.builder()
 			.member(member)
@@ -77,8 +82,8 @@ public class ClacoBookServiceImpl implements ClacoBookService {
 			.orElseThrow(() -> new BusinessException(ApiStatus.CLACO_BOOK_NOT_FOUND));
 
 		// 수정
-		clacoBook.updateTitle(updateRequest.getTitle());
-		clacoBook.updateColor(updateRequest.getColor());
+		clacoBook.updateTitle(updateRequest.getTitle() == null ? clacoBook.getTitle() : updateRequest.getTitle());
+		clacoBook.updateColor(updateRequest.getColor() == null ? clacoBook.getColor() : updateRequest.getColor());
 
 		return ClacoBookResponse.fromEntity(clacoBook);
 	}
