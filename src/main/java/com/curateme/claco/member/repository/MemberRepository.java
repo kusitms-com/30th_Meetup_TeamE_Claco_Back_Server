@@ -19,7 +19,7 @@ import com.curateme.claco.member.domain.entity.Member;
  * DATE               AUTHOR        NOTE
  * -----------------------------------------------------------
  * 2024.10.17   	   이 건        최초 생성
- * 2024.10.18   	   이 건        nickname 메서드 추가
+ * 2024.10.18   	   이 건        nickname 메서드 추가 -> id 로 변경
  */
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
@@ -39,11 +39,11 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
 	/**
 	 * 닉네임으로 Member 를 클라코 북과 함께 찾는 메서드
-	 * @param nickname : 찾고자 하는 유저의 닉네임
+	 * @param id : 찾고자 하는 유저의 id
 	 * @return : Optional Member
 	 */
 	@EntityGraph(attributePaths = {"clacoBooks"})
-	@Query("select m from Member m where m.nickname=:nickname")
-	Optional<Member> findMemberByNicknameWithClacoBook(@Param("nickname") String nickname);
+	@Query("select m from Member m where m.id=:id")
+	Optional<Member> findMemberByIdWithClacoBook(@Param("id") Long id);
 
 }

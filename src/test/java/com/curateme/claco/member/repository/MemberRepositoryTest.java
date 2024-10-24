@@ -89,7 +89,7 @@ class MemberRepositoryTest {
 	}
 
 	@Test
-	@DisplayName("닉네임으로 클라코북과 함께 멤버 찾기")
+	@DisplayName("아이디로 클라코북과 함께 멤버 찾기")
 	void findMemberByNicknameWithClacoBook() {
 		// Given
 		Member testMember = Member.builder()
@@ -101,6 +101,8 @@ class MemberRepositoryTest {
 			.build();
 
 		entityManager.persist(testMember);
+
+		Long curId = testMember.getId();
 
 		ClacoBook clacoBook1 = ClacoBook.builder()
 			.title(testString)
@@ -121,7 +123,7 @@ class MemberRepositoryTest {
 		testMember.addClacoBook(clacoBook2);
 
 		// When
-		Optional<Member> result = memberRepository.findMemberByNicknameWithClacoBook(testString);
+		Optional<Member> result = memberRepository.findMemberByIdWithClacoBook(curId);
 
 		// Then
 		assertThat(result.isPresent()).isTrue();
