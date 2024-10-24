@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
  * 2024.10.22   	   이 건        최초 생성
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/members")
 @RequiredArgsConstructor
 public class MemberController {
 
@@ -35,7 +35,7 @@ public class MemberController {
 	 * @param nickname : 체크하고자 하는 닉네임
 	 * @return : COM-000 정상, MEM-009 닉네임 중복
 	 */
-	@GetMapping("/nickname")
+	@GetMapping("/check-nickname")
 	public ApiResponse<Void> checkNicknameDuplicate(@RequestParam("nickname") String nickname) {
 		memberService.checkNicknameValid(nickname);
 
@@ -48,7 +48,7 @@ public class MemberController {
 	 * @param request : 회원가입하고자 하는 정보 (닉네임, 선호 정보)
 	 * @return : COM-000 정상, MEM-009 닉네임 중복
 	 */
-	@PostMapping("/sign-up")
+	@PostMapping
 	public ApiResponse<Void> signUp(@RequestBody SignUpRequest request) {
 		memberService.signUp(request);
 
