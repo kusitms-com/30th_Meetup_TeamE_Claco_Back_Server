@@ -201,6 +201,11 @@ class ClacoBookServiceTest {
 		when(securityContextUtil.getContextMemberInfo()).thenReturn(jwtMemberDetailMock);
 		when(jwtMemberDetailMock.getMemberId()).thenReturn(testId);
 		when(clacoBookRepository.findClacoBookById(testId)).thenReturn(Optional.of(testBook1));
+		doAnswer(invocationOnMock -> {
+			ClacoBook tmpBook = invocationOnMock.getArgument(0);
+			tmpBook.updateActiveStatus(ActiveStatus.DELETED);
+			return tmpBook;
+		}).when(clacoBookRepository).delete(any(ClacoBook.class));
 
 		// When
 		clacoBookService.deleteClacoBook(testId);
