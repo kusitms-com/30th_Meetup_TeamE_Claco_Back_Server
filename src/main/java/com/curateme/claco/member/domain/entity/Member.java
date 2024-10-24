@@ -1,5 +1,8 @@
 package com.curateme.claco.member.domain.entity;
 
+import java.util.List;
+
+import com.curateme.claco.clacobook.domain.entity.ClacoBook;
 import com.curateme.claco.global.entity.BaseEntity;
 import com.curateme.claco.preference.domain.entity.Preference;
 
@@ -8,10 +11,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -35,6 +40,7 @@ import lombok.NoArgsConstructor;
  * 2024.10.17		   이 건		   엔티티 필드 제약 조건 변경
  * 2024.10.18		   이 건		   성별 필드 추가 (Gender) 및 Preference 관계 매핑
  * 2024.10.22		   이 건		   나이 필드 추가 및 Preference 매핑 condition 수정
+ * 2024.10.24		   이 건		   ClacoBook 일대다 엔티티 매핑
  */
 @Entity
 @Getter
@@ -52,6 +58,10 @@ public class Member extends BaseEntity {
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "preference_id")
 	private Preference preference;
+
+	// ClacoBook 일대다 양방향 매핑
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<ClacoBook> clacoBooks;
 
 	// email
 	@NotNull
