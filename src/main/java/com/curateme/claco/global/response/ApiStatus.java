@@ -40,7 +40,8 @@ public enum ApiStatus {
 	OAUTH_ATTRIBUTE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "ATH-001", "Cannot find OAuth attribute."),
 
 	// 클라코 북 에러
-	CLACO_BOOK_NOT_FOUND(HttpStatus.BAD_REQUEST, "CLB-001", "Claco book not found.")
+	CLACO_BOOK_NOT_FOUND(HttpStatus.BAD_REQUEST, "CLB-001", "Claco book not found."),
+	CLACO_BOOK_CREATION_LIMIT(HttpStatus.BAD_REQUEST, "CLB-010", "Claco Book can create maximum 5."),
 	;
 
 	private final HttpStatus httpStatus;
