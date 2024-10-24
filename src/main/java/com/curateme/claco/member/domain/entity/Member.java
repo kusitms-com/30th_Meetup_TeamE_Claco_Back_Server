@@ -3,6 +3,9 @@ package com.curateme.claco.member.domain.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
 import com.curateme.claco.clacobook.domain.entity.ClacoBook;
 import com.curateme.claco.global.entity.BaseEntity;
 import com.curateme.claco.preference.domain.entity.Preference;
@@ -41,13 +44,15 @@ import lombok.NoArgsConstructor;
  * 2024.10.17		   이 건		   엔티티 필드 제약 조건 변경
  * 2024.10.18		   이 건		   성별 필드 추가 (Gender) 및 Preference 관계 매핑
  * 2024.10.22		   이 건		   나이 필드 추가 및 Preference 매핑 condition 수정
- * 2024.10.24		   이 건		   ClacoBook 일대다 엔티티 매핑
+ * 2024.10.24		   이 건		   ClacoBook 일대다 엔티티 매핑, soft delete 조건 추가
  */
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE member SET active_status = 'DELETED' WHERE member_id = ?")
+@SQLRestriction("active_status <> 'DELETED'")
 public class Member extends BaseEntity {
 
 	// auto_increment 사용 id

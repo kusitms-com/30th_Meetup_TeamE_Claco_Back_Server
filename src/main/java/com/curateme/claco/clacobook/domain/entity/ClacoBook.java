@@ -1,5 +1,9 @@
 package com.curateme.claco.clacobook.domain.entity;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
+import com.curateme.claco.global.entity.BaseEntity;
 import com.curateme.claco.member.domain.entity.Member;
 
 import jakarta.persistence.Column;
@@ -32,7 +36,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ClacoBook {
+@SQLDelete(sql = "UPDATE claco_book SET active_status = 'DELETED' WHERE claco_book_id = ?")
+@SQLRestriction("active_status <> 'DELETED'")
+public class ClacoBook extends BaseEntity {
 
 	@Id @Column(name = "claco_book_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
