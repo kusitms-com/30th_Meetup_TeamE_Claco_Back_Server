@@ -2,7 +2,10 @@ package com.curateme.claco.member.repository;
 
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.curateme.claco.member.domain.entity.Member;
 
@@ -33,5 +36,14 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	 * @return : Optional Member
 	 */
 	Optional<Member> findMemberByNickname(String nickname);
+
+	/**
+	 * 닉네임으로 Member 를 클라코 북과 함께 찾는 메서드
+	 * @param nickname : 찾고자 하는 유저의 닉네임
+	 * @return : Optional Member
+	 */
+	@EntityGraph(attributePaths = {"clacoBooks"})
+	@Query("select m from Member m where m.nickname=:nickname")
+	Optional<Member> findMemberByNicknameWithClacoBook(@Param("nickname") String nickname);
 
 }
