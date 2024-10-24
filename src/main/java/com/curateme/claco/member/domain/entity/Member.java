@@ -1,5 +1,6 @@
 package com.curateme.claco.member.domain.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.curateme.claco.clacobook.domain.entity.ClacoBook;
@@ -60,8 +61,9 @@ public class Member extends BaseEntity {
 	private Preference preference;
 
 	// ClacoBook 일대다 양방향 매핑
+	@Builder.Default
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<ClacoBook> clacoBooks;
+	private List<ClacoBook> clacoBooks = new ArrayList<>();
 
 	// email
 	@NotNull
@@ -112,5 +114,16 @@ public class Member extends BaseEntity {
 	public void updateRole() {
 		this.role = Role.MEMBER;
 	}
+
+	// 연관관계 편의 메서드
+	public void addClacoBook(ClacoBook clacoBook) {
+		if (!this.clacoBooks.contains(clacoBook)) {
+			this.clacoBooks.add(clacoBook);
+		}
+		if (clacoBook.getMember() != this) {
+			clacoBook.updateMember(this);
+		}
+	}
+
 
 }

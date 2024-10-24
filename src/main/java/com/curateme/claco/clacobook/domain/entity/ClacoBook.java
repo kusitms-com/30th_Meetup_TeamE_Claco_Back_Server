@@ -4,6 +4,7 @@ import com.curateme.claco.member.domain.entity.Member;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,6 +25,7 @@ import lombok.NoArgsConstructor;
  * DATE               AUTHOR        NOTE
  * -----------------------------------------------------------
  * 2024.10.23   	   이 건        최초 생성
+ * 2024.10.24   	   이 건        Member 연관관계 편의 메서드 추가
  */
 @Entity
 @Getter
@@ -43,8 +45,18 @@ public class ClacoBook {
 	private String color;
 
 	// Member 다대일 양방향 매핑 (주 테이블)
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
 	private Member member;
+
+	// 연관관계 편의 메서드
+	public void updateMember(Member member) {
+		if (this.member != member) {
+			this.member = member;
+		}
+		if (!member.getClacoBooks().contains(this)) {
+			member.addClacoBook(this);
+		}
+	}
 
 }
