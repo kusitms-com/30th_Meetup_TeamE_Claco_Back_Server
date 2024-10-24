@@ -55,6 +55,14 @@ public class ClacoBook extends BaseEntity {
 	@JoinColumn(name = "member_id")
 	private Member member;
 
+	public void updateTitle(String title) {
+		this.title = title;
+	}
+
+	public void updateColor(String color) {
+		this.color = color;
+	}
+
 	// 연관관계 편의 메서드
 	public void updateMember(Member member) {
 		if (this.member != member) {
