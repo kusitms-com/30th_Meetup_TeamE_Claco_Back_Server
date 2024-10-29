@@ -9,6 +9,7 @@ import org.hibernate.annotations.SQLRestriction;
 import com.curateme.claco.clacobook.domain.entity.ClacoBook;
 import com.curateme.claco.global.entity.BaseEntity;
 import com.curateme.claco.preference.domain.entity.Preference;
+import com.curateme.claco.review.domain.entity.TicketReview;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -45,6 +46,7 @@ import lombok.NoArgsConstructor;
  * 2024.10.18		   이 건		   성별 필드 추가 (Gender) 및 Preference 관계 매핑
  * 2024.10.22		   이 건		   나이 필드 추가 및 Preference 매핑 condition 수정
  * 2024.10.24		   이 건		   ClacoBook 일대다 엔티티 매핑, soft delete 조건 추가
+ * 2024.10.28		   이 건		   TicketReview	일대다 엔티티 매핑 추가
  */
 @Entity
 @Getter
@@ -69,6 +71,11 @@ public class Member extends BaseEntity {
 	@Builder.Default
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<ClacoBook> clacoBooks = new ArrayList<>();
+
+	// TicketReview 일대다 양방향 매핑
+	@Builder.Default
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<TicketReview> ticketReviews = new ArrayList<>();
 
 	// email
 	@NotNull
@@ -127,6 +134,15 @@ public class Member extends BaseEntity {
 		}
 		if (clacoBook.getMember() != this) {
 			clacoBook.updateMember(this);
+		}
+	}
+
+	public void addTicketReview(TicketReview ticketReview) {
+		if (!this.ticketReviews.contains(ticketReview)) {
+			this.ticketReviews.add(ticketReview);
+		}
+		if (ticketReview.getMember() != this) {
+			ticketReview.updateMember(this);
 		}
 	}
 
