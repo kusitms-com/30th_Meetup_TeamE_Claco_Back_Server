@@ -71,7 +71,9 @@ public class SecurityConfig {
 					.requestMatchers(HttpMethod.GET, "/api/members/check-nickname")
 					.hasAnyRole(Role.SOCIAL.getRole(), Role.ADMIN.getRole())
 					.requestMatchers("/api/**")
-					.permitAll()
+					.hasAnyRole(Role.MEMBER.getRole(), Role.ADMIN.getRole())
+					.anyRequest()
+					.authenticated()
 			)
 			.oauth2Login((oauth2Login) ->
 				oauth2Login.successHandler(oAuthLoginSuccessHandler)
