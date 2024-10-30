@@ -30,7 +30,7 @@ public class ConcertCategory {
     private Double score;
 
     @ManyToOne
-    @JoinColumn(name = "concertId", nullable = false)
+    @JoinColumn(name = "concert_id", nullable = false)
     private Concert concert;
 
     public ConcertCategory(String category, Double score, Concert concert) {
