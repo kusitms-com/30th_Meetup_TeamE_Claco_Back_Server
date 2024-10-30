@@ -113,7 +113,7 @@ public class Concert extends BaseEntity {
     private String styurl;
 
     @ElementCollection
-    @CollectionTable(name = "ConcertCategory", joinColumns = @JoinColumn(name = "concertId"))
+    @CollectionTable(name = "concert_category", joinColumns = @JoinColumn(name = "concertId"))
     @MapKeyColumn(name = "category")
     @Column(name = "score")
     private Map<String, Double> categories;
