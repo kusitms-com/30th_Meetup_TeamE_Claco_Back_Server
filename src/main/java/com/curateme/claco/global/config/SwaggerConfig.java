@@ -35,7 +35,7 @@ public class SwaggerConfig {
 
     private Info apiInfo() {
         return new Info()
-            .title("Calco Springdoc")
+            .title("Claco Springdoc")
             .description("Springdoc을 사용한 CLACO API 테스트")
             .version("1.0.0");
     }
