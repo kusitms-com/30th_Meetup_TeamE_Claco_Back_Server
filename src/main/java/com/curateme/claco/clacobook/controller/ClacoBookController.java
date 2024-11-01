@@ -1,5 +1,6 @@
 package com.curateme.claco.clacobook.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 
 import org.springframework.validation.annotation.Validated;
@@ -33,6 +34,7 @@ public class ClacoBookController {
 	}
 
 	@GetMapping
+	@Operation(summary = "ClacoBook 조회 서비스", description = "기능명세서 화면번호 n.0.0")
 	public ApiResponse<List<ClacoBookResponse>> readClacoBookListWithOwner() {
 		return ApiResponse.ok(clacoBookService.readClacoBooks());
 	}
