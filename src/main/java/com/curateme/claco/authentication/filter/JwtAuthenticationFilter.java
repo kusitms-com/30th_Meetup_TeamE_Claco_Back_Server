@@ -47,13 +47,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private static String GRANT_TYPE = "Bearer ";
 
 	protected List<String> filterPassList = List.of("/oauth2/authorization/kakao",
-		"/login/oauth2/code/kakao", "/favicon.ico");
+		"/login/oauth2/code/kakao", "/favicon.ico", "/v3/api-docs", "/v3/api-docs/swagger-config");
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 
-		if (filterPassList.contains(request.getRequestURI())){
+		String requestUri = request.getRequestURI();
+
+		if (filterPassList.contains(requestUri) || requestUri.startsWith("/swagger")) {
 			filterChain.doFilter(request, response);
 			return;
 		}
@@ -65,7 +67,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		Authentication authentication;
 
 		// 정상 흐름
-		try{
+		try {
 			authentication = jwtTokenUtil.getAuthentication(accessToken);
 
 			SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -77,8 +79,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			response.setHeader("Authorization", GRANT_TYPE + accessToken);
 			response.setHeader("Set-Cookie", refreshToken);
 
-		// access token 만료 흐름
-		} catch (ExpiredJwtException e){
+			// access token 만료 흐름
+		} catch (ExpiredJwtException e) {
 
 			log.info("[AccessTokenExpire] -> accessToken: {}", accessToken);
 
@@ -88,7 +90,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				.findAny()
 				.orElseThrow(() -> new BusinessException(ApiStatus.REFRESH_TOKEN_NOT_FOUND));
 
-			if (!jwtTokenUtil.validate(refreshToken)){
+			if (!jwtTokenUtil.validate(refreshToken)) {
 				throw new BusinessException(ApiStatus.MEMBER_LOGIN_SESSION_EXPIRED);
 			}
 
@@ -96,7 +98,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				.findAny()
 				.orElseThrow(() -> new BusinessException(ApiStatus.MEMBER_NOT_FOUND));
 
-			if (!currentMember.getRefreshToken().equals(refreshToken)){
+			if (!currentMember.getRefreshToken().equals(refreshToken)) {
 				throw new BusinessException(ApiStatus.MEMBER_LOGIN_SESSION_EXPIRED);
 			}
 
