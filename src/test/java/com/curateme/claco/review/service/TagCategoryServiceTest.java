@@ -26,7 +26,7 @@ class TagCategoryServiceTest {
 	TagCategoryRepository tagCategoryRepository;
 
 	@InjectMocks
-	TagCategoryService tagCategoryService;
+	TagCategoryServiceImpl tagCategoryService;
 
 	final String test1 = "test1";
 	final String test2 = "test2";
