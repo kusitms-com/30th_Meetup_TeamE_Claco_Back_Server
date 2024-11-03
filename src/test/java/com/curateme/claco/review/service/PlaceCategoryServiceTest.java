@@ -25,7 +25,7 @@ class PlaceCategoryServiceTest {
 	@Mock
 	PlaceCategoryRepository placeCategoryRepository;
 	@InjectMocks
-	PlaceCategoryService placeCategoryService;
+	PlaceCategoryServiceImpl placeCategoryService;
 
 	@Test
 	@DisplayName("장소평 카테고리 가져오기")
