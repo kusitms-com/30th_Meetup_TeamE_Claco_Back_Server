@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.curateme.claco.review.domain.dto.response.PlaceCategoryInfoResponse;
+import com.curateme.claco.review.domain.vo.PlaceCategoryVO;
 import com.curateme.claco.review.repository.PlaceCategoryRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -16,10 +16,10 @@ public class PlaceCategoryServiceImpl implements PlaceCategoryService{
 	private final PlaceCategoryRepository placeCategoryRepository;
 
 	@Override
-	public List<PlaceCategoryInfoResponse> readPlaceCategoryList() {
+	public List<PlaceCategoryVO> readPlaceCategoryList() {
 
 		return placeCategoryRepository.findAll().stream()
-			.map(PlaceCategoryInfoResponse::fromEntity)
+			.map(PlaceCategoryVO::fromEntity)
 			.toList();
 	}
 }

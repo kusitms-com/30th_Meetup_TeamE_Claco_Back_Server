@@ -2,7 +2,7 @@ package com.curateme.claco.review.service;
 
 import java.util.List;
 
-import com.curateme.claco.review.domain.dto.response.PlaceCategoryInfoResponse;
+import com.curateme.claco.review.domain.vo.PlaceCategoryVO;
 
 /**
  * @author      : 이 건
@@ -19,6 +19,6 @@ public interface PlaceCategoryService {
 	 * 장소평 카테고리 리스트 읽어오기
 	 * @return : 장소평 카테고리 이름 및 id 반환
 	 */
-	List<PlaceCategoryInfoResponse> readPlaceCategoryList();
+	List<PlaceCategoryVO> readPlaceCategoryList();
 
 }

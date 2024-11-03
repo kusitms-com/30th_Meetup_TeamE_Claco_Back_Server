@@ -12,8 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.curateme.claco.review.domain.dto.response.PlaceCategoryInfoResponse;
 import com.curateme.claco.review.domain.entity.PlaceCategory;
+import com.curateme.claco.review.domain.vo.PlaceCategoryVO;
 import com.curateme.claco.review.repository.PlaceCategoryRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +44,7 @@ class PlaceCategoryServiceTest {
 		when(placeCategoryRepository.findAll()).thenReturn(List.of(category1, category2));
 
 		// When
-		List<PlaceCategoryInfoResponse> assertResult = placeCategoryService.readPlaceCategoryList();
+		List<PlaceCategoryVO> assertResult = placeCategoryService.readPlaceCategoryList();
 
 		// Then
 		verify(placeCategoryRepository).findAll();
