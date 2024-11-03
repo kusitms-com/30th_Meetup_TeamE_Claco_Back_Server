@@ -72,9 +72,6 @@ public class TicketReview extends BaseEntity {
 	@NotNull
 	@Column(precision = 2, scale = 1)
 	private BigDecimal starRate;
-	// 티켓 가격
-	@NotNull
-	private Integer ticketPrice;
 	// 티켓 이미지 (클라코 생성)
 	private String ticketImage;
 	// 리뷰 내용

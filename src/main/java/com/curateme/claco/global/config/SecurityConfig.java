@@ -66,6 +66,10 @@ public class SecurityConfig {
 					.requestMatchers("/probe", "/oauth2/authorization/kakao",
 						"/login/oauth2/code/kakao", "/favicon.ico")
 					.permitAll()
+					.requestMatchers("/swagger-ui/**")
+					.permitAll()
+					.requestMatchers("/v3/api-docs/**")
+					.permitAll()
 					.requestMatchers(HttpMethod.POST, "/api/members")
 					.hasAnyRole(Role.SOCIAL.getRole(), Role.ADMIN.getRole())
 					.requestMatchers(HttpMethod.GET, "/api/members/check-nickname")
