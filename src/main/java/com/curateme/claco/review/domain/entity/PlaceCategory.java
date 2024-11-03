@@ -28,7 +28,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE place_category SET active_status = 'DELETED' WHERE member_id = ?")
+@SQLDelete(sql = "UPDATE place_category SET active_status = 'DELETED' WHERE place_category_id = ?")
 @SQLRestriction("active_status <> 'DELETED'")
 public class PlaceCategory extends BaseEntity {
 
