@@ -35,6 +35,7 @@ import lombok.NoArgsConstructor;
  * -----------------------------------------------------------
  * 2024.10.28		   이 건		   최초 생성
  * 2024.11.03		   이 건		   ReviewTag, Concert 매핑 추가
+ * 2024.11.04		   이 건		   관람 좌석 NotNull 조건 해제(요구사항)
  */
 @Entity
 @Getter
@@ -75,7 +76,6 @@ public class TicketReview extends BaseEntity {
 	@NotNull
 	private LocalDate watchDate;
 	// 관람 좌석
-	@NotNull
 	private String watchSit;
 	// 별점
 	@NotNull
