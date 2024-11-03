@@ -42,7 +42,9 @@ public enum ApiStatus {
 	// 클라코 북 에러
 	CLACO_BOOK_NOT_FOUND(HttpStatus.BAD_REQUEST, "CLB-001", "Claco book not found."),
 	CLACO_BOOK_CREATION_LIMIT(HttpStatus.BAD_REQUEST, "CLB-010", "Claco Book can create maximum 5."),
-	;
+
+	// 이미지 에러
+	IMAGE_NOT_FOUND(HttpStatus.BAD_REQUEST, "IMG-001", "Image not found.");
 
 	private final HttpStatus httpStatus;
 	private final String code;
