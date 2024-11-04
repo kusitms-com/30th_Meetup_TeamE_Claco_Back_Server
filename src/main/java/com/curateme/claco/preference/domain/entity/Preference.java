@@ -1,7 +1,9 @@
 package com.curateme.claco.preference.domain.entity;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
@@ -33,6 +35,7 @@ import lombok.NoArgsConstructor;
  * -----------------------------------------------------------
  * 2024.10.22   	   이 건        최초 생성
  * 2024.10.24   	   이 건        soft delete 조건 추가
+ * 2024.11.05   	   이 건        카테시안 곱에 대비한 List -> Set으로 변경
  */
 @Entity
 @Getter
@@ -55,11 +58,11 @@ public class Preference extends BaseEntity {
 	// 다대일 매핑
 	@Builder.Default
 	@OneToMany(mappedBy = "preference", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<TypePreference> typePreferences= new ArrayList<>();
+	private Set<TypePreference> typePreferences= new HashSet<>();
 	// 다대일 매핑
 	@Builder.Default
 	@OneToMany(mappedBy = "preference", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<RegionPreference> regionPreferences = new ArrayList<>();
+	private Set<RegionPreference> regionPreferences = new HashSet<>();
 
 	// 카테고리 기반 취향
 	private String preference1;
@@ -70,6 +73,18 @@ public class Preference extends BaseEntity {
 	// 선호 가격대
 	private Integer minPrice;
 	private Integer maxPrice;
+
+	public void updateMinPrice(Integer minPrice) {
+		if (minPrice != null) {
+			this.minPrice = minPrice;
+		}
+	}
+
+	public void updateMaxPrice(Integer maxPrice) {
+		if (maxPrice != null) {
+			this.maxPrice = maxPrice;
+		}
+	}
 
 	// 연관관계 편의 메서드
 	public void addTypeReference(TypePreference typePreference) {

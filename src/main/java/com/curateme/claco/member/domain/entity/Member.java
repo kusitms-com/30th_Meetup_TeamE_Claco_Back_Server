@@ -112,7 +112,9 @@ public class Member extends BaseEntity {
 	}
 
 	public void updateGender(Gender gender) {
-		this.gender = gender;
+		if (gender != null) {
+			this.gender = gender;
+		}
 	}
 
 	public void updatePreference(Preference preference) {
@@ -120,7 +122,9 @@ public class Member extends BaseEntity {
 	}
 
 	public void updateAge(Integer age) {
-		this.age = age;
+		if (age != null) {
+			this.age = age;
+		}
 	}
 
 	public void updateRole() {
