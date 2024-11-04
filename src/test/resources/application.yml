@@ -6,3 +6,4 @@ spring:
       - test
     include:
       - oauth
+      - aws

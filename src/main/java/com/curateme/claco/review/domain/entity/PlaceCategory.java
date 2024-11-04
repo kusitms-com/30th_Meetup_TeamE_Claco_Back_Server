@@ -7,6 +7,8 @@ import com.curateme.claco.global.entity.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -33,6 +35,7 @@ import lombok.NoArgsConstructor;
 public class PlaceCategory extends BaseEntity {
 
 	@Id @Column(name = "place_category_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	// 카테고리 이름
 	private String name;

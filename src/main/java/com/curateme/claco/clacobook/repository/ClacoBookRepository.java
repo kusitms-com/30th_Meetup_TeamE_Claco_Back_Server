@@ -15,6 +15,7 @@ import com.curateme.claco.clacobook.domain.entity.ClacoBook;
  * DATE               AUTHOR        NOTE
  * -----------------------------------------------------------
  * 2024.10.24   	   이 건        최초 생성
+ * 2024.11.04   	   이 건        티켓 리뷰 조인 조회 기능 추가
  */
 public interface ClacoBookRepository extends JpaRepository<ClacoBook, Long> {
 
@@ -25,4 +26,13 @@ public interface ClacoBookRepository extends JpaRepository<ClacoBook, Long> {
 	 */
 	@EntityGraph(attributePaths = {"member"})
 	Optional<ClacoBook> findClacoBookById(Long id);
+
+	/**
+	 * TicketReview 엔티티 조인 조회 메서드
+	 * @param id : 찾고자 하는 ClacoBook id
+	 * @return : Optional ClacoBook
+	 */
+	@EntityGraph(attributePaths = {"ticketReviews"})
+	Optional<ClacoBook> findByIdIs(Long id);
+
 }

@@ -3,6 +3,8 @@ package com.curateme.claco.review.domain.entity;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import com.curateme.claco.global.entity.BaseEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,21 +34,23 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE review_tag SET active_status = 'DELETED' WHERE review_tag_id = ?")
 @SQLRestriction("active_status <> 'DELETED'")
-public class ReviewTag {
+public class ReviewTag extends BaseEntity {
 
 	@Id @Column(name = "review_tag_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	// 다대일 양방향 매핑(일대다-다대일 해결 테이블)
 	@ManyToOne
 	@JoinColumn(name = "ticket_review_id")
 	private TicketReview ticketReview;
 
+	// 다대일 단방향 매핑(일대다-다대일 해결 테이블)
 	@ManyToOne
 	@JoinColumn(name = "tag_category_id")
 	private TagCategory tagCategory;
 
-	// 연관관계 편의 메서드
+	// TicketReview 연관관계 편의 메서드
 	public void updateTicketReview(TicketReview ticketReview) {
 		if (this.ticketReview != ticketReview) {
 			this.ticketReview = ticketReview;

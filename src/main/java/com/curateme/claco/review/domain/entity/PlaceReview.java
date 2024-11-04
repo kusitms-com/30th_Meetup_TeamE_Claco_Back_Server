@@ -8,6 +8,8 @@ import com.curateme.claco.global.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -38,19 +40,20 @@ public class PlaceReview extends BaseEntity {
 
 	@Id
 	@Column(name = "place_review_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	// 장소평 카테고리 다대일 단방향 매핑
+	// 다대일 단방향 매핑(일대다-다대일 해결 테이블)
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "place_category_id")
 	private PlaceCategory placeCategory;
 
-	// 티켓 리뷰 다대일 양방향 매핑
+	// 다대일 양방향 매핑(일대다-다대일 해결 테이블)
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ticket_review_id")
 	private TicketReview ticketReview;
 
-	// 연관관계 편의 메서드
+	// TickerReview 연관관계 편의 메서드
 	public void updateTicketReview(TicketReview ticketReview) {
 		if (this.ticketReview != ticketReview) {
 			this.ticketReview = ticketReview;
