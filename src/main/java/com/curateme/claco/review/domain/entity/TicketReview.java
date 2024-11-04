@@ -7,6 +7,7 @@ import java.util.List;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import com.curateme.claco.concert.domain.entity.Concert;
 import com.curateme.claco.global.entity.BaseEntity;
 import com.curateme.claco.member.domain.entity.Member;
 
@@ -33,13 +34,14 @@ import lombok.NoArgsConstructor;
  * DATE               AUTHOR        NOTE
  * -----------------------------------------------------------
  * 2024.10.28		   이 건		   최초 생성
+ * 2024.11.03		   이 건		   ReviewTag, Concert 매핑 추가
  */
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE ticket_review SET active_status = 'DELETED' WHERE member_id = ?")
+@SQLDelete(sql = "UPDATE ticket_review SET active_status = 'DELETED' WHERE ticket_review_id = ?")
 @SQLRestriction("active_status <> 'DELETED'")
 public class TicketReview extends BaseEntity {
 
@@ -54,6 +56,13 @@ public class TicketReview extends BaseEntity {
 	// 리뷰 이미지 일대다 양방향 매핑
 	@OneToMany(mappedBy = "ticketReview", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<ReviewImage> reviewImages;
+
+	@OneToMany(mappedBy = "ticketReview", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<ReviewTag> reviewTags;
+
+	@ManyToOne
+	@JoinColumn(name = "concert_id")
+	private Concert concert;
 
 	// 다대일 양방향 매핑
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -104,6 +113,16 @@ public class TicketReview extends BaseEntity {
 		}
 		if (reviewImage.getTicketReview() != this) {
 			reviewImage.updateTicketReview(this);
+		}
+	}
+
+	// 연관관계 편의 메서드
+	public void addReviewTag(ReviewTag reviewTag) {
+		if (!this.reviewTags.contains(reviewTag)) {
+			this.reviewTags.add(reviewTag);
+		}
+		if (reviewTag.getTicketReview() != this) {
+			reviewTag.updateTicketReview(this);
 		}
 	}
 

@@ -63,7 +63,7 @@ public class Member extends BaseEntity {
 	private Long id;
 
 	// Preference 일대일 양방향 매핑 (주 테이블)
-	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@JoinColumn(name = "preference_id")
 	private Preference preference;
 

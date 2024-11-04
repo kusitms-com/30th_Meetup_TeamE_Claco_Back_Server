@@ -32,7 +32,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE place_review SET active_status = 'DELETED' WHERE member_id = ?")
+@SQLDelete(sql = "UPDATE place_review SET active_status = 'DELETED' WHERE place_review_id = ?")
 @SQLRestriction("active_status <> 'DELETED'")
 public class PlaceReview extends BaseEntity {
 
