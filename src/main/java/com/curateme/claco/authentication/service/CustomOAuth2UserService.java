@@ -86,7 +86,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
 	private Member saveMember(KakaoOAuthAttribute attributes) {
 		Member createdUser = attributes.toEntity(attributes.getOauth2UserInfo());
-		// TODO: Claco book 기본 생성 추가 필요
 		return memberRepository.save(createdUser);
 	}
 }
