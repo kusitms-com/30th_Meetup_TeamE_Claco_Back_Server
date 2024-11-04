@@ -215,8 +215,13 @@ class PreferenceServiceTest {
 			.maxPrice(testInt)
 			.build();
 
-		RegionPreference testRegionPrefer = RegionPreference.builder()
+		RegionPreference testRegionPrefer1 = RegionPreference.builder()
 			.regionName(testString)
+			.preference(testPrefer)
+			.build();
+
+		RegionPreference testRegionPrefer2 = RegionPreference.builder()
+			.regionName(resultString)
 			.preference(testPrefer)
 			.build();
 
@@ -224,12 +229,14 @@ class PreferenceServiceTest {
 			.typeContent(testString)
 			.preference(testPrefer)
 			.build();
-		testPrefer.addRegionPreference(testRegionPrefer);
+		testPrefer.addRegionPreference(testRegionPrefer1);
+		testPrefer.addRegionPreference(testRegionPrefer2);
 		testPrefer.addTypeReference(testTypePrefer);
 		testMember.updatePreference(testPrefer);
 
 		PreferenceUpdateRequest request = PreferenceUpdateRequest.builder()
 			.age(resultInt)
+			.gender(Gender.FEMALE)
 			.maxPrice(resultInt)
 			.minPrice(resultInt)
 			.regionPreferences(List.of())
@@ -256,6 +263,7 @@ class PreferenceServiceTest {
 		assertThat(result.getPreferRegions()).hasSize(0);
 		assertThat(result.getAge()).isEqualTo(resultInt);
 		assertThat(result.getMinPrice()).isEqualTo(resultInt);
+		assertThat(result.getGender()).isEqualTo(Gender.FEMALE);
 
 	}
 
