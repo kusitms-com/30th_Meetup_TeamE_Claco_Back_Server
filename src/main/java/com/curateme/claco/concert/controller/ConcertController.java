@@ -4,6 +4,8 @@ import com.curateme.claco.concert.domain.dto.response.ConcertResponse;
 import com.curateme.claco.concert.service.ConcertService;
 import com.curateme.claco.global.response.ApiResponse;
 import com.curateme.claco.global.response.PageResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +22,9 @@ public class ConcertController {
     private final ConcertService concertService;
 
     @GetMapping("/{categoryName}/{direction}")
+    @Operation(summary = "공연 둘러보기", description = "기능명세서 화면번호 4.0.0")
+    @Parameter(name = "categoryName", description = "카테고리 명", required = true, example = "grand")
+    @Parameter(name = "direction", description = "정렬 순서", required = true, example = "asc/dsc")
     public ApiResponse<PageResponse<ConcertResponse>> getConcerts(
         @PathVariable("categoryName") String categoryName,
         @PathVariable("direction") String direction,
