@@ -1,11 +1,16 @@
 package com.curateme.claco.clacobook.domain.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import com.curateme.claco.global.entity.BaseEntity;
 import com.curateme.claco.member.domain.entity.Member;
+import com.curateme.claco.review.domain.entity.TicketReview;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,6 +19,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -55,6 +61,11 @@ public class ClacoBook extends BaseEntity {
 	@JoinColumn(name = "member_id")
 	private Member member;
 
+	// TickerReview 일대다 양방향 매핑
+	@Builder.Default
+	@OneToMany(mappedBy = "clacoBook", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Set<TicketReview> ticketReviews = new HashSet<>();
+
 	public void updateTitle(String title) {
 		this.title = title;
 	}
@@ -73,4 +84,13 @@ public class ClacoBook extends BaseEntity {
 		}
 	}
 
+	// TickerReview 연관관계 편의 메서드
+	public void addTicketReview(TicketReview ticketReview) {
+		if (!this.ticketReviews.contains(ticketReview)) {
+			this.ticketReviews.add(ticketReview);
+		}
+		if (ticketReview.getClacoBook() != this) {
+			ticketReview.updateClacoBook(this);
+		}
+	}
 }

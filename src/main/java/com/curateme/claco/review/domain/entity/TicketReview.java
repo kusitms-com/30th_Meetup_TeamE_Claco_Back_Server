@@ -2,11 +2,14 @@ package com.curateme.claco.review.domain.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import com.curateme.claco.clacobook.domain.entity.ClacoBook;
 import com.curateme.claco.concert.domain.entity.Concert;
 import com.curateme.claco.global.entity.BaseEntity;
 import com.curateme.claco.member.domain.entity.Member;
@@ -15,6 +18,8 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -46,22 +51,32 @@ import lombok.NoArgsConstructor;
 @SQLRestriction("active_status <> 'DELETED'")
 public class TicketReview extends BaseEntity {
 
-	@Id
-	@Column(name = "ticket_review_id")
+	@Id @Column(name = "ticket_review_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	// 리뷰 장소평 일대다 양방향 매핑
+	@Builder.Default
+	@BatchSize(size = 5)
 	@OneToMany(mappedBy = "ticketReview", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<PlaceReview> placeReviews;
+	private Set<PlaceReview> placeReviews = new HashSet<>();
 
 	// 리뷰 이미지 일대다 양방향 매핑
+	@Builder.Default
+	@BatchSize(size = 3)
 	@OneToMany(mappedBy = "ticketReview", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<ReviewImage> reviewImages;
+	private Set<ReviewImage> reviewImages = new HashSet<>();
 
+	@Builder.Default
+	@BatchSize(size = 5)
 	@OneToMany(mappedBy = "ticketReview", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<ReviewTag> reviewTags;
+	private Set<ReviewTag> reviewTags = new HashSet<>();
 
 	@ManyToOne
+	@JoinColumn(name = "claco_book_id")
+	private ClacoBook clacoBook;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "concert_id")
 	private Concert concert;
 
@@ -84,9 +99,13 @@ public class TicketReview extends BaseEntity {
 	// 티켓 이미지 (클라코 생성)
 	private String ticketImage;
 	// 리뷰 내용
+	@NotNull
+	@Column(length = 500)
 	private String content;
+	@NotNull
+	private String casting;
 
-	// 연관관계 편의 메서드
+	// Member 연관관계 편의 메서드
 	public void updateMember(Member member) {
 		if (this.member != member) {
 			this.member = member;
@@ -96,7 +115,17 @@ public class TicketReview extends BaseEntity {
 		}
 	}
 
-	// 연관관계 편의 메서드
+	// ClacoBook 연관관계 편의 메서드
+	public void updateClacoBook(ClacoBook clacoBook) {
+		if (this.clacoBook != clacoBook) {
+			this.clacoBook = clacoBook;
+		}
+		if (!clacoBook.getTicketReviews().contains(this)) {
+			clacoBook.addTicketReview(this);
+		}
+	}
+
+	// PlaceReview 연관관계 편의 메서드
 	public void addPlaceReview(PlaceReview placeReview) {
 		if (!this.placeReviews.contains(placeReview)) {
 			this.placeReviews.add(placeReview);
@@ -106,7 +135,7 @@ public class TicketReview extends BaseEntity {
 		}
 	}
 
-	// 연관관계 편의 메서드
+	// ReviewImage 연관관계 편의 메서드
 	public void addReviewImage(ReviewImage reviewImage) {
 		if (!this.reviewImages.contains(reviewImage)) {
 			this.reviewImages.add(reviewImage);
@@ -116,7 +145,7 @@ public class TicketReview extends BaseEntity {
 		}
 	}
 
-	// 연관관계 편의 메서드
+	// ReviewTag 연관관계 편의 메서드
 	public void addReviewTag(ReviewTag reviewTag) {
 		if (!this.reviewTags.contains(reviewTag)) {
 			this.reviewTags.add(reviewTag);
@@ -126,5 +155,26 @@ public class TicketReview extends BaseEntity {
 		}
 	}
 
+	public void updateTicketImage(String ticketImage) {
+		this.ticketImage = ticketImage;
+	}
+
+	public void updateWatchSit(String watchSit) {
+		if (watchSit != null) {
+			this.watchSit = watchSit;
+		}
+	}
+
+	public void updateStarRate(BigDecimal starRate) {
+		if (starRate != null) {
+			this.starRate = starRate;
+		}
+	}
+
+	public void updateContent(String content) {
+		if (content != null) {
+			this.content = content;
+		}
+	}
 
 }
