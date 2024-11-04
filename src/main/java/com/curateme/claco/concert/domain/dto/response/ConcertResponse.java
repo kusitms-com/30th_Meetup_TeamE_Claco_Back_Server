@@ -2,9 +2,6 @@ package com.curateme.claco.concert.domain.dto.response;
 
 import com.curateme.claco.concert.domain.entity.Concert;
 import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
