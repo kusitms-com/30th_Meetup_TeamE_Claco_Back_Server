@@ -6,5 +6,5 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 
 public interface ConcertService {
-    PageResponse<List<ConcertResponse>> getConcertInfos(String categoryName, String direction, Pageable pageable);
+    PageResponse<ConcertResponse> getConcertInfos(String categoryName, String direction, Pageable pageable);
 }
