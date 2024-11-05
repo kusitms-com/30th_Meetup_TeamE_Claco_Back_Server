@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.curateme.claco.global.response.ApiResponse;
 import com.curateme.claco.review.domain.dto.request.OrderBy;
 import com.curateme.claco.review.domain.dto.request.TicketReviewCreateRequest;
+import com.curateme.claco.review.domain.dto.response.CountResponse;
 import com.curateme.claco.review.domain.dto.response.ReviewInfoResponse;
 import com.curateme.claco.review.domain.dto.response.ReviewListResponse;
 import com.curateme.claco.review.domain.dto.response.TicketListResponse;
@@ -38,6 +39,7 @@ import lombok.RequiredArgsConstructor;
  * DATE               AUTHOR        NOTE
  * -----------------------------------------------------------
  * 2024.11.04		   이 건		   최초 생성
+ * 2024.11.05   	   이 건        Swagger 적용
  */
 @RestController
 @RequestMapping("/api/ticket-reviews")
@@ -53,6 +55,7 @@ public class TicketReviewController {
 	 * @return : 생성한 TicketReview 정보
 	 */
 	@PostMapping(consumes = {"multipart/form-data"})
+	@Operation(summary = "ClacoBook", description = "기능명세서")
 	public ApiResponse<TicketReviewInfoResponse> createTicketReview(
 		@Validated @RequestPart("body") TicketReviewCreateRequest request,
 		@RequestPart("files") MultipartFile[] files) throws IOException {
@@ -67,6 +70,7 @@ public class TicketReviewController {
 	 * @return : 저장한 이미지 url
 	 */
 	@PutMapping("/ticket-images")
+	@Operation(summary = "ClacoBook", description = "기능명세서")
 	public ApiResponse<ImageUrlVO> addNewTicketImage(
 		@RequestParam("id") Long id,
 		@RequestPart("file") MultipartFile file) throws IOException {
@@ -80,6 +84,7 @@ public class TicketReviewController {
 	 * @return : 리뷰의 정보
 	 */
 	@GetMapping("/reviews/{reviewId}")
+	@Operation(summary = "ClacoBook", description = "기능명세서")
 	public ApiResponse<ReviewInfoResponse> readDetailReview(@PathVariable("reviewId") Long id) {
 		return ApiResponse.ok(ticketReviewService.readReview(id));
 	}
@@ -90,6 +95,7 @@ public class TicketReviewController {
 	 * @return : TickerReview 전체 정보
 	 */
 	@GetMapping("/{ticketReviewId}")
+	@Operation(summary = "ClacoBook", description = "기능명세서")
 	public ApiResponse<TicketReviewInfoResponse> readTicketReview(@PathVariable("ticketReviewId") Long id) {
 		return ApiResponse.ok(ticketReviewService.readTicketReview(id));
 	}
@@ -103,6 +109,7 @@ public class TicketReviewController {
 	 * @return : 총 페이지 개수, 현재 페이지 번호, 요청 사이즈, 페이징 된 데이터
 	 */
 	@GetMapping("/concerts/reviews/{concertId}")
+	@Operation(summary = "ClacoBook", description = "기능명세서")
 	public ApiResponse<ReviewListResponse> readReviewOfConcert(@PathVariable("concertId") Long concertId,
 		@Validated @Min(value = 1) @RequestParam("page") Integer page,
 		@Validated @Max(value = 10) @RequestParam("size") Integer size,
@@ -117,6 +124,7 @@ public class TicketReviewController {
 	 * @return : 티켓 아이디, 티켓 이미지
 	 */
 	@GetMapping("/claco-books/{clacoBookId}")
+	@Operation(summary = "ClacoBook", description = "기능명세서")
 	public ApiResponse<TicketListResponse> readTicketListFromClacoBook(@PathVariable("clacoBookId") Long id) {
 		return ApiResponse.ok(ticketReviewService.readTicketOfClacoBook(id));
 	}
@@ -127,8 +135,9 @@ public class TicketReviewController {
 	 * @return : 리뷰 총 개수
 	 */
 	@GetMapping("/concerts/{concertId}/size")
-	public ApiResponse<Map<String, Integer>> countReviewOfConcert(@PathVariable("concertId") Long id) {
-		return ApiResponse.ok(Map.of("total", ticketReviewService.countReview(id)));
+	@Operation(summary = "ClacoBook", description = "기능명세서")
+	public ApiResponse<CountResponse> countReviewOfConcert(@PathVariable("concertId") Long id) {
+		return ApiResponse.ok(new CountResponse(ticketReviewService.countReview(id)));
 	}
 
 	/**
@@ -137,6 +146,7 @@ public class TicketReviewController {
 	 * @return : Void
 	 */
 	@DeleteMapping("/{ticketReviewId}")
+	@Operation(summary = "ClacoBook", description = "기능명세서")
 	public ApiResponse<Void> deleteTicketReview(@PathVariable("ticketReviewId") Long id) {
 		ticketReviewService.deleteTicket(id);
 		return ApiResponse.ok();
