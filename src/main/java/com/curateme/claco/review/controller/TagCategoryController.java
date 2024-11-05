@@ -33,7 +33,7 @@ public class TagCategoryController {
 	private final TagCategoryService tagCategoryService;
 
 	@GetMapping
-	@Operation(summary = "공연 유형의 카테고리 조회(한국어, 이미지 없음, 사용X)", description = "공연 유형의 카테고리 조회(한국어), 이미지 없음, 사용x")
+	@Operation(summary = "공연 성격의 카테고리 조회", description = "공연 성격의 카테고리 조회")
 	public ApiResponse<CategoryListResponse<List<TagCategoryVO>>> readTagCategoryList() {
 		return ApiResponse.ok(new CategoryListResponse<>(tagCategoryService.readTagCategoryList()));
 	}
