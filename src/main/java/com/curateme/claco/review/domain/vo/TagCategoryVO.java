@@ -26,10 +26,10 @@ import lombok.NoArgsConstructor;
 public class TagCategoryVO {
 
 	// id
-	@Schema(description = "태그 Id", example = "1")
+	@Schema(description = "공연 성격 Id", example = "1")
 	private Long tagCategoryId;
 	// 태그 이름
-	@Schema(description = "태그 이름", example = "웅장한")
+	@Schema(description = "공연 성격 이름", example = "웅장한")
 	private String tagName;
 
 	public static TagCategoryVO fromEntity(TagCategory tagCategory) {
