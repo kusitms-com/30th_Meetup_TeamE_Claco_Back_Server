@@ -38,6 +38,7 @@ public class ConcertController {
     }
 
     @GetMapping("/filters")
+    @Operation(summary = "공연 둘러보기 세부사항 필터", description = "기능명세서 화면번호 4.0.1")
     public ApiResponse<PageResponse<ConcertResponse>> filterConcerts(
         @RequestParam("minPrice") Double minPrice,
         @RequestParam("maxPrice") Double maxPrice,
