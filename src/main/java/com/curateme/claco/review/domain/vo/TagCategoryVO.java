@@ -31,9 +31,11 @@ public class TagCategoryVO {
 	// 태그 이름
 	@Schema(description = "공연 성격 이름", example = "웅장한")
 	private String tagName;
+	@Schema(description = "공연 성격 아이콘 이미지", example = "https://claco.com")
+	private String iconUrl;
 
 	public static TagCategoryVO fromEntity(TagCategory tagCategory) {
-		return new TagCategoryVO(tagCategory.getId(), tagCategory.getName());
+		return new TagCategoryVO(tagCategory.getId(), tagCategory.getName(), tagCategory.getImageUrl());
 	}
 
 }
