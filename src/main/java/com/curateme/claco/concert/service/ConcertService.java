@@ -10,4 +10,7 @@ public interface ConcertService {
 
     PageResponse<ConcertResponse> getConcertInfosWithFilter(Double minPrice, Double maxPrice, String area, LocalDate startDate, LocalDate endDate,
         String direction, Pageable pageable);
+
+    PageResponse<ConcertResponse> getSearchConcert(String query, String direction, Pageable pageable);
+
 }

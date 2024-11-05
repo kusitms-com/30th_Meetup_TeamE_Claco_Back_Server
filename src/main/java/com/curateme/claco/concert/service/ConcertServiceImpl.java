@@ -67,5 +67,26 @@ public class ConcertServiceImpl implements ConcertService {
             .size(concertPage.getSize())
             .build();
     }
+
+    @Override
+    public PageResponse<ConcertResponse> getSearchConcert(String query, String direction, Pageable pageable) {
+
+        Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by("prfpdfrom").ascending() : Sort.by("prfpdfrom").descending();
+        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+
+        List<Long> concertIds = concertRepository.findConcertIdsBySearchQuery(query);
+
+        Page<Concert> concertPage = concertRepository.findByIdIn(concertIds, sortedPageable);
+
+        List<ConcertResponse> concertResponses = concertPage.getContent().stream()
+            .map(ConcertResponse::fromEntity)
+            .collect(Collectors.toList());
+
+        return PageResponse.<ConcertResponse>builder()
+            .listPageResponse(concertResponses)
+            .totalCount(concertPage.getTotalElements())
+            .size(concertPage.getSize())
+            .build();
+    }
 }
 

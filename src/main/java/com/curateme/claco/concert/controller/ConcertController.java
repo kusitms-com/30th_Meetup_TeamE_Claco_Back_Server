@@ -53,5 +53,19 @@ public class ConcertController {
 
         return ApiResponse.ok(concertService.getConcertInfosWithFilter(minPrice, maxPrice, area, startDate, endDate, direction, pageable));
     }
+
+    @GetMapping("/queries")
+    @Operation(summary = "공연 둘러보기 검색하기", description = "기능명세서 화면번호 4.1.0")
+    public ApiResponse<PageResponse<ConcertResponse>> searchConcerts(
+        @RequestParam("query") String query,
+        @RequestParam("direction") String direction,
+        @RequestParam("page") int page,
+        @RequestParam(value = "size", defaultValue = "9") int size) {
+
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return ApiResponse.ok(concertService.getSearchConcert(query,direction, pageable));
+    }
+
+
 }
 
