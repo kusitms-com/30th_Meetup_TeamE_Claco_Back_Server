@@ -52,10 +52,10 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSIOTRY }}:server .
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server .
 
       - name: Push Docker image to Docker Hub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSIOTRY }}:server
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server
 
       - name: Deploy
         uses: appleboy/ssh-action@v0.1.10
@@ -66,7 +66,7 @@ jobs:
           env:
             DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
             DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-            DOCKER_REPOSITORY: ${{ secrets.DOCKER_REPOSIOTRY }}
+            DOCKER_REPOSITORY: ${{ secrets.DOCKER_REPOSITORY }}
           script: |
             echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
   
