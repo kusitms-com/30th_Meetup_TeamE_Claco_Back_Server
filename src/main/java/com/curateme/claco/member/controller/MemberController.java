@@ -64,7 +64,7 @@ public class MemberController {
 	 * 유저 정보 조회
 	 * @return : 유저 정보 (닉네임, 프사)
 	 */
-	@Operation(summary = "닉네임 중복 조회", description = "닉네임 중복 조회")
+	@Operation(summary = "유저 정보 조회", description = "유저 정보 조회, 토큰 포함 요청 필요")
 	@ApiResponses({
 		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COM-000", description = "정상 응답"),
 		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "MEM-001", description = "조회하고자 하는 사용자를 찾을 수 없음(잘못된 토큰 정보)")
@@ -105,8 +105,8 @@ public class MemberController {
 		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COM-000", description = "정상 응답"),
 		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "MEM-001", description = "수정하고자 하는 사용자를 찾을 수 없음(잘못된 토큰 정보)")
 	})
-	@Parameter(name = "updateNickname", description = "업데이트 하고자 하는 닉네임, 그대로여도 key-value에서 key는 보내고 value는 null로")
-	@Parameter(name = "updateImage", description = "업데이트 하고자 하는 새로운 이미지(멀티 파트 파일), 그대로여도 key-value에서 key는 보내고 value는 null로")
+	@Parameter(name = "updateNickname", description = "업데이트 하고자 하는 닉네임, 그대로여도 key-value에서 key는 보내고 value는 null로", required = true)
+	@Parameter(name = "updateImage", description = "업데이트 하고자 하는 새로운 이미지(멀티 파트 파일), 그대로여도 key-value에서 key는 보내고 value는 null로", required = true)
 	@PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ApiResponse<MemberInfoResponse> updateMemberInfo(
 		@RequestPart(value = "updateNickname", required = false) String updateNickname,
