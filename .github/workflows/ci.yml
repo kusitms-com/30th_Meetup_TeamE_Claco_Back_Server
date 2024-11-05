@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - chore/#50-cicd
   pull_request:
     branches:
       - main
