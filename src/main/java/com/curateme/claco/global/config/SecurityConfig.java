@@ -106,7 +106,8 @@ public class SecurityConfig {
 		corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
 		corsConfiguration.setAllowedOrigins(List.of(
 			"http://localhost:5173",
-			"http://localhost:8080"
+			"http://localhost:8080",
+			"https://claco-client.vercel.app"
 		));
 		corsConfiguration.setAllowCredentials(true);
 
