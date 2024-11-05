@@ -1,5 +1,7 @@
 package com.curateme.claco.member.service;
 
+import java.io.IOException;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import com.curateme.claco.member.domain.dto.request.SignUpRequest;
@@ -42,6 +44,6 @@ public interface MemberService {
 	 * @param updateImage : 이미지 파일
 	 * @return : 수정 후 닉네임, 이미지 url
 	 */
-	MemberInfoResponse updateMemberInfo(String updateNickname, MultipartFile updateImage);
+	MemberInfoResponse updateMemberInfo(String updateNickname, MultipartFile updateImage) throws IOException;
 
 }
