@@ -6,9 +6,11 @@ import com.curateme.claco.global.response.ApiResponse;
 import com.curateme.claco.global.response.PageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ConcertController {
     private final ConcertService concertService;
 
-    @GetMapping("/{categoryName}/{direction}")
+    @GetMapping("/views/{categoryName}/{direction}")
     @Operation(summary = "공연 둘러보기", description = "기능명세서 화면번호 4.0.0")
     @Parameter(name = "categoryName", description = "카테고리 명", required = true, example = "grand")
     @Parameter(name = "direction", description = "정렬 순서", required = true, example = "asc/dsc")
@@ -34,5 +36,36 @@ public class ConcertController {
         Pageable pageable = PageRequest.of(page - 1, size);
         return ApiResponse.ok(concertService.getConcertInfos(categoryName, direction, pageable));
     }
+
+    @GetMapping("/filters")
+    @Operation(summary = "공연 둘러보기 세부사항 필터", description = "기능명세서 화면번호 4.0.1")
+    public ApiResponse<PageResponse<ConcertResponse>> filterConcerts(
+        @RequestParam("minPrice") Double minPrice,
+        @RequestParam("maxPrice") Double maxPrice,
+        @RequestParam("area") String area,
+        @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy.MM.dd") LocalDate startDate,
+        @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy.MM.dd") LocalDate endDate,
+        @RequestParam("direction") String direction,
+        @RequestParam("page") int page,
+        @RequestParam(value = "size", defaultValue = "9") int size) {
+
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        return ApiResponse.ok(concertService.getConcertInfosWithFilter(minPrice, maxPrice, area, startDate, endDate, direction, pageable));
+    }
+
+    @GetMapping("/queries")
+    @Operation(summary = "공연 둘러보기 검색하기", description = "기능명세서 화면번호 4.1.0")
+    public ApiResponse<PageResponse<ConcertResponse>> searchConcerts(
+        @RequestParam("query") String query,
+        @RequestParam("direction") String direction,
+        @RequestParam("page") int page,
+        @RequestParam(value = "size", defaultValue = "9") int size) {
+
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return ApiResponse.ok(concertService.getSearchConcert(query,direction, pageable));
+    }
+
+
 }
 

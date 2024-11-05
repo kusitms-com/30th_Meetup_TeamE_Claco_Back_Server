@@ -3,6 +3,7 @@ package com.curateme.claco.concert.domain.dto.response;
 import com.curateme.claco.concert.domain.entity.Concert;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,10 +28,10 @@ public class ConcertResponse {
     private String prfnm;
 
     @Column(name = "start_date")
-    private String prfpdfrom;
+    private LocalDate prfpdfrom;
 
     @Column(name = "end_date")
-    private String prfpdto;
+    private LocalDate prfpdto;
 
     @Column(name = "facility_name")
     private String fcltynm;
