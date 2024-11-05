@@ -1,14 +1,19 @@
 package com.curateme.claco.concert.service;
 
+import com.curateme.claco.concert.domain.dto.request.ConcertLikesRequest;
 import com.curateme.claco.concert.domain.dto.response.ConcertCategoryResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertDetailResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertResponse;
 import com.curateme.claco.concert.domain.entity.Category;
 import com.curateme.claco.concert.domain.entity.Concert;
+import com.curateme.claco.concert.domain.entity.ConcertLike;
 import com.curateme.claco.concert.repository.CategoryRepository;
 import com.curateme.claco.concert.repository.ConcertCategoryRepository;
+import com.curateme.claco.concert.repository.ConcertLikeRepository;
 import com.curateme.claco.concert.repository.ConcertRepository;
 import com.curateme.claco.global.response.PageResponse;
+import com.curateme.claco.member.domain.entity.Member;
+import com.curateme.claco.member.repository.MemberRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +36,8 @@ public class ConcertServiceImpl implements ConcertService {
     private final ConcertRepository concertRepository;
     private final ConcertCategoryRepository concertCategoryRepository;
     private final CategoryRepository categoryRepository;
+    private final MemberRepository memberRepository;
+    private final ConcertLikeRepository concertLikeRepository;
 
     @Override
     public PageResponse<ConcertResponse> getConcertInfos(String categoryName, String direction, Pageable pageable) {
@@ -111,5 +118,28 @@ public class ConcertServiceImpl implements ConcertService {
 
         return response;
     }
+
+    @Override
+    @Transactional
+    public String postLikes(ConcertLikesRequest concertLikesRequest) {
+
+        Member member = memberRepository.findById(concertLikesRequest.getMemberId())
+            .orElseThrow(() -> new IllegalArgumentException("Member not found with ID: " + concertLikesRequest.getMemberId()));
+        Concert concert = concertRepository.findById(concertLikesRequest.getConcertId())
+            .orElseThrow(() -> new IllegalArgumentException("Concert not found with ID: " + concertLikesRequest.getConcertId()));
+
+        // 좋아요가 이미 있는지 확인
+        Optional<ConcertLike> existingLike = concertLikeRepository.findByMemberAndConcert(member, concert);
+
+        if (existingLike.isPresent()) {
+            concertLikeRepository.delete(existingLike.get());
+            return "좋아요가 취소되었습니다.";
+        } else {
+            ConcertLike concertLike = concertLikesRequest.toEntity(member, concert);
+            concertLikeRepository.save(concertLike);
+            return "좋아요가 등록되었습니다.";
+        }
+    }
+
 }
 

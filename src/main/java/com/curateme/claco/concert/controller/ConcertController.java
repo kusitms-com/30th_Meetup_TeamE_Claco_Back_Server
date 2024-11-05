@@ -1,5 +1,6 @@
 package com.curateme.claco.concert.controller;
 
+import com.curateme.claco.concert.domain.dto.request.ConcertLikesRequest;
 import com.curateme.claco.concert.domain.dto.response.ConcertDetailResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertResponse;
 import com.curateme.claco.concert.service.ConcertService;
@@ -14,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -73,6 +76,13 @@ public class ConcertController {
         @PathVariable("concertId") Long concertId
     ) {
         return ApiResponse.ok(concertService.getConcertDetailWithCategories(concertId));
+    }
+
+    @PostMapping("/likes")
+    public ApiResponse<String> postLikes(
+        @RequestBody ConcertLikesRequest concertLikesRequest
+    ) {
+        return ApiResponse.ok(concertService.postLikes(concertLikesRequest));
     }
 
 }
