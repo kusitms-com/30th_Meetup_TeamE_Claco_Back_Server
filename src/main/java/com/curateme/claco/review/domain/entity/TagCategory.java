@@ -24,6 +24,7 @@ import lombok.NoArgsConstructor;
  * DATE               AUTHOR        NOTE
  * -----------------------------------------------------------
  * 2024.11.03		   이 건		   최초 생성
+ * 2024.11.05		   이 건		   이미지 url 추가
  */
 @Entity
 @Getter
@@ -39,5 +40,7 @@ public class TagCategory extends BaseEntity {
 	private Long id;
 	// 태그명
 	private String name;
+	// 이미지 Url
+	private String imageUrl;
 
 }

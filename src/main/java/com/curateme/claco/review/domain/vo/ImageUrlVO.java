@@ -3,6 +3,7 @@ package com.curateme.claco.review.domain.vo;
 import com.curateme.claco.review.domain.entity.ReviewImage;
 import com.curateme.claco.review.domain.entity.TicketReview;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,6 +26,7 @@ import lombok.NoArgsConstructor;
 public class ImageUrlVO {
 
 	// 이미지 주소
+	@Schema(description = "이미지 Url", example = "https://claco.com")
 	private String imageUrl;
 
 	public static ImageUrlVO fromReviewImage(ReviewImage image) {

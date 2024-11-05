@@ -47,6 +47,7 @@ import lombok.NoArgsConstructor;
  * 2024.10.22		   이 건		   나이 필드 추가 및 Preference 매핑 condition 수정
  * 2024.10.24		   이 건		   ClacoBook 일대다 엔티티 매핑, soft delete 조건 추가
  * 2024.10.28		   이 건		   TicketReview	일대다 엔티티 매핑 추가
+ * 2024.11.05		   이 건		   닉네임, 프로필 이미지 업데이트 메서드 추가
  */
 @Entity
 @Getter
@@ -108,7 +109,15 @@ public class Member extends BaseEntity {
 	}
 
 	public void updateNickname(String nickname) {
-		this.nickname = nickname;
+		if (nickname != null) {
+			this.nickname = nickname;
+		}
+	}
+
+	public void updateProfileImage(String profileImage) {
+		if (profileImage != null) {
+			this.profileImage = profileImage;
+		}
 	}
 
 	public void updateGender(Gender gender) {

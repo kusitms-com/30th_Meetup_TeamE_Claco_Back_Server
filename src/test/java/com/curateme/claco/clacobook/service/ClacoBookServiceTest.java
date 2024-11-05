@@ -49,7 +49,7 @@ class ClacoBookServiceTest {
 	@DisplayName("ClacoBook 생성")
 	void createClacoBook() {
 		// Given
-
+		String bookColor = "#8F9AF8";
 		JwtMemberDetail jwtMemberDetailMock = mock(JwtMemberDetail.class);
 		Member testMember = Member.builder()
 			.id(testId)
@@ -63,9 +63,11 @@ class ClacoBookServiceTest {
 		when(jwtMemberDetailMock.getMemberId()).thenReturn(testId);
 		when(memberRepository.findMemberByIdWithClacoBook(testId)).thenReturn(Optional.of(testMember));
 		when(clacoBookRepository.save(any(ClacoBook.class))).then(AdditionalAnswers.returnsFirstArg());
-
+		UpdateClacoBookRequest request = UpdateClacoBookRequest.builder()
+			.color(bookColor)
+			.build();
 		// When
-		ClacoBookResponse result = clacoBookService.createClacoBook();
+		ClacoBookResponse result = clacoBookService.createClacoBook(request);
 
 		// Then
 		verify(securityContextUtil).getContextMemberInfo();
@@ -73,7 +75,6 @@ class ClacoBookServiceTest {
 		verify(memberRepository).findMemberByIdWithClacoBook(testId);
 
 		String bookTitle = "test님의 이야기";
-		String bookColor = "#8F9AF8";
 
 		assertThat(result.getId()).isNull();
 		assertThat(result.getTitle()).isEqualTo(bookTitle);

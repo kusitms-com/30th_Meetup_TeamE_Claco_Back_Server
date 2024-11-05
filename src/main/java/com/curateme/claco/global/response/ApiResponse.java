@@ -2,6 +2,7 @@ package com.curateme.claco.global.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,7 +23,9 @@ import lombok.Getter;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ApiResponse<T> {
 
+    @Schema(description = "응답 코드", example = "COM-000")
     private final String code;
+    @Schema(description = "응답 메시지", example = "OK.")
     private final String message;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T result;

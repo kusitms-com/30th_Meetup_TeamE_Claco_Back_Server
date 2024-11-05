@@ -20,7 +20,7 @@ public interface ClacoBookService {
 	 * ClacoBook 생성
 	 * @return : 생성된 ClacoBook 정보
 	 */
-	ClacoBookResponse createClacoBook();
+	ClacoBookResponse createClacoBook(UpdateClacoBookRequest request);
 
 	/**
 	 * 접근한 유저의 ClacoBook 정보들

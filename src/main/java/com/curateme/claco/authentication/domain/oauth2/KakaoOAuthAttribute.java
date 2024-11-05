@@ -22,6 +22,7 @@ import lombok.Getter;
  * DATE               AUTHOR        NOTE
  * -----------------------------------------------------------
  * 2024.10.18   	   이 건        최초 생성
+ * 2024.11.05   	   이 건        기본 이미지 url 추가
  */
 @Getter
 public class KakaoOAuthAttribute {
@@ -29,9 +30,7 @@ public class KakaoOAuthAttribute {
 	private String nameAttributeKey; // OAuth2 로그인 진행 시 키가 되는 필드 값, PK와 같은 의미
 	private Oauth2UserInfo oauth2UserInfo;
 	private PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-	// @Value("")
-	// TODO: 미동의 시 기본 프로필 이미지 Url 추가
-	private String baseProfileImage = "test";
+	private String baseProfileImage = "https://claco-image-bucket.s3.ap-northeast-2.amazonaws.com/member/profile-image/basic-profile.svg";
 
 	@Builder
 	private KakaoOAuthAttribute(String nameAttributeKey, Oauth2UserInfo oauth2UserInfo) {
