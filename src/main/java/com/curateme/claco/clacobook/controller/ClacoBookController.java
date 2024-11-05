@@ -2,6 +2,7 @@ package com.curateme.claco.clacobook.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,12 +15,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.curateme.claco.clacobook.domain.dto.request.UpdateClacoBookRequest;
+import com.curateme.claco.clacobook.domain.dto.response.ClacoBookListResponse;
 import com.curateme.claco.clacobook.domain.dto.response.ClacoBookResponse;
 import com.curateme.claco.clacobook.service.ClacoBookService;
 import com.curateme.claco.global.response.ApiResponse;
 
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * @author      : 이 건
+ * @date        : 2024.10.25
+ * @author devkeon(devkeon123@gmail.com)
+ * ===========================================================
+ * DATE               AUTHOR        NOTE
+ * -----------------------------------------------------------
+ * 2024.10.25   	   이 건        최초 생성
+ * 2024.11.05   	   이 건        Swagger 적용
+ */
 @RestController
 @RequestMapping("/api/claco-books")
 @RequiredArgsConstructor
@@ -27,24 +41,44 @@ public class ClacoBookController {
 
 	private final ClacoBookService clacoBookService;
 
-	@PostMapping("/claco-book")
-	public ApiResponse<Void> createClacoBook() {
-		clacoBookService.createClacoBook();
-		return ApiResponse.ok();
+	@PostMapping
+	@Operation(summary = "클라코북 생성", description = "클라코북 생성")
+	@ApiResponses({
+		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COM-000", description = "정상 응답"),
+		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "MEM-001", description = "사용자를 찾을 수 없음(잘못된 토큰 정보)"),
+		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "CLB-010", description = "생성 한도 초과 = 5개 이상")
+	})
+	public ApiResponse<ClacoBookResponse> createClacoBook(@RequestBody UpdateClacoBookRequest request) {
+		return ApiResponse.ok(clacoBookService.createClacoBook(request));
 	}
 
 	@GetMapping
-	@Operation(summary = "ClacoBook 조회 서비스", description = "기능명세서 화면번호 n.0.0")
-	public ApiResponse<List<ClacoBookResponse>> readClacoBookListWithOwner() {
-		return ApiResponse.ok(clacoBookService.readClacoBooks());
+	@Operation(summary = "접근 사용자의 클라코북 리스트 조회", description = "접근한 사용자의 클라코북 리스트 조회")
+	@ApiResponses({
+		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COM-000", description = "정상 응답"),
+		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "MEM-001", description = "사용자를 찾을 수 없음(잘못된 토큰 정보)")
+	})
+	public ApiResponse<ClacoBookListResponse> readClacoBookListWithOwner() {
+		return ApiResponse.ok(new ClacoBookListResponse(clacoBookService.readClacoBooks()));
 	}
 
-	@PutMapping("/claco-book")
-	public ApiResponse<ClacoBookResponse> updateClacoBook(@Validated @RequestBody UpdateClacoBookRequest request) {
+	@PutMapping
+	@Operation(summary = "클라코북 id 기반 수정", description = "클라코북의 이름과 색을 수정")
+	@ApiResponses({
+		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COM-000", description = "정상 응답"),
+		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "CLB-001", description = "id에 해당하는 클라코북 찾을 수 없음")
+	})
+	public ApiResponse<ClacoBookResponse> updateClacoBook(@RequestBody UpdateClacoBookRequest request) {
 		return ApiResponse.ok(clacoBookService.updateClacoBook(request));
 	}
 
 	@DeleteMapping("/claco-book/{bookId}")
+	@Operation(summary = "클라코북 삭제", description = "클라코북 삭제, 소유주가 아니라면 삭제 불가")
+	@Parameter(description = "삭제하고자 하는 클라코북 Id", example = "1")
+	@ApiResponses({
+		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COM-000", description = "정상 응답"),
+		@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "CLB-001", description = "id에 해당하는 클라코북 찾을 수 없음, 혹은 소유주 아님")
+	})
 	public ApiResponse<Void> deleteClacoBook(@PathVariable Long bookId) {
 		clacoBookService.deleteClacoBook(bookId);
 		return ApiResponse.ok();
