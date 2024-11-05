@@ -2,6 +2,7 @@ package com.curateme.claco.review.domain.vo;
 
 import com.curateme.claco.review.domain.entity.TagCategory;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
  * DATE               AUTHOR        NOTE
  * -----------------------------------------------------------
  * 2024.11.03		   이 건		   최초 생성
+ * 2024.11.05		   이 건		   Swagger 적용
  */
 @Getter
 @Builder
@@ -24,8 +26,10 @@ import lombok.NoArgsConstructor;
 public class TagCategoryVO {
 
 	// id
+	@Schema(description = "태그 Id", example = "1")
 	private Long tagCategoryId;
 	// 태그 이름
+	@Schema(description = "태그 이름", example = "웅장한")
 	private String tagName;
 
 	public static TagCategoryVO fromEntity(TagCategory tagCategory) {
