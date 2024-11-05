@@ -2,14 +2,13 @@ name: Continuous Deploy
 
 on:
   workflow_run:
-    workflows: ["Continuous Integration"]
+    workflows: [ Continuous Integration ]
     types:
       - completed
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
