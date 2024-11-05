@@ -68,12 +68,11 @@ public class ConcertController {
     }
 
     @GetMapping("/details/{concertId}")
+    @Operation(summary = "공연 상세보가", description = "기능명세서 화면번호 3.0.0")
     public ApiResponse<ConcertDetailResponse> getConcertDetails(
         @PathVariable("concertId") Long concertId
     ) {
-
         return ApiResponse.ok(concertService.getConcertDetailWithCategories(concertId));
-
     }
 
 }
