@@ -18,6 +18,7 @@ import com.curateme.claco.preference.domain.entity.Preference;
 import com.curateme.claco.preference.service.PreferenceService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author      : 이 건
@@ -30,6 +31,7 @@ import lombok.RequiredArgsConstructor;
  * 2024.10.22   	   이 건        예외를 활용한 로직으로 변경, 회원가입 메서드 추가
  * 2024.11.05   	   이 건        회원 정보 조회 / 수정 메서드 추가
  */
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -85,9 +87,9 @@ public class MemberServiceV1 implements MemberService {
 
 		member.updateNickname(updateNickname);
 
-		String profileImageLocation = "member/profile" + member.getId();
+		String profileImageLocation = "member/profile-image/" + member.getId();
 
-		if (updateImage != null) {
+		if (updateImage != null || !updateImage.isEmpty()) {
 			String url = s3Util.uploadImage(updateImage, profileImageLocation);
 			member.updateProfileImage(url);
 		}
