@@ -15,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapKeyColumn;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -40,10 +41,10 @@ public class Concert extends BaseEntity {
     private String prfnm;
 
     @Column(name = "start_date")
-    private String prfpdfrom;
+    private LocalDate prfpdfrom;
 
     @Column(name = "end_date")
-    private String prfpdto;
+    private LocalDate prfpdto;
 
     @Column(name = "facility_name")
     private String fcltynm;

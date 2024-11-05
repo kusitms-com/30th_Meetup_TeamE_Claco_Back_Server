@@ -10,5 +10,6 @@ public interface ConcertCategoryRepository extends JpaRepository<ConcertCategory
     @Query("SELECT cc.concert.id FROM ConcertCategory cc WHERE cc.category = :categoryName")
     List<Long> findConcertIdsByCategoryName(@Param("categoryName") String categoryName);
 
+
 }
 
