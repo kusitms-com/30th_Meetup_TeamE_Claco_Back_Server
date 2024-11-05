@@ -38,7 +38,7 @@ public class ClacoBookServiceImpl implements ClacoBookService {
 	private final SecurityContextUtil securityContextUtil;
 
 	@Override
-	public ClacoBookResponse createClacoBook() {
+	public ClacoBookResponse createClacoBook(UpdateClacoBookRequest request) {
 		// 접근 사용자의 ClacoBook 생성
 		Member member = memberRepository.findMemberByIdWithClacoBook(
 				securityContextUtil.getContextMemberInfo().getMemberId()).stream()
@@ -51,8 +51,8 @@ public class ClacoBookServiceImpl implements ClacoBookService {
 
 		ClacoBook clacoBook = ClacoBook.builder()
 			.member(member)
-			.title(member.getNickname() + "님의 이야기")
-			.color("#8F9AF8")
+			.title(request.getTitle() != null ? request.getTitle() : member.getNickname() + "님의 이야기")
+			.color(request.getColor() != null ? request.getColor() : "#5B120B")
 			.build();
 
 		return ClacoBookResponse.fromEntity(clacoBookRepository.save(clacoBook));
