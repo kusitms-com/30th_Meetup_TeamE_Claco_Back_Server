@@ -20,6 +20,8 @@ import com.curateme.claco.member.domain.entity.Gender;
 import com.curateme.claco.member.domain.entity.Member;
 import com.curateme.claco.member.domain.entity.Role;
 import com.curateme.claco.member.repository.MemberRepository;
+import com.curateme.claco.preference.domain.dto.request.PreferenceUpdateRequest;
+import com.curateme.claco.preference.domain.dto.response.PreferenceInfoResponse;
 import com.curateme.claco.preference.domain.entity.Preference;
 import com.curateme.claco.preference.domain.entity.RegionPreference;
 import com.curateme.claco.preference.domain.entity.TypePreference;
@@ -120,6 +122,148 @@ class PreferenceServiceTest {
 
 		assertThat(preference.getId()).isEqualTo(testId);
 		assertThat(preference.getMember()).isEqualTo(testMember);
+
+	}
+
+	@Test
+	@DisplayName("선호도 조회 메서드 테스트")
+	void readPreference() {
+		// Given
+		Long testId = 1L;
+		Integer testInt = 0;
+		String testString = "test";
+		JwtMemberDetail mockMemberDetail = mock(JwtMemberDetail.class);
+
+		Member testMember = Member.builder()
+			.socialId(testId)
+			.role(Role.MEMBER)
+			.email("test@test.com")
+			.age(testInt)
+			.gender(Gender.MALE)
+			.build();
+
+		Preference testPrefer = Preference.builder()
+			.preference1(testString)
+			.preference2(testString)
+			.preference3(testString)
+			.preference4(testString)
+			.preference5(testString)
+			.member(testMember)
+			.minPrice(testInt)
+			.maxPrice(testInt)
+			.build();
+
+		RegionPreference testRegionPrefer = RegionPreference.builder()
+			.regionName(testString)
+			.preference(testPrefer)
+			.build();
+
+		TypePreference testTypePrefer = TypePreference.builder()
+			.typeContent(testString)
+			.preference(testPrefer)
+			.build();
+		testPrefer.addRegionPreference(testRegionPrefer);
+		testPrefer.addTypeReference(testTypePrefer);
+		testMember.updatePreference(testPrefer);
+
+		when(securityContextUtil.getContextMemberInfo()).thenReturn(mockMemberDetail);
+		when(mockMemberDetail.getMemberId()).thenReturn(testId);
+		when(memberRepository.findMemberByIdIs(testId)).thenReturn(Optional.of(testMember));
+
+		// When
+		PreferenceInfoResponse result = preferenceService.readPreference();
+
+		// Then
+		verify(securityContextUtil).getContextMemberInfo();
+		verify(mockMemberDetail).getMemberId();
+		verify(memberRepository).findMemberByIdIs(testId);
+
+		assertThat(result.getAge()).isEqualTo(testInt);
+		assertThat(result.getPreferRegions()).hasSize(1);
+		assertThat(result.getPreferCategories()).hasSize(5);
+		assertThat(result.getPreferTypes()).hasSize(1);
+
+	}
+
+	@Test
+	@DisplayName("선호도 수정 메서드 테스트")
+	void updatePreference() {
+		// Given
+		Long testId = 1L;
+		Integer testInt = 0;
+		String testString = "test";
+		Integer resultInt = 1;
+		String resultString = "result";
+		JwtMemberDetail mockMemberDetail = mock(JwtMemberDetail.class);
+
+		Member testMember = Member.builder()
+			.socialId(testId)
+			.role(Role.MEMBER)
+			.email("test@test.com")
+			.age(testInt)
+			.gender(Gender.MALE)
+			.build();
+
+		Preference testPrefer = Preference.builder()
+			.preference1(testString)
+			.preference2(testString)
+			.preference3(testString)
+			.preference4(testString)
+			.preference5(testString)
+			.member(testMember)
+			.minPrice(testInt)
+			.maxPrice(testInt)
+			.build();
+
+		RegionPreference testRegionPrefer1 = RegionPreference.builder()
+			.regionName(testString)
+			.preference(testPrefer)
+			.build();
+
+		RegionPreference testRegionPrefer2 = RegionPreference.builder()
+			.regionName(resultString)
+			.preference(testPrefer)
+			.build();
+
+		TypePreference testTypePrefer = TypePreference.builder()
+			.typeContent(testString)
+			.preference(testPrefer)
+			.build();
+		testPrefer.addRegionPreference(testRegionPrefer1);
+		testPrefer.addRegionPreference(testRegionPrefer2);
+		testPrefer.addTypeReference(testTypePrefer);
+		testMember.updatePreference(testPrefer);
+
+		PreferenceUpdateRequest request = PreferenceUpdateRequest.builder()
+			.age(resultInt)
+			.gender(Gender.FEMALE)
+			.maxPrice(resultInt)
+			.minPrice(resultInt)
+			.regionPreferences(List.of())
+			.typePreferences(List.of(TypePreferenceVO.fromEntity(testTypePrefer), new TypePreferenceVO(resultString)))
+			.build();
+
+		when(securityContextUtil.getContextMemberInfo()).thenReturn(mockMemberDetail);
+		when(mockMemberDetail.getMemberId()).thenReturn(testId);
+		when(memberRepository.findMemberByIdIs(testId)).thenReturn(Optional.of(testMember));
+		doNothing().when(regionPreferenceRepository).delete(any(RegionPreference.class));
+		when(typePreferenceRepository.save(any(TypePreference.class))).thenAnswer(
+			invocationOnMock -> invocationOnMock.getArgument(0));
+
+		// When
+		PreferenceInfoResponse result = preferenceService.updatePreference(request);
+
+		// Then
+		verify(securityContextUtil).getContextMemberInfo();
+		verify(mockMemberDetail).getMemberId();
+		verify(memberRepository).findMemberByIdIs(testId);
+		verify(typePreferenceRepository).save(any(TypePreference.class));
+
+		assertThat(result.getPreferTypes()).hasSize(2);
+		assertThat(result.getPreferRegions()).hasSize(0);
+		assertThat(result.getAge()).isEqualTo(resultInt);
+		assertThat(result.getMinPrice()).isEqualTo(resultInt);
+		assertThat(result.getGender()).isEqualTo(Gender.FEMALE);
 
 	}
 

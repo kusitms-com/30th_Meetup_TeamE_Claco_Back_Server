@@ -20,6 +20,7 @@ import com.curateme.claco.member.domain.entity.Member;
  * -----------------------------------------------------------
  * 2024.10.17   	   이 건        최초 생성
  * 2024.10.18   	   이 건        nickname 메서드 추가 -> id 로 변경
+ * 2024.11.05   	   이 건        preference entity graph 메서드 추가
  */
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
@@ -45,5 +46,13 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	@EntityGraph(attributePaths = {"clacoBooks"})
 	@Query("select m from Member m where m.id=:id")
 	Optional<Member> findMemberByIdWithClacoBook(@Param("id") Long id);
+
+	/**
+	 * preference, typePreferences, regionPreferences 조인하여 조회
+	 * @param id : 찾고자 하는 회원의 id
+	 * @return : 취향 정보를 모두 포함한 회원 정보
+	 */
+	@EntityGraph(attributePaths = {"preference", "preference.typePreferences", "preference.regionPreferences"})
+	Optional<Member> findMemberByIdIs(Long id);
 
 }
