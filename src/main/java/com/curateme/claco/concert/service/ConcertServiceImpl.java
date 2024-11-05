@@ -1,12 +1,17 @@
 package com.curateme.claco.concert.service;
 
+import com.curateme.claco.concert.domain.dto.response.ConcertCategoryResponse;
+import com.curateme.claco.concert.domain.dto.response.ConcertDetailResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertResponse;
+import com.curateme.claco.concert.domain.entity.Category;
 import com.curateme.claco.concert.domain.entity.Concert;
+import com.curateme.claco.concert.repository.CategoryRepository;
 import com.curateme.claco.concert.repository.ConcertCategoryRepository;
 import com.curateme.claco.concert.repository.ConcertRepository;
 import com.curateme.claco.global.response.PageResponse;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +30,7 @@ public class ConcertServiceImpl implements ConcertService {
 
     private final ConcertRepository concertRepository;
     private final ConcertCategoryRepository concertCategoryRepository;
+    private final CategoryRepository categoryRepository;
 
     @Override
     public PageResponse<ConcertResponse> getConcertInfos(String categoryName, String direction, Pageable pageable) {
@@ -87,6 +93,23 @@ public class ConcertServiceImpl implements ConcertService {
             .totalCount(concertPage.getTotalElements())
             .size(concertPage.getSize())
             .build();
+    }
+
+    @Override
+    public ConcertDetailResponse getConcertDetailWithCategories(Long concertId) {
+
+        Concert concert = concertRepository.findConcertById(concertId);
+
+        List<Long> categoryIds = concertCategoryRepository.findCategoryIdsByCategoryName(concertId);
+        List<Category> categories = categoryRepository.findAllById(categoryIds);
+
+        List<ConcertCategoryResponse> categoryResponses = categories.stream()
+            .map(category -> new ConcertCategoryResponse(category.getCategory(), category.getImageUrl()))
+            .collect(Collectors.toList());
+
+        ConcertDetailResponse response = ConcertDetailResponse.fromEntity(concert, categoryResponses);
+
+        return response;
     }
 }
 

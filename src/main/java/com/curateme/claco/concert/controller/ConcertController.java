@@ -1,5 +1,6 @@
 package com.curateme.claco.concert.controller;
 
+import com.curateme.claco.concert.domain.dto.response.ConcertDetailResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertResponse;
 import com.curateme.claco.concert.service.ConcertService;
 import com.curateme.claco.global.response.ApiResponse;
@@ -66,6 +67,14 @@ public class ConcertController {
         return ApiResponse.ok(concertService.getSearchConcert(query,direction, pageable));
     }
 
+    @GetMapping("/details/{concertId}")
+    public ApiResponse<ConcertDetailResponse> getConcertDetails(
+        @PathVariable("concertId") Long concertId
+    ) {
+
+        return ApiResponse.ok(concertService.getConcertDetailWithCategories(concertId));
+
+    }
 
 }
 
