@@ -1,8 +1,8 @@
 package com.curateme.claco.concert.domain.dto.response;
 
 import com.curateme.claco.concert.domain.entity.Concert;
-import com.curateme.claco.concert.domain.entity.ConcertCategory;
 import com.curateme.claco.review.domain.entity.TicketReview;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -22,98 +22,98 @@ public class ConcertDetailResponse {
     private Long id;
 
     @NotNull
-    @Column(name = "concert_id")
+    @Schema(name = "concert_id")
     private String mt20id;
 
     @NotNull
-    @Column(name = "concert_name")
+    @Schema(name = "concert_name")
     private String prfnm;
 
-    @Column(name = "start_date")
+    @Schema(name = "start_date")
     private LocalDate prfpdfrom;
 
-    @Column(name = "end_date")
+    @Schema(name = "end_date")
     private LocalDate prfpdto;
 
-    @Column(name = "facility_name")
+    @Schema(name = "facility_name")
     private String fcltynm;
 
-    @Column(name = "poster")
+    @Schema(name = "poster")
     private String poster;
 
-    @Column(name = "area")
+    @Schema(name = "area")
     private String area;
 
-    @Column(name = "genre")
+    @Schema(name = "genre")
     private String genrenm;
 
-    @Column(name = "openrun")
+    @Schema(name = "openrun")
     private String openrun;
 
-    @Column(name = "status")
+    @Schema(name = "status")
     private String prfstate;
 
-    @Column(name = "cast")
+    @Schema(name = "cast")
     private String prfcast;
 
-    @Column(name = "crew")
+    @Schema(name = "crew")
     private String prfcrew;
 
-    @Column(name = "runtime")
+    @Schema(name = "runtime")
     private String prfruntime;
 
-    @Column(name = "age")
+    @Schema(name = "age")
     private String prfage;
 
-    @Column(name = "company_name")
+    @Schema(name = "company_name")
     private String entrpsnm;
 
-    @Column(name = "company_namep")
+    @Schema(name = "company_namep")
     private String entrpsnmP;
 
-    @Column(name = "company_namea")
+    @Schema(name = "company_namea")
     private String entrpsnmA;
 
-    @Column(name = "company_nameh")
+    @Schema(name = "company_nameh")
     private String entrpsnmH;
 
-    @Column(name = "company_names")
+    @Schema(name = "company_names")
     private String entrpsnmS;
 
-    @Column(name = "seat_guidance")
+    @Schema(name = "seat_guidance")
     private String pcseguidance;
 
-    @Column(name = "visit")
+    @Schema(name = "visit")
     private String visit;
 
-    @Column(name = "child")
+    @Schema(name = "child")
     private String child;
 
-    @Column(name = "daehakro")
+    @Schema(name = "daehakro")
     private String daehakro;
 
-    @Column(name = "festival")
+    @Schema(name = "festival")
     private String festival;
 
-    @Column(name = "musical_license")
+    @Schema(name = "musical_license")
     private String musicallicense;
 
-    @Column(name = "musical_create")
+    @Schema(name = "musical_create")
     private String musicalcreate;
 
-    @Column(name = "update_date")
+    @Schema(name = "update_date")
     private String updatedate;
 
-    @Column(name = "schedule_guidance", length = 1000)
+    @Schema(name = "schedule_guidance")
     private String dtguidance;
 
-    @Column(name = "introduction")
+    @Schema(name = "introduction")
     private String styurl;
 
-    @Column(name = "ticketReview")
+    @Schema(name = "ticketReview")
     private List<TicketReview> ticketReview;
 
-    @Column(name = "categories")
+    @Schema(name = "categories")
     private List<ConcertCategoryResponse> categories;
 
     public static ConcertDetailResponse fromEntity(Concert concert, List<ConcertCategoryResponse> categories){
