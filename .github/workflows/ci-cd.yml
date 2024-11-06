@@ -39,6 +39,7 @@ jobs:
         run: ./gradlew test --no-daemon
 
   CD:
+    if: ${{ github.event_name != 'pull_request' && success() }}
     needs: CI
     runs-on: ubuntu-latest
     steps:
