@@ -11,6 +11,8 @@ import com.curateme.claco.concert.repository.CategoryRepository;
 import com.curateme.claco.concert.repository.ConcertCategoryRepository;
 import com.curateme.claco.concert.repository.ConcertLikeRepository;
 import com.curateme.claco.concert.repository.ConcertRepository;
+import com.curateme.claco.global.exception.BusinessException;
+import com.curateme.claco.global.response.ApiStatus;
 import com.curateme.claco.global.response.PageResponse;
 import com.curateme.claco.member.domain.entity.Member;
 import com.curateme.claco.member.repository.MemberRepository;
@@ -124,9 +126,9 @@ public class ConcertServiceImpl implements ConcertService {
     public String postLikes(ConcertLikesRequest concertLikesRequest) {
 
         Member member = memberRepository.findById(concertLikesRequest.getMemberId())
-            .orElseThrow(() -> new IllegalArgumentException("Member not found with ID: " + concertLikesRequest.getMemberId()));
+            .orElseThrow(() -> new BusinessException(ApiStatus.MEMBER_NOT_FOUND));
         Concert concert = concertRepository.findById(concertLikesRequest.getConcertId())
-            .orElseThrow(() -> new IllegalArgumentException("Concert not found with ID: " + concertLikesRequest.getConcertId()));
+            .orElseThrow(() ->new BusinessException(ApiStatus.CONCERT_NOT_FOUND));
 
         // 좋아요가 이미 있는지 확인
         Optional<ConcertLike> existingLike = concertLikeRepository.findByMemberAndConcert(member, concert);
