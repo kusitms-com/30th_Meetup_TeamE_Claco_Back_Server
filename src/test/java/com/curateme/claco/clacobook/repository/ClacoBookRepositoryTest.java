@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.curateme.claco.clacobook.domain.entity.ClacoBook;
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class ClacoBookRepositoryTest {
 
 	@Autowired

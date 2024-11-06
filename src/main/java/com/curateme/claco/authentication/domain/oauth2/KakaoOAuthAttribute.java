@@ -30,7 +30,7 @@ public class KakaoOAuthAttribute {
 	private String nameAttributeKey; // OAuth2 로그인 진행 시 키가 되는 필드 값, PK와 같은 의미
 	private Oauth2UserInfo oauth2UserInfo;
 	private PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-	private String baseProfileImage = "https://claco-image-bucket.s3.ap-northeast-2.amazonaws.com/member/profile-image/basic-profile.svg";
+	private String baseProfileImage = "https://claco-image-bucket.s3.ap-northeast-2.amazonaws.com/member/profile-image/basic-profile.png";
 
 	@Builder
 	private KakaoOAuthAttribute(String nameAttributeKey, Oauth2UserInfo oauth2UserInfo) {
