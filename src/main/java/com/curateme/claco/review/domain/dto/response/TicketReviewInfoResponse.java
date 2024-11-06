@@ -4,17 +4,14 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.curateme.claco.concert.domain.entity.Concert;
 import com.curateme.claco.review.domain.entity.PlaceReview;
 import com.curateme.claco.review.domain.entity.ReviewTag;
 import com.curateme.claco.review.domain.entity.TicketReview;
 import com.curateme.claco.review.domain.vo.ImageUrlVO;
 import com.curateme.claco.review.domain.vo.PlaceCategoryVO;
 import com.curateme.claco.review.domain.vo.TagCategoryVO;
-import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -44,6 +41,8 @@ public class TicketReviewInfoResponse {
 	// 콘서트 명
 	@Schema(description = "콘서트 명", example = "오페라의 유령")
 	private String concertName;
+	@Schema(description = "닉네임, create 응답에는 미포함", example = "사용자1")
+	private String nickname;
 	// 관람 날짜
 	@Schema(description = "관람 날짜")
 	private LocalDate watchDate;
@@ -87,6 +86,7 @@ public class TicketReviewInfoResponse {
 	public static TicketReviewInfoResponse fromTicketReview(TicketReview ticketReview) {
 		TicketReviewInfoResponse response = new TicketReviewInfoResponse();
 		response.ticketReviewId = ticketReview.getId();
+		response.nickname = ticketReview.getMember().getNickname();
 		response.watchDate = ticketReview.getWatchDate();
 		response.watchRound = ticketReview.getWatchRound();
 		response.watchSit = ticketReview.getWatchSit();
