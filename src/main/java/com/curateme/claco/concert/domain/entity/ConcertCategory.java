@@ -1,13 +1,6 @@
 package com.curateme.claco.concert.domain.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,9 +16,6 @@ public class ConcertCategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "category")
-    private String category;
-
     @Column(name = "score")
     private Double score;
 
@@ -33,9 +23,13 @@ public class ConcertCategory {
     @JoinColumn(name = "concert_id", nullable = false)
     private Concert concert;
 
-    public ConcertCategory(String category, Double score, Concert concert) {
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+    public ConcertCategory(Category category, Double score, Concert concert) {
         this.category = category;
         this.score = score;
         this.concert = concert;
     }
 }
+

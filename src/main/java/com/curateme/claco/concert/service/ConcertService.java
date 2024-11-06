@@ -1,5 +1,7 @@
 package com.curateme.claco.concert.service;
 
+import com.curateme.claco.concert.domain.dto.request.ConcertLikesRequest;
+import com.curateme.claco.concert.domain.dto.response.ConcertDetailResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertResponse;
 import com.curateme.claco.global.response.PageResponse;
 import java.time.LocalDate;
@@ -12,5 +14,9 @@ public interface ConcertService {
         String direction, Pageable pageable);
 
     PageResponse<ConcertResponse> getSearchConcert(String query, String direction, Pageable pageable);
+
+    ConcertDetailResponse getConcertDetailWithCategories(Long concertId);
+
+    String postLikes(ConcertLikesRequest concertLikesRequest);
 
 }

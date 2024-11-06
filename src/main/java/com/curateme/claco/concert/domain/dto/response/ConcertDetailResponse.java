@@ -1,10 +1,12 @@
 package com.curateme.claco.concert.domain.dto.response;
 
 import com.curateme.claco.concert.domain.entity.Concert;
+import com.curateme.claco.review.domain.entity.TicketReview;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,8 +17,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ConcertResponse {
-
+public class ConcertDetailResponse {
     @NotNull
     private Long id;
 
@@ -109,8 +110,14 @@ public class ConcertResponse {
     @Schema(name = "introduction")
     private String styurl;
 
-    public static ConcertResponse fromEntity(Concert concert){
-        return new ConcertResponse(concert.getId(), concert.getMt20id(), concert.getPrfnm(),
+    @Schema(name = "ticketReview")
+    private List<TicketReview> ticketReview;
+
+    @Schema(name = "categories")
+    private List<ConcertCategoryResponse> categories;
+
+    public static ConcertDetailResponse fromEntity(Concert concert, List<ConcertCategoryResponse> categories){
+        return new ConcertDetailResponse(concert.getId(), concert.getMt20id(), concert.getPrfnm(),
             concert.getPrfpdfrom(), concert.getPrfpdto(), concert.getFcltynm(), concert.getPoster(),
             concert.getArea(), concert.getGenrenm(), concert.getOpenrun(), concert.getPrfstate(),
             concert.getPrfcast(), concert.getPrfcrew(), concert.getPrfruntime(),
@@ -118,6 +125,12 @@ public class ConcertResponse {
             concert.getEntrpsnmA(), concert.getEntrpsnmH(), concert.getEntrpsnmS(),
             concert.getPcseguidance(), concert.getVisit(), concert.getChild(), concert.getDaehakro(),
             concert.getFestival(), concert.getMusicallicense(), concert.getMusicalcreate(),
-            concert.getUpdatedate(), concert.getDtguidance(), concert.getStyurl());
+            concert.getUpdatedate(), concert.getDtguidance(), concert.getStyurl(), concert.getTicketReview(),
+            categories);
     }
+
+    public void setCategories(List<ConcertCategoryResponse> categories) {
+        this.categories = categories;
+    }
+
 }

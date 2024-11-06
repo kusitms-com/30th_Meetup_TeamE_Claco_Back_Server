@@ -1,5 +1,7 @@
 package com.curateme.claco.concert.controller;
 
+import com.curateme.claco.concert.domain.dto.request.ConcertLikesRequest;
+import com.curateme.claco.concert.domain.dto.response.ConcertDetailResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertResponse;
 import com.curateme.claco.concert.service.ConcertService;
 import com.curateme.claco.global.response.ApiResponse;
@@ -13,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -66,6 +70,20 @@ public class ConcertController {
         return ApiResponse.ok(concertService.getSearchConcert(query,direction, pageable));
     }
 
+    @GetMapping("/details/{concertId}")
+    @Operation(summary = "공연 상세보가", description = "기능명세서 화면번호 3.0.0")
+    public ApiResponse<ConcertDetailResponse> getConcertDetails(
+        @PathVariable("concertId") Long concertId
+    ) {
+        return ApiResponse.ok(concertService.getConcertDetailWithCategories(concertId));
+    }
+
+    @PostMapping("/likes")
+    public ApiResponse<String> postLikes(
+        @RequestBody ConcertLikesRequest concertLikesRequest
+    ) {
+        return ApiResponse.ok(concertService.postLikes(concertLikesRequest));
+    }
 
 }
 
