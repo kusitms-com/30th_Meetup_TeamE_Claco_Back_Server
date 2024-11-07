@@ -29,12 +29,37 @@ public class RecommendationServiceImpl implements RecommendationService{
     private final ConcertRepository concertRepository;
     private final ConcertLikeRepository concertLikeRepository;
 
+    // 유저 취향 기반 공연 추천
     @Override
     public List<RecommendationConcertsResponse> getConcertRecommendations(Long userId) {
+        String FLASK_API_URL = "http://localhost:8081/recommendations/users/";
 
-        String jsonResponse = getConcertsFromFlask(userId);
+        String jsonResponse = getConcertsFromFlask(userId, FLASK_API_URL);
         System.out.println("jsonResponse = " + jsonResponse);
-        // 추천시스템에서 받아온 콘서트 id 값
+
+        List<Long> concertIds = parseConcertIdsFromJson(jsonResponse);
+
+        return getConcertDetails(concertIds);
+    }
+
+    //최근 좋아요한 공연 기반 추천
+    @Override
+    public List<RecommendationConcertsResponse> getLikedConcertRecommendations(Long userId) {
+
+        Long concertId = concertLikeRepository.findMostRecentLikedConcert(userId);
+
+        String FLASK_API_URL = "http://localhost:8081/recommendations/items/";
+
+        String jsonResponse = getConcertsFromFlask(concertId, FLASK_API_URL);
+        System.out.println("jsonResponse = " + jsonResponse);
+
+        List<Long> concertIds = parseConcertIdsFromJson(jsonResponse);
+
+        return getConcertDetails(concertIds);
+    }
+
+    // JSON 응답을 파싱하여 concertIds 리스트 생성
+    private List<Long> parseConcertIdsFromJson(String jsonResponse) {
         List<Long> concertIds = new ArrayList<>();
         if (jsonResponse != null) {
             try {
@@ -50,8 +75,11 @@ public class RecommendationServiceImpl implements RecommendationService{
                 System.err.println("Error parsing recommendations: " + e.getMessage());
             }
         }
+        return concertIds;
+    }
 
-        // 콘서트 정보 반환 값들
+    // concertIds를 기반으로 콘서트 정보를 조회하여 recommendations 리스트 생성
+    private List<RecommendationConcertsResponse> getConcertDetails(List<Long> concertIds) {
         List<RecommendationConcertsResponse> recommendations = new ArrayList<>();
 
         for (Long concertId : concertIds) {
@@ -59,20 +87,18 @@ public class RecommendationServiceImpl implements RecommendationService{
             Long id = concert.getId();
 
             recommendations.add(new RecommendationConcertsResponse(
-                    id,
-                    concert.getPrfnm(),
-                    concert.getPoster(),
-                    concert.getGenrenm(),
-                    concertLikeRepository.existsByConcertId(id)
-                ));
+                id,
+                concert.getPrfnm(),
+                concert.getPoster(),
+                concert.getGenrenm(),
+                concertLikeRepository.existsByConcertId(id)
+            ));
         }
-
         return recommendations;
     }
 
-    private static final String FLASK_API_URL = "http://localhost:8081/recommendations/users/";
-    public String getConcertsFromFlask(Long userId) {
-        String urlWithUserId = FLASK_API_URL + userId;
+    public String getConcertsFromFlask(Long Id, String FLASK_API_URL) {
+        String urlWithUserId = FLASK_API_URL + Id;
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
