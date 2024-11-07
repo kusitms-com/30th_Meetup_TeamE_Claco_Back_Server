@@ -12,4 +12,8 @@ public interface ConcertLikeRepository extends JpaRepository<ConcertLike,Long> {
 
     @Query("SELECT cl FROM ConcertLike cl WHERE cl.member = :member AND cl.concert = :concert")
     Optional<ConcertLike> findByMemberAndConcert(@Param("member") Member member, @Param("concert") Concert concert);
+
+    @Query("SELECT CASE WHEN COUNT(cl) > 0 THEN true ELSE false END FROM ConcertLike cl WHERE cl.concert.id = :concertId")
+    boolean existsByConcertId(@Param("concertId") Long concertId);
 }
+
