@@ -251,7 +251,7 @@ public class PreferenceServiceImpl implements PreferenceService {
 			.build();
 	}
 
-	private static final String FLASK_API_URL = "http://localhost:8081/users/preferences";
+	private static final String FLASK_API_URL = "FLASK_서버"; // 추후 수정 예정 현재는 localhost
 
 	public void sendPreferencesToAI(Long userId, List<String> preferences) {
 		// Prepare JSON body for Flask API
