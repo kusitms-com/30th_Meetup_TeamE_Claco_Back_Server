@@ -1,9 +1,17 @@
 package com.curateme.claco.preference.service;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +35,7 @@ import com.curateme.claco.preference.repository.TypePreferenceRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * @author      : 이 건
@@ -57,6 +66,13 @@ public class PreferenceServiceImpl implements PreferenceService {
 		Member member = memberRepository.findById(securityContextUtil.getContextMemberInfo().getMemberId()).stream()
 			.findAny()
 			.orElseThrow(() -> new BusinessException(ApiStatus.MEMBER_NOT_FOUND));
+
+		// AI Server 로 취향 전송하기
+		List<String> preferences = signUpRequest.getCategoryPreferences().stream()
+			.map(pref -> pref.getPreferenceCategory())
+			.collect(Collectors.toList());
+
+		sendPreferencesToAI(member.getId(), preferences);
 
 		// TODO: 개선 필요
 		// Preference 생성
@@ -233,5 +249,30 @@ public class PreferenceServiceImpl implements PreferenceService {
 				.toList()
 			)
 			.build();
+	}
+
+	private static final String FLASK_API_URL = "http://localhost:8081/users/preferences";
+
+	public void sendPreferencesToAI(Long userId, List<String> preferences) {
+		// Prepare JSON body for Flask API
+		Map<String, Object> body = new HashMap<>();
+		body.put("userId", userId);
+		body.put("preferences", preferences);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+		RestTemplate restTemplate = new RestTemplate();
+		try {
+			ResponseEntity<String> response = restTemplate.exchange(FLASK_API_URL, HttpMethod.POST, requestEntity, String.class);
+			if (response.getStatusCode().is2xxSuccessful()) {
+				System.out.println("취향 전송이 완료 되었습니다: " + response.getBody());
+			} else {
+				System.err.println("취향 전송에 실패 했습니다. Status code: " + response.getStatusCode());
+			}
+		} catch (Exception e) {
+			System.err.println("취향 전송에 실패 했습니다: " + e.getMessage());
+		}
 	}
 }
