@@ -70,7 +70,7 @@ public class RecommendationServiceImpl implements RecommendationService{
         return recommendations;
     }
 
-    private static final String FLASK_API_URL = "http://localhost:8081/recommendations/";
+    private static final String FLASK_API_URL = "http://localhost:8081/recommendations/users/";
     public String getConcertsFromFlask(Long userId) {
         String urlWithUserId = FLASK_API_URL + userId;
 
