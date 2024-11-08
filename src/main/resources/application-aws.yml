@@ -9,3 +9,5 @@ cloud:
       static: ${AWS_REGION}
     stack:
       auto: false
+  ai:
+    url: ${FLASK_SERVER}

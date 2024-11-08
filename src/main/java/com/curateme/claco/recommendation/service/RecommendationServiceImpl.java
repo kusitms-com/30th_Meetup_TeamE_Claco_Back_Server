@@ -23,9 +23,9 @@ import com.curateme.claco.review.repository.TicketReviewRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,10 +53,13 @@ public class RecommendationServiceImpl implements RecommendationService{
     private final SecurityContextUtil securityContextUtil;
     private final MemberRepository memberRepository;
 
+    @Value("${cloud.ai.url}")
+    private String URL;
+
     // 유저 취향 기반 공연 추천
     @Override
     public List<RecommendationConcertsResponseV1> getConcertRecommendations() {
-        String FLASK_API_URL = "http://localhost:8081/recommendations/users/";
+        String FLASK_API_URL = URL + "/recommendations/users/";
         // 현재 로그인 세션 유저 정보 추출
         Member member = memberRepository.findById(securityContextUtil.getContextMemberInfo().getMemberId()).stream()
             .findAny()
@@ -81,7 +84,7 @@ public class RecommendationServiceImpl implements RecommendationService{
 
         Long concertId = concertLikeRepository.findMostRecentLikedConcert(member.getId());
 
-        String FLASK_API_URL = "http://localhost:8081/recommendations/items/";
+        String FLASK_API_URL = URL + "/recommendations/items/";
 
         String jsonResponse = getConcertsFromFlask(concertId, FLASK_API_URL);
         System.out.println("jsonResponse = " + jsonResponse);
@@ -101,7 +104,7 @@ public class RecommendationServiceImpl implements RecommendationService{
             .orElseThrow(() -> new BusinessException(ApiStatus.MEMBER_NOT_FOUND));
 
 
-        String FLASK_API_URL = "http://localhost:8081/recommendations/clacobooks/";
+        String FLASK_API_URL = URL + "/recommendations/clacobooks/";
         String jsonResponse = getConcertsFromFlask(member.getId(), FLASK_API_URL);
         System.out.println("jsonResponse = " + jsonResponse);
 

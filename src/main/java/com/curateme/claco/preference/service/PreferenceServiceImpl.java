@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -58,6 +59,9 @@ public class PreferenceServiceImpl implements PreferenceService {
 	private final PreferenceRepository preferenceRepository;
 	private final TypePreferenceRepository typePreferenceRepository;
 	private final RegionPreferenceRepository regionPreferenceRepository;
+
+	@Value("${cloud.ai.url}")
+	private String URL;
 
 	@Override
 	public Preference savePreference(SignUpRequest signUpRequest) {
@@ -251,7 +255,7 @@ public class PreferenceServiceImpl implements PreferenceService {
 			.build();
 	}
 
-	private static final String FLASK_API_URL = "FLASK_서버"; // 추후 수정 예정 현재는 localhost
+	private String FLASK_API_URL = URL + "/users/preferences";
 
 	public void sendPreferencesToAI(Long userId, List<String> preferences) {
 		// Prepare JSON body for Flask API
