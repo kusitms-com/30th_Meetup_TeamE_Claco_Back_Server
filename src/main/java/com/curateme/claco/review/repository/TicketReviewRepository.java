@@ -1,5 +1,6 @@
 package com.curateme.claco.review.repository;
 
+import com.curateme.claco.review.domain.dto.response.TicketReviewSummaryResponse;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +12,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.curateme.claco.clacobook.domain.entity.ClacoBook;
 import com.curateme.claco.concert.domain.entity.Concert;
 import com.curateme.claco.review.domain.entity.TicketReview;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * @author      : 이 건
@@ -78,4 +81,7 @@ public interface TicketReviewRepository extends JpaRepository<TicketReview, Long
 
 	List<TicketReview> findByClacoBook(ClacoBook clacoBook);
 
+	@Query("SELECT new com.curateme.claco.review.domain.dto.response.TicketReviewSummaryResponse(tr.concert.id, tr.createdAt, tr.content) " +
+		"FROM TicketReview tr WHERE tr.id = :id")
+	Optional<TicketReviewSummaryResponse> findSummaryById(@Param("id") Long id);
 }

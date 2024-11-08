@@ -1,12 +1,18 @@
 package com.curateme.claco.recommendation.service;
 
+import com.curateme.claco.clacobook.domain.entity.ClacoBook;
+import com.curateme.claco.clacobook.repository.ClacoBookRepository;
 import com.curateme.claco.concert.domain.entity.Concert;
 import com.curateme.claco.concert.repository.ConcertLikeRepository;
 import com.curateme.claco.concert.repository.ConcertRepository;
 import com.curateme.claco.recommendation.domain.dto.RecommendationConcertsResponse;
+import com.curateme.claco.review.domain.dto.response.TicketReviewSummaryResponse;
+import com.curateme.claco.review.domain.entity.TicketReview;
+import com.curateme.claco.review.repository.TicketReviewRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -28,6 +34,8 @@ public class RecommendationServiceImpl implements RecommendationService{
 
     private final ConcertRepository concertRepository;
     private final ConcertLikeRepository concertLikeRepository;
+    private final ClacoBookRepository clacoBookRepository;
+    private final TicketReviewRepository ticketReviewRepository;
 
     // 유저 취향 기반 공연 추천
     @Override
@@ -56,6 +64,29 @@ public class RecommendationServiceImpl implements RecommendationService{
         List<Long> concertIds = parseConcertIdsFromJson(jsonResponse);
 
         return getConcertDetails(concertIds);
+    }
+
+    // 유저 취향 기반 클라코북 추천
+    @Override
+    public List<RecommendationConcertsResponse> getClacoBooksRecommendations(Long userId) {
+
+        String FLASK_API_URL = "http://localhost:8081/recommendations/clacobooks/";
+
+        String jsonResponse = getConcertsFromFlask(userId, FLASK_API_URL);
+        System.out.println("jsonResponse = " + jsonResponse);
+
+        List<Long> RecUserIds = parseConcertIdsFromJson(jsonResponse);
+        Long RecUserId = RecUserIds.get(0);
+
+        Optional<ClacoBook> clacoBook = clacoBookRepository.findByMemberId(RecUserId);
+        Optional<TicketReview> ticketReview = clacoBookRepository.findRandomTicketReviewByClacoBookId(clacoBook.get()
+            .getId());
+        Optional<TicketReviewSummaryResponse> ticketReviewSummaryResponse = ticketReviewRepository.findSummaryById(ticketReview.get()
+            .getId());
+
+
+
+        return null;
     }
 
     // JSON 응답을 파싱하여 concertIds 리스트 생성

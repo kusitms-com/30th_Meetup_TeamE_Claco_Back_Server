@@ -6,6 +6,7 @@ import java.util.List;
 public interface RecommendationService {
     List<RecommendationConcertsResponse> getConcertRecommendations(Long userId);
     List<RecommendationConcertsResponse> getLikedConcertRecommendations(Long userId);
+    List<RecommendationConcertsResponse> getClacoBooksRecommendations(Long userId);
 
 
 }
