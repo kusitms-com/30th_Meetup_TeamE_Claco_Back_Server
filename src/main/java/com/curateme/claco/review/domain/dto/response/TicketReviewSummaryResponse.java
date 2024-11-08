@@ -1,7 +1,9 @@
 package com.curateme.claco.review.domain.dto.response;
 
 import java.time.LocalDateTime;
+import lombok.Getter;
 
+@Getter
 public class TicketReviewSummaryResponse {
     private Long concertId;
     private LocalDateTime createdAt;
