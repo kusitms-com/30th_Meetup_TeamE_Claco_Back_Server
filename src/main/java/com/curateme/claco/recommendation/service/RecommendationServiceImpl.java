@@ -1,12 +1,27 @@
 package com.curateme.claco.recommendation.service;
 
+import com.curateme.claco.clacobook.domain.entity.ClacoBook;
+import com.curateme.claco.clacobook.repository.ClacoBookRepository;
+import com.curateme.claco.concert.domain.dto.response.ConcertCategoryResponse;
+import com.curateme.claco.concert.domain.dto.response.ConcertClacoBookResponse;
+import com.curateme.claco.concert.domain.entity.Category;
 import com.curateme.claco.concert.domain.entity.Concert;
+import com.curateme.claco.concert.repository.CategoryRepository;
+import com.curateme.claco.concert.repository.ConcertCategoryRepository;
 import com.curateme.claco.concert.repository.ConcertLikeRepository;
 import com.curateme.claco.concert.repository.ConcertRepository;
-import com.curateme.claco.recommendation.domain.dto.RecommendationConcertsResponse;
+import com.curateme.claco.global.exception.BusinessException;
+import com.curateme.claco.global.response.ApiStatus;
+import com.curateme.claco.recommendation.domain.dto.RecommendationConcertResponseV2;
+import com.curateme.claco.recommendation.domain.dto.RecommendationConcertsResponseV1;
+import com.curateme.claco.review.domain.dto.response.TicketReviewSummaryResponse;
+import com.curateme.claco.review.domain.entity.TicketReview;
+import com.curateme.claco.review.repository.TicketReviewRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -28,10 +43,14 @@ public class RecommendationServiceImpl implements RecommendationService{
 
     private final ConcertRepository concertRepository;
     private final ConcertLikeRepository concertLikeRepository;
+    private final ClacoBookRepository clacoBookRepository;
+    private final TicketReviewRepository ticketReviewRepository;
+    private final CategoryRepository categoryRepository;
+    private final ConcertCategoryRepository concertCategoryRepository;
 
     // 유저 취향 기반 공연 추천
     @Override
-    public List<RecommendationConcertsResponse> getConcertRecommendations(Long userId) {
+    public List<RecommendationConcertsResponseV1> getConcertRecommendations(Long userId) {
         String FLASK_API_URL = "http://localhost:8081/recommendations/users/";
 
         String jsonResponse = getConcertsFromFlask(userId, FLASK_API_URL);
@@ -44,7 +63,7 @@ public class RecommendationServiceImpl implements RecommendationService{
 
     //최근 좋아요한 공연 기반 추천
     @Override
-    public List<RecommendationConcertsResponse> getLikedConcertRecommendations(Long userId) {
+    public List<RecommendationConcertsResponseV1> getLikedConcertRecommendations(Long userId) {
 
         Long concertId = concertLikeRepository.findMostRecentLikedConcert(userId);
 
@@ -57,6 +76,44 @@ public class RecommendationServiceImpl implements RecommendationService{
 
         return getConcertDetails(concertIds);
     }
+
+    // 유저 취향 기반 클라코북 추천
+    @Override
+    public RecommendationConcertResponseV2 getClacoBooksRecommendations(Long userId) {
+
+        String FLASK_API_URL = "http://localhost:8081/recommendations/clacobooks/";
+        String jsonResponse = getConcertsFromFlask(userId, FLASK_API_URL);
+        System.out.println("jsonResponse = " + jsonResponse);
+
+        // 추천 받은 유저 아이디
+        List<Long> recUserIds = parseConcertIdsFromJson(jsonResponse);
+        Long recUserId = recUserIds.get(0);
+
+        // 추천 받은 유저의 클라코 북 및 리뷰 담기
+        ClacoBook clacoBook = clacoBookRepository.findByMemberId(recUserId)
+            .orElseThrow(() -> new BusinessException(ApiStatus.CLACO_BOOK_NOT_FOUND));
+        TicketReview ticketReview = clacoBookRepository.findRandomTicketReviewByClacoBookId(clacoBook.getId())
+            .orElseThrow(() -> new BusinessException(ApiStatus.TICKET_REVIEW_NOT_FOUND));
+
+        // DTO Mapping
+        TicketReviewSummaryResponse ticketReviewSummaryResponse = ticketReviewRepository.findSummaryById(ticketReview.getId());
+
+        Concert concert = concertRepository.findById(ticketReviewSummaryResponse.getConcertId())
+            .orElseThrow(() -> new BusinessException(ApiStatus.CONCERT_NOT_FOUND));
+
+        // DTO Mapping
+        List<Long> categoryIds = concertCategoryRepository.findCategoryIdsByCategoryName(concert.getId());
+        List<Category> categories = categoryRepository.findAllById(categoryIds);
+        List<ConcertCategoryResponse> categoryResponses = categories.stream()
+            .map(category -> new ConcertCategoryResponse(category.getCategory(), category.getImageUrl()))
+            .collect(Collectors.toList());
+
+        // 최종 Response
+        ConcertClacoBookResponse concertClacoBookResponse = ConcertClacoBookResponse.fromEntity(concert, categoryResponses);
+
+        return RecommendationConcertResponseV2.from(concertClacoBookResponse, ticketReviewSummaryResponse);
+    }
+
 
     // JSON 응답을 파싱하여 concertIds 리스트 생성
     private List<Long> parseConcertIdsFromJson(String jsonResponse) {
@@ -79,14 +136,14 @@ public class RecommendationServiceImpl implements RecommendationService{
     }
 
     // concertIds를 기반으로 콘서트 정보를 조회하여 recommendations 리스트 생성
-    private List<RecommendationConcertsResponse> getConcertDetails(List<Long> concertIds) {
-        List<RecommendationConcertsResponse> recommendations = new ArrayList<>();
+    private List<RecommendationConcertsResponseV1> getConcertDetails(List<Long> concertIds) {
+        List<RecommendationConcertsResponseV1> recommendations = new ArrayList<>();
 
         for (Long concertId : concertIds) {
             Concert concert = concertRepository.findConcertById(concertId);
             Long id = concert.getId();
 
-            recommendations.add(new RecommendationConcertsResponse(
+            recommendations.add(new RecommendationConcertsResponseV1(
                 id,
                 concert.getPrfnm(),
                 concert.getPoster(),
