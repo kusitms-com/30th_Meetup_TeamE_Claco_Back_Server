@@ -1,5 +1,6 @@
 package com.curateme.claco.recommendation.service;
 
+import com.curateme.claco.authentication.util.SecurityContextUtil;
 import com.curateme.claco.clacobook.domain.entity.ClacoBook;
 import com.curateme.claco.clacobook.repository.ClacoBookRepository;
 import com.curateme.claco.concert.domain.dto.response.ConcertCategoryResponse;
@@ -12,6 +13,8 @@ import com.curateme.claco.concert.repository.ConcertLikeRepository;
 import com.curateme.claco.concert.repository.ConcertRepository;
 import com.curateme.claco.global.exception.BusinessException;
 import com.curateme.claco.global.response.ApiStatus;
+import com.curateme.claco.member.domain.entity.Member;
+import com.curateme.claco.member.repository.MemberRepository;
 import com.curateme.claco.recommendation.domain.dto.RecommendationConcertResponseV2;
 import com.curateme.claco.recommendation.domain.dto.RecommendationConcertsResponseV1;
 import com.curateme.claco.review.domain.dto.response.TicketReviewSummaryResponse;
@@ -47,13 +50,20 @@ public class RecommendationServiceImpl implements RecommendationService{
     private final TicketReviewRepository ticketReviewRepository;
     private final CategoryRepository categoryRepository;
     private final ConcertCategoryRepository concertCategoryRepository;
+    private final SecurityContextUtil securityContextUtil;
+    private final MemberRepository memberRepository;
 
     // 유저 취향 기반 공연 추천
     @Override
-    public List<RecommendationConcertsResponseV1> getConcertRecommendations(Long userId) {
+    public List<RecommendationConcertsResponseV1> getConcertRecommendations() {
         String FLASK_API_URL = "http://localhost:8081/recommendations/users/";
+        // 현재 로그인 세션 유저 정보 추출
+        Member member = memberRepository.findById(securityContextUtil.getContextMemberInfo().getMemberId()).stream()
+            .findAny()
+            .orElseThrow(() -> new BusinessException(ApiStatus.MEMBER_NOT_FOUND));
 
-        String jsonResponse = getConcertsFromFlask(userId, FLASK_API_URL);
+
+        String jsonResponse = getConcertsFromFlask(member.getId(), FLASK_API_URL);
         System.out.println("jsonResponse = " + jsonResponse);
 
         List<Long> concertIds = parseConcertIdsFromJson(jsonResponse);
@@ -63,9 +73,13 @@ public class RecommendationServiceImpl implements RecommendationService{
 
     //최근 좋아요한 공연 기반 추천
     @Override
-    public List<RecommendationConcertsResponseV1> getLikedConcertRecommendations(Long userId) {
+    public List<RecommendationConcertsResponseV1> getLikedConcertRecommendations() {
 
-        Long concertId = concertLikeRepository.findMostRecentLikedConcert(userId);
+        Member member = memberRepository.findById(securityContextUtil.getContextMemberInfo().getMemberId()).stream()
+            .findAny()
+            .orElseThrow(() -> new BusinessException(ApiStatus.MEMBER_NOT_FOUND));
+
+        Long concertId = concertLikeRepository.findMostRecentLikedConcert(member.getId());
 
         String FLASK_API_URL = "http://localhost:8081/recommendations/items/";
 
@@ -79,10 +93,16 @@ public class RecommendationServiceImpl implements RecommendationService{
 
     // 유저 취향 기반 클라코북 추천
     @Override
-    public RecommendationConcertResponseV2 getClacoBooksRecommendations(Long userId) {
+    public RecommendationConcertResponseV2 getClacoBooksRecommendations() {
+
+
+        Member member = memberRepository.findById(securityContextUtil.getContextMemberInfo().getMemberId()).stream()
+            .findAny()
+            .orElseThrow(() -> new BusinessException(ApiStatus.MEMBER_NOT_FOUND));
+
 
         String FLASK_API_URL = "http://localhost:8081/recommendations/clacobooks/";
-        String jsonResponse = getConcertsFromFlask(userId, FLASK_API_URL);
+        String jsonResponse = getConcertsFromFlask(member.getId(), FLASK_API_URL);
         System.out.println("jsonResponse = " + jsonResponse);
 
         // 추천 받은 유저 아이디
