@@ -79,6 +79,7 @@ public class ConcertController {
     }
 
     @PostMapping("/likes")
+    @Operation(summary = "공연 좋아요", description = "특정 공연에 좋아요를 추가합니다")
     public ApiResponse<String> postLikes(
         @RequestBody ConcertLikesRequest concertLikesRequest
     ) {
