@@ -128,7 +128,7 @@ public class ConcertServiceImpl implements ConcertService {
         Member member = memberRepository.findById(concertLikesRequest.getMemberId())
             .orElseThrow(() -> new BusinessException(ApiStatus.MEMBER_NOT_FOUND));
         Concert concert = concertRepository.findById(concertLikesRequest.getConcertId())
-            .orElseThrow(() ->new BusinessException(ApiStatus.CONCERT_NOT_FOUND));
+            .orElseThrow(() -> new BusinessException(ApiStatus.CONCERT_NOT_FOUND));
 
         // 좋아요가 이미 있는지 확인
         Optional<ConcertLike> existingLike = concertLikeRepository.findByMemberAndConcert(member, concert);

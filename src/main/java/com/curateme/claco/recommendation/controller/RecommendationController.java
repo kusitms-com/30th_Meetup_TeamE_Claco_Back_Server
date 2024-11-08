@@ -1,7 +1,8 @@
 package com.curateme.claco.recommendation.controller;
 
 import com.curateme.claco.global.response.ApiResponse;
-import com.curateme.claco.recommendation.domain.dto.RecommendationConcertsResponse;
+import com.curateme.claco.recommendation.domain.dto.RecommendationConcertResponseV2;
+import com.curateme.claco.recommendation.domain.dto.RecommendationConcertsResponseV1;
 import com.curateme.claco.recommendation.service.RecommendationService;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
@@ -20,7 +21,7 @@ public class RecommendationController {
 
     @GetMapping("/userbased")
     @Operation(summary = "나의 취향 기반 맞춤 추천", description = "기능명세서 화면번호 2.0.0(C)")
-    public ApiResponse<List<RecommendationConcertsResponse>> getConcertRecommendations(
+    public ApiResponse<List<RecommendationConcertsResponseV1>> getConcertRecommendations(
         @RequestParam Long userId
     ){
         return ApiResponse.ok(recommendationService.getConcertRecommendations(userId));
@@ -28,7 +29,7 @@ public class RecommendationController {
 
     @GetMapping("/itembased")
     @Operation(summary = "최근 좋아요 한 공연 기반 맞춤 추천", description = "기능명세서 화면번호 2.1.0(C)")
-    public ApiResponse<List<RecommendationConcertsResponse>> getLikedConcertRecommendations(
+    public ApiResponse<List<RecommendationConcertsResponseV1>> getLikedConcertRecommendations(
         @RequestParam Long userId
     ){
         return ApiResponse.ok(recommendationService.getLikedConcertRecommendations(userId));
@@ -36,7 +37,7 @@ public class RecommendationController {
 
     @GetMapping("/clacobooks")
     @Operation(summary = "유저 취향 기반 클라코북 맞춤 추천", description = "기능명세서 화면번호 2.2.0")
-    public ApiResponse<List<RecommendationConcertsResponse>> getClacoBooksRecommendations(
+    public ApiResponse<RecommendationConcertResponseV2> getClacoBooksRecommendations(
         @RequestParam Long userId
     ){
         return ApiResponse.ok(recommendationService.getClacoBooksRecommendations(userId));
