@@ -152,7 +152,7 @@ public class ConcertServiceImpl implements ConcertService {
 
         Long memberId = securityContextUtil.getContextMemberInfo().getMemberId();
 
-        List<Long> concertLikedIds = concertLikeRepository.findByMemberId(memberId);
+        List<Long> concertLikedIds = concertLikeRepository.findConcertIdsByMemberId(memberId);
 
         // 필터링 적용
         concertLikedIds = filterConcertsByQueryAndGenre(concertLikedIds, query, genre);

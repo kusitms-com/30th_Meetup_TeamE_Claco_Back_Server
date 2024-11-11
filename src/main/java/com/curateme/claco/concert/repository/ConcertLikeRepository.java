@@ -22,7 +22,7 @@ public interface ConcertLikeRepository extends JpaRepository<ConcertLike,Long> {
 
 
     @Query("SELECT cl.concert.id FROM ConcertLike cl WHERE cl.member.id = :userId")
-    List<Long> findByMemberId(@Param("userId") Long userId);
+    List<Long> findConcertIdsByMemberId(@Param("userId") Long userId);
 
 }
 
