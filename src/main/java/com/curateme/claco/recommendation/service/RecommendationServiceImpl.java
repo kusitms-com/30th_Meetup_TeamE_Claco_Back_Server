@@ -29,6 +29,8 @@ import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -61,12 +63,10 @@ public class RecommendationServiceImpl implements RecommendationService{
     public List<RecommendationConcertsResponseV1> getConcertRecommendations() {
         String FLASK_API_URL = URL + "/recommendations/users/";
         // 현재 로그인 세션 유저 정보 추출
-        Member member = memberRepository.findById(securityContextUtil.getContextMemberInfo().getMemberId()).stream()
-            .findAny()
-            .orElseThrow(() -> new BusinessException(ApiStatus.MEMBER_NOT_FOUND));
+        Long memberId = securityContextUtil.getContextMemberInfo().getMemberId();
 
 
-        String jsonResponse = getConcertsFromFlask(member.getId(), FLASK_API_URL);
+        String jsonResponse = getConcertsFromFlask(memberId, FLASK_API_URL);
         System.out.println("jsonResponse = " + jsonResponse);
 
         List<Long> concertIds = parseConcertIdsFromJson(jsonResponse);
@@ -81,6 +81,13 @@ public class RecommendationServiceImpl implements RecommendationService{
         Long memberId = securityContextUtil.getContextMemberInfo().getMemberId();
 
         Long concertId = concertLikeRepository.findMostRecentLikedConcert(memberId);
+
+        if (concertId == null){
+            Pageable pageable = PageRequest.of(0, 2); // 상위 두개만
+            List<Long> concertIds = concertLikeRepository.findTopConcertIdsByLikeCount(pageable);
+
+            return getConcertDetails(concertIds);
+        }
 
         String FLASK_API_URL = URL + "/recommendations/items/";
 
