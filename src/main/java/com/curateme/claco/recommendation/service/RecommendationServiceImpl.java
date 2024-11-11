@@ -78,11 +78,9 @@ public class RecommendationServiceImpl implements RecommendationService{
     @Override
     public List<RecommendationConcertsResponseV1> getLikedConcertRecommendations() {
 
-        Member member = memberRepository.findById(securityContextUtil.getContextMemberInfo().getMemberId()).stream()
-            .findAny()
-            .orElseThrow(() -> new BusinessException(ApiStatus.MEMBER_NOT_FOUND));
+        Long memberId = securityContextUtil.getContextMemberInfo().getMemberId();
 
-        Long concertId = concertLikeRepository.findMostRecentLikedConcert(member.getId());
+        Long concertId = concertLikeRepository.findMostRecentLikedConcert(memberId);
 
         String FLASK_API_URL = URL + "/recommendations/items/";
 
