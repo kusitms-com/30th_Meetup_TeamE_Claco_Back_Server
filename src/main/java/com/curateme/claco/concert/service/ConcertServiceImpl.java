@@ -186,7 +186,8 @@ public class ConcertServiceImpl implements ConcertService {
             List<Long> filteredByQuery = concertRepository.findConcertIdsBySearchQuery(query);
             concertLikedIds = concertLikedIds.stream()
                 .filter(filteredByQuery::contains)
-                .collect(Collectors.toList());
+                .toList();
+
         }
 
         // 장르로 필터링
