@@ -150,11 +150,9 @@ public class ConcertServiceImpl implements ConcertService {
     @Override
     public List<ConcertLikedResponse> getLikedConcert(String query, String genre) {
 
-        Member member = memberRepository.findById(securityContextUtil.getContextMemberInfo().getMemberId()).stream()
-            .findAny()
-            .orElseThrow(() -> new BusinessException(ApiStatus.MEMBER_NOT_FOUND));
+        Long memberId = securityContextUtil.getContextMemberInfo().getMemberId();
 
-        List<Long> concertLikedIds = concertLikeRepository.findByMemberId(member.getId());
+        List<Long> concertLikedIds = concertLikeRepository.findByMemberId(memberId);
 
         // 필터링 적용
         concertLikedIds = filterConcertsByQueryAndGenre(concertLikedIds, query, genre);
