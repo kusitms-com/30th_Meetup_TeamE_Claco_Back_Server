@@ -159,7 +159,7 @@ public class ConcertServiceImpl implements ConcertService {
 
         List<ConcertLikedResponse> likedConcerts = new ArrayList<>();
 
-        for (Long concertId : concertLikedIds) {
+        concertLikedIds.forEach(concertId -> {
             Concert concert = concertRepository.findConcertById(concertId);
 
             List<Long> categoryIds = concertCategoryRepository.findCategoryIdsByCategoryName(concertId);
@@ -171,7 +171,8 @@ public class ConcertServiceImpl implements ConcertService {
 
             ConcertLikedResponse response = ConcertLikedResponse.fromEntity(concert, categoryResponses);
             likedConcerts.add(response);
-        }
+        });
+
 
         return likedConcerts;
     }
