@@ -2,6 +2,7 @@ package com.curateme.claco.concert.controller;
 
 import com.curateme.claco.concert.domain.dto.request.ConcertLikesRequest;
 import com.curateme.claco.concert.domain.dto.response.ConcertDetailResponse;
+import com.curateme.claco.concert.domain.dto.response.ConcertLikedResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertResponse;
 import com.curateme.claco.concert.service.ConcertService;
 import com.curateme.claco.global.response.ApiResponse;
@@ -9,6 +10,7 @@ import com.curateme.claco.global.response.PageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -71,7 +73,7 @@ public class ConcertController {
     }
 
     @GetMapping("/details/{concertId}")
-    @Operation(summary = "공연 상세보가", description = "기능명세서 화면번호 3.0.0")
+    @Operation(summary = "공연 상세보기", description = "기능명세서 화면번호 3.0.0")
     public ApiResponse<ConcertDetailResponse> getConcertDetails(
         @PathVariable("concertId") Long concertId
     ) {
@@ -84,6 +86,15 @@ public class ConcertController {
         @RequestBody ConcertLikesRequest concertLikesRequest
     ) {
         return ApiResponse.ok(concertService.postLikes(concertLikesRequest));
+    }
+
+    @GetMapping("/likes")
+    @Operation(summary = "내가 좋아요한 공연", description = "기능명세서 화면번호 7.3.0")
+    public ApiResponse<List<ConcertLikedResponse>> getMyConcerts(
+        @RequestParam("query") String query,
+        @RequestParam("genre") String genre
+    ) {
+        return ApiResponse.ok(concertService.getLikedConcert(query, genre));
     }
 
 }

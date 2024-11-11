@@ -2,9 +2,11 @@ package com.curateme.claco.concert.service;
 
 import com.curateme.claco.concert.domain.dto.request.ConcertLikesRequest;
 import com.curateme.claco.concert.domain.dto.response.ConcertDetailResponse;
+import com.curateme.claco.concert.domain.dto.response.ConcertLikedResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertResponse;
 import com.curateme.claco.global.response.PageResponse;
 import java.time.LocalDate;
+import java.util.List;
 import org.springframework.data.domain.Pageable;
 
 public interface ConcertService {
@@ -19,4 +21,5 @@ public interface ConcertService {
 
     String postLikes(ConcertLikesRequest concertLikesRequest);
 
+    List<ConcertLikedResponse> getLikedConcert(String query, String genre);
 }

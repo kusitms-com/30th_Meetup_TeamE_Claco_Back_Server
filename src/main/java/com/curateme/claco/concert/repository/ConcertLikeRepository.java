@@ -3,6 +3,7 @@ package com.curateme.claco.concert.repository;
 import com.curateme.claco.concert.domain.entity.Concert;
 import com.curateme.claco.concert.domain.entity.ConcertLike;
 import com.curateme.claco.member.domain.entity.Member;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,6 +19,10 @@ public interface ConcertLikeRepository extends JpaRepository<ConcertLike,Long> {
 
     @Query("SELECT cl.concert.id FROM ConcertLike cl WHERE cl.member.id = :userId ORDER BY cl.createdAt DESC")
     Long findMostRecentLikedConcert(@Param("userId") Long userId);
+
+
+    @Query("SELECT cl.concert.id FROM ConcertLike cl WHERE cl.member.id = :userId")
+    List<Long> findConcertIdsByMemberId(@Param("userId") Long userId);
 
 }
 
