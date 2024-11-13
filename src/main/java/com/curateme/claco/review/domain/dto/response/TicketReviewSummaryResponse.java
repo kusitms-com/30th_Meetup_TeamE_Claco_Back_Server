@@ -7,13 +7,13 @@ import lombok.Getter;
 @Getter
 public class TicketReviewSummaryResponse {
 
-    @Schema(name = "concert_id")
+    @Schema(name = "공연 아이디")
     private Long concertId;
 
-    @Schema(name = "created_at")
+    @Schema(name = "티켓 등록 날짜(관람 날짜)")
     private LocalDateTime createdAt;
 
-    @Schema(name = "review_content")
+    @Schema(name = "리뷰 내용")
     private String content;
 
     // Constructor
