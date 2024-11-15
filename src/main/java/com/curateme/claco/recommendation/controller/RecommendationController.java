@@ -2,6 +2,7 @@ package com.curateme.claco.recommendation.controller;
 
 import com.curateme.claco.global.response.ApiResponse;
 import com.curateme.claco.recommendation.domain.dto.RecommendationConcertResponseV2;
+import com.curateme.claco.recommendation.domain.dto.RecommendationConcertResponseV3;
 import com.curateme.claco.recommendation.domain.dto.RecommendationConcertsResponseV1;
 import com.curateme.claco.recommendation.service.RecommendationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,7 +29,7 @@ public class RecommendationController {
 
     @GetMapping("/itembased")
     @Operation(summary = "최근 좋아요 한 공연 기반 맞춤 추천", description = "기능명세서 화면번호 2.1.0(C)")
-    public ApiResponse<List<RecommendationConcertsResponseV1>> getLikedConcertRecommendations(
+    public ApiResponse<RecommendationConcertResponseV3> getLikedConcertRecommendations(
     ){
         return ApiResponse.ok(recommendationService.getLikedConcertRecommendations());
     }
