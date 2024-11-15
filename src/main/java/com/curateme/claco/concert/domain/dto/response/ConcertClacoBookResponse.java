@@ -17,16 +17,16 @@ import lombok.NoArgsConstructor;
 public class ConcertClacoBookResponse {
 
     @NotNull
-    @Schema(name = "concert_name")
+    @Schema(name = "공연 이름")
     private String prfnm;
 
-    @Schema(name = "poster")
+    @Schema(name = "포스터 URL")
     private String poster;
 
-    @Schema(name = "facility_name")
+    @Schema(name = "공연 장소")
     private String fcltynm;
 
-    @Schema(name = "categories")
+    @Schema(name = "공연 성격 리스트")
     private List<ConcertCategoryResponse> categories;
 
     public static ConcertClacoBookResponse fromEntity(

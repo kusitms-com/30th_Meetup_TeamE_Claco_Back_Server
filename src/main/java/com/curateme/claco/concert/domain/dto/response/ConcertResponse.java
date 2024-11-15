@@ -21,80 +21,80 @@ public class ConcertResponse {
     private Long id;
 
     @NotNull
-    @Schema(name = "concert_id")
+    @Schema(name = "공연 아이디")
     private String mt20id;
 
     @NotNull
-    @Schema(name = "concert_name")
+    @Schema(name = "공연 제목")
     private String prfnm;
 
-    @Schema(name = "start_date")
+    @Schema(name = "공연 시작날짜")
     private LocalDate prfpdfrom;
 
-    @Schema(name = "end_date")
+    @Schema(name = "공연 종료날짜")
     private LocalDate prfpdto;
 
-    @Schema(name = "facility_name")
+    @Schema(name = "공연 장소")
     private String fcltynm;
 
-    @Schema(name = "poster")
+    @Schema(name = "공연 포스터 URL")
     private String poster;
 
-    @Schema(name = "area")
+    @Schema(name = "공연 지역")
     private String area;
 
-    @Schema(name = "genre")
+    @Schema(name = "공연 장르")
     private String genrenm;
 
-    @Schema(name = "openrun")
+    @Schema(name = "오픈런 여부")
     private String openrun;
 
-    @Schema(name = "status")
+    @Schema(name = "공연 상태")
     private String prfstate;
 
-    @Schema(name = "cast")
+    @Schema(name = "공연 캐스팅")
     private String prfcast;
 
-    @Schema(name = "crew")
+    @Schema(name = "공연 크루")
     private String prfcrew;
 
-    @Schema(name = "runtime")
+    @Schema(name = "공연 시간")
     private String prfruntime;
 
-    @Schema(name = "age")
+    @Schema(name = "공연 관람 나이")
     private String prfage;
 
-    @Schema(name = "company_name")
+    @Schema(name = "공연 회사 M")
     private String entrpsnm;
 
-    @Schema(name = "company_namep")
+    @Schema(name = "공연 회사 P")
     private String entrpsnmP;
 
-    @Schema(name = "company_namea")
+    @Schema(name = "공연 회사 A")
     private String entrpsnmA;
 
-    @Schema(name = "company_nameh")
+    @Schema(name = "공연 회사 H")
     private String entrpsnmH;
 
-    @Schema(name = "company_names")
+    @Schema(name = "공연 회사 S")
     private String entrpsnmS;
 
-    @Schema(name = "seat_guidance")
+    @Schema(name = "자리별 가격 ")
     private String pcseguidance;
 
     @Schema(name = "visit")
     private String visit;
 
-    @Schema(name = "child")
+    @Schema(name = "어린이 관람 가능")
     private String child;
 
-    @Schema(name = "daehakro")
+    @Schema(name = "대학로 공연 여부")
     private String daehakro;
 
-    @Schema(name = "festival")
+    @Schema(name = "페스티벌 여부")
     private String festival;
 
-    @Schema(name = "musical_license")
+    @Schema(name = "저작권 여부")
     private String musicallicense;
 
     @Schema(name = "musical_create")
@@ -103,10 +103,10 @@ public class ConcertResponse {
     @Schema(name = "update_date")
     private String updatedate;
 
-    @Schema(name = "schedule_guidance")
+    @Schema(name = "공연 요일 및 시간대")
     private String dtguidance;
 
-    @Schema(name = "introduction")
+    @Schema(name = "공연 소개 URL")
     private String styurl;
 
     public static ConcertResponse fromEntity(Concert concert){
