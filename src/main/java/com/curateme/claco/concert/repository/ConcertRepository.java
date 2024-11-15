@@ -15,7 +15,7 @@ public interface ConcertRepository extends JpaRepository<Concert,Long> {
     @Query("SELECT c.id FROM Concert c " + "WHERE c.area = :area " + "AND c.prfpdto BETWEEN :startDate AND :endDate")
     List<Long> findConcertIdsByFilters(@Param("area") String area, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
-    @Query("SELECT c.id FROM Concert c " + "WHERE (c.prfnm LIKE %:query% " + "OR c.prfcast LIKE %:query% " + "OR c.fcltynm LIKE %:query%)")
+    @Query("SELECT c.id FROM Concert c " + "WHERE (c.prfnm LIKE %:query% " + "OR c.prfcast LIKE %:query% " + "OR c.fcltynm LIKE %:query%)" + "AND c.prfpdto >= CURRENT_DATE")
     List<Long> findConcertIdsBySearchQuery(@Param("query") String query);
 
     @Query("SELECT c FROM Concert c WHERE c.id = :concertId")
