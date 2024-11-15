@@ -20,16 +20,16 @@ public class ConcertLikedResponse {
     private Long id;
 
     @NotNull
-    @Schema(name = "공연 제목")
+    @Schema(description = "공연 제목")
     private String prfnm;
 
-    @Schema(name = "공연 장르")
+    @Schema(description = "공연 장르")
     private String genrenm;
 
-    @Schema(name = "공연 포스터 URL")
+    @Schema(description = "공연 포스터 URL")
     private String poster;
 
-    @Schema(name = "공연 성격 리스트")
+    @Schema(description = "공연 성격 리스트")
     private List<ConcertCategoryResponse> categories;
 
     public static ConcertLikedResponse fromEntity(Concert concert, List<ConcertCategoryResponse> categories){
