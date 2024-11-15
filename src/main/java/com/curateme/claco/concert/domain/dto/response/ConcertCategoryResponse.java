@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ConcertCategoryResponse {
 
-    @Schema(name = "공연 성격")
+    @Schema(description = "공연 성격")
     private String category;
 
-    @Schema(name = "성격 이미지 URL")
+    @Schema(description = "성격 이미지 URL")
     private String imageURL;
 }

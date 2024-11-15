@@ -15,10 +15,10 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ConcertLikesRequest {
 
-    @Schema(name = "멤버 아이디")
+    @Schema(description = "멤버 아이디")
     private Long memberId;
 
-    @Schema(name = "공연 아이디")
+    @Schema(description = "공연 아이디")
     private Long concertId;
 
     public ConcertLike toEntity(Member member, Concert concert) {

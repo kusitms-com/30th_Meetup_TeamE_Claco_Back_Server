@@ -26,22 +26,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/concerts")
 @RequiredArgsConstructor
-public class ConcertController {
-    private final ConcertService concertService;
+    public class ConcertController {
+        private final ConcertService concertService;
 
-    @GetMapping("/views/{categoryName}/{direction}")
-    @Operation(summary = "공연 둘러보기", description = "기능명세서 화면번호 4.0.0")
-    @Parameter(name = "categoryName", description = "카테고리 명", required = true, example = "grand")
-    @Parameter(name = "direction", description = "정렬 순서", required = true, example = "asc/dsc")
-    public ApiResponse<PageResponse<ConcertResponse>> getConcerts(
-        @PathVariable("categoryName") String categoryName,
-        @PathVariable("direction") String direction,
-        @RequestParam("page") int page,
-        @RequestParam(value = "size", defaultValue = "9") int size) {
+        @GetMapping("/views/{categoryName}/{direction}")
+        @Operation(summary = "공연 둘러보기", description = "기능명세서 화면번호 4.0.0")
+        @Parameter(name = "categoryName", description = "카테고리 명", required = true, example = "grand")
+        @Parameter(name = "direction", description = "정렬 순서", required = true, example = "asc/dsc")
+        public ApiResponse<PageResponse<ConcertResponse>> getConcerts(
+            @PathVariable("categoryName") String categoryName,
+            @PathVariable("direction") String direction,
+            @RequestParam("page") int page,
+            @RequestParam(value = "size", defaultValue = "9") int size) {
 
-        Pageable pageable = PageRequest.of(page - 1, size);
-        return ApiResponse.ok(concertService.getConcertInfos(categoryName, direction, pageable));
-    }
+            Pageable pageable = PageRequest.of(page - 1, size);
+            return ApiResponse.ok(concertService.getConcertInfos(categoryName, direction, pageable));
+        }
 
     @GetMapping("/filters")
     @Operation(summary = "공연 둘러보기 세부사항 필터", description = "기능명세서 화면번호 4.0.1")

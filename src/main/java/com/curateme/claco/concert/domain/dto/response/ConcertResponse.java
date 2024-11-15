@@ -21,92 +21,92 @@ public class ConcertResponse {
     private Long id;
 
     @NotNull
-    @Schema(name = "공연 아이디")
+    @Schema(description = "공연 아이디", example = "PF121682")
     private String mt20id;
 
     @NotNull
-    @Schema(name = "공연 제목")
+    @Schema(description = "공연 제목", example = "옥탑방 고양이 [대학로]")
     private String prfnm;
 
-    @Schema(name = "공연 시작날짜")
+    @Schema(description = "공연 시작날짜", example = "2010-04-06")
     private LocalDate prfpdfrom;
 
-    @Schema(name = "공연 종료날짜")
+    @Schema(description = "공연 종료날짜", example = "2024-11-30")
     private LocalDate prfpdto;
 
-    @Schema(name = "공연 장소")
+    @Schema(description = "공연 장소", example = "틴틴홀")
     private String fcltynm;
 
-    @Schema(name = "공연 포스터 URL")
+    @Schema(description = "공연 포스터 URL", example = "http://www.kopis.or.kr/upload/pfmPoster/PF_PF121682_210322_143051.gif")
     private String poster;
 
-    @Schema(name = "공연 지역")
+    @Schema(description = "공연 지역", example = "서울특별시")
     private String area;
 
-    @Schema(name = "공연 장르")
+    @Schema(description = "공연 장르", example = "연극")
     private String genrenm;
 
-    @Schema(name = "오픈런 여부")
+    @Schema(description = "오픈런 여부", example = "Y")
     private String openrun;
 
-    @Schema(name = "공연 상태")
+    @Schema(description = "공연 상태", example = "공연중")
     private String prfstate;
 
-    @Schema(name = "공연 캐스팅")
+    @Schema(description = "공연 캐스팅", example = "정태령, 유다영, 서해든, 민채우, 가은, 이른봄, 정진혁 등")
     private String prfcast;
 
-    @Schema(name = "공연 크루")
+    @Schema(description = "공연 크루", example = " ")
     private String prfcrew;
 
-    @Schema(name = "공연 시간")
+    @Schema(description = "공연 시간", example = "1시간 40분")
     private String prfruntime;
 
-    @Schema(name = "공연 관람 나이")
+    @Schema(description = "공연 관람 나이", example = "만 13세 이상")
     private String prfage;
 
-    @Schema(name = "공연 회사 M")
+    @Schema(description = "공연 회사 M", example = " ")
     private String entrpsnm;
 
-    @Schema(name = "공연 회사 P")
+    @Schema(description = "공연 회사 P", example = " ")
     private String entrpsnmP;
 
-    @Schema(name = "공연 회사 A")
+    @Schema(description = "공연 회사 A", example = " ")
     private String entrpsnmA;
 
-    @Schema(name = "공연 회사 H")
+    @Schema(description = "공연 회사 H", example = "(주)레드앤블루(구. 악어컴퍼니)")
     private String entrpsnmH;
 
-    @Schema(name = "공연 회사 S")
+    @Schema(description = "공연 회사 S", example = "(주)레드앤블루(구. 악어컴퍼니)")
     private String entrpsnmS;
 
-    @Schema(name = "자리별 가격 ")
+    @Schema(description = "자리별 가격", example = "전석 40,000원")
     private String pcseguidance;
 
-    @Schema(name = "visit")
+    @Schema(description = "방문 여부", example = "N")
     private String visit;
 
-    @Schema(name = "어린이 관람 가능")
+    @Schema(description = "어린이 관람 가능 여부", example = "N")
     private String child;
 
-    @Schema(name = "대학로 공연 여부")
+    @Schema(description = "대학로 공연 여부", example = "Y")
     private String daehakro;
 
-    @Schema(name = "페스티벌 여부")
+    @Schema(description = "페스티벌 여부", example = "N")
     private String festival;
 
-    @Schema(name = "저작권 여부")
+    @Schema(description = "저작권 여부", example = "N")
     private String musicallicense;
 
-    @Schema(name = "musical_create")
+    @Schema(description = "뮤지컬 창작 여부", example = "N")
     private String musicalcreate;
 
-    @Schema(name = "update_date")
+    @Schema(description = "업데이트 날짜", example = "2024-10-24 11:01:03")
     private String updatedate;
 
-    @Schema(name = "공연 요일 및 시간대")
+    @Schema(description = "공연 요일 및 시간대", example = "월요일 ~ 목요일(15:00,16:00,17:15,19:30), 토요일 ~ 일요일(11:50,12:50,14:00,15:00,16:15,17:15,18:30,19:30,20:30), HOL(11:50,12:00,12:50,14:00,14:10,15:00,16:15,16:20,17:15,18:30,19:30,20:30), 금요일(15:00,16:00,17:15,19:00,19:30)")
     private String dtguidance;
 
-    @Schema(name = "공연 소개 URL")
+    @Schema(description = "공연 소개 URL", example = "http://www.kopis.or.kr/upload/pfmIntroImage/PF_PF121682_240913_0959491.jpg")
     private String styurl;
 
     public static ConcertResponse fromEntity(Concert concert){
