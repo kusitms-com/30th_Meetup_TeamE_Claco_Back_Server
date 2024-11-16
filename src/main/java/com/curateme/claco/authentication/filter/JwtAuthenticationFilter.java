@@ -117,8 +117,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				.path("/")
 				.httpOnly(true)
 				.maxAge(COOKIE_EXPIRATION)
-				.sameSite("Lax")
-				.secure(false)
+				.sameSite("None")
+				.secure(true)
 				.build();
 
 			response.setHeader("Set-Cookie", String.valueOf(cookie));
