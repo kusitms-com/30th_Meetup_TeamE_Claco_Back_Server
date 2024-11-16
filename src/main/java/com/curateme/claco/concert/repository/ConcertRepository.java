@@ -15,7 +15,7 @@ public interface ConcertRepository extends JpaRepository<Concert,Long> {
     @Query("SELECT DISTINCT c.id FROM Concert c JOIN c.categories cat WHERE c.area = :area AND c.prfpdto BETWEEN :startDate AND :endDate AND EXISTS (SELECT 1 FROM ConcertCategory cc WHERE cc.concert = c AND cc.category.category IN :categories)")
     List<Long> findConcertIdsByFilters(@Param("area") String area, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, @Param("categories") List<String> categories);
 
-    @Query("SELECT c.id FROM Concert c " + "WHERE (c.prfnm LIKE %:query% " + "OR c.prfcast LIKE %:query% " + "OR c.fcltynm LIKE %:query%)")
+    @Query("SELECT c.id FROM Concert c " + "WHERE (c.prfnm LIKE %:query% " + "OR c.prfcast LIKE %:query% " + "OR c.fcltynm LIKE %:query%)" + "AND c.prfpdto >= CURRENT_DATE")
     List<Long> findConcertIdsBySearchQuery(@Param("query") String query);
 
     @Query("SELECT c FROM Concert c WHERE c.id = :concertId")

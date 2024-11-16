@@ -1,6 +1,7 @@
 package com.curateme.claco.concert.controller;
 
 import com.curateme.claco.concert.domain.dto.request.ConcertLikesRequest;
+import com.curateme.claco.concert.domain.dto.response.ConcertAutoCompleteResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertDetailResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertLikedResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertResponse;
@@ -105,6 +106,15 @@ import org.springframework.web.bind.annotation.RestController;
         ) {
             return ApiResponse.ok(concertService.getLikedConcert(query, genre));
         }
+
+    @GetMapping("/search")
+    @Operation(summary = "자동완성 API", description = "자동완성 기능으로 10개의 공연을 반환")
+    public ApiResponse<List<ConcertAutoCompleteResponse>> autoCompletes(
+        @RequestParam("query") String query
+    ){
+
+        return ApiResponse.ok(concertService.getAutoComplete(query));
+    }
 
 }
 

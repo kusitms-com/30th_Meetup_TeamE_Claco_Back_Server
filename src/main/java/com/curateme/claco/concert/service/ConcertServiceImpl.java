@@ -2,6 +2,7 @@ package com.curateme.claco.concert.service;
 
 import com.curateme.claco.authentication.util.SecurityContextUtil;
 import com.curateme.claco.concert.domain.dto.request.ConcertLikesRequest;
+import com.curateme.claco.concert.domain.dto.response.ConcertAutoCompleteResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertCategoryResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertDetailResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertLikedResponse;
@@ -212,6 +213,20 @@ public class ConcertServiceImpl implements ConcertService {
 
         return likedConcerts;
     }
+
+    @Override
+    public List<ConcertAutoCompleteResponse> getAutoComplete(String query) {
+
+        List<Long> concertIds = concertRepository.findConcertIdsBySearchQuery(query);
+        List<Long> topConcertIds = concertIds.size() > 10 ? concertIds.subList(0, 10) : concertIds;
+
+        List<Concert> concerts = concertRepository.findAllById(topConcertIds);
+
+        return concerts.stream()
+            .map(ConcertAutoCompleteResponse::fromEntity)
+            .toList();
+    }
+
 
     private List<Long> filterConcertsByQueryAndGenre(List<Long> concertLikedIds, String query, String genre) {
         // 검색어로 필터링
