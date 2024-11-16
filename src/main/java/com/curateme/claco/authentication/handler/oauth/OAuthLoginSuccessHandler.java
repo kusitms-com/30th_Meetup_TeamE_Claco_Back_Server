@@ -76,7 +76,9 @@ public class OAuthLoginSuccessHandler implements AuthenticationSuccessHandler {
 
 		// TODO: 임시 지정
 		String redirectUrl = "http://localhost:5173/oauth/callback/main?token=" +
-			URLEncoder.encode(accessToken, StandardCharsets.UTF_8);
+			URLEncoder.encode(accessToken, StandardCharsets.UTF_8) +
+			"&nickname=" +
+			URLEncoder.encode(member.getNickname(), StandardCharsets.UTF_8);
 
 		if (member.getRole() == Role.SOCIAL) {
 			redirectUrl = "http://localhost:5173/oauth/callback/sign-up?token=" +
