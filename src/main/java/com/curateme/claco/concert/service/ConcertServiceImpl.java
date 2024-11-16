@@ -177,9 +177,6 @@ public class ConcertServiceImpl implements ConcertService {
         return likedConcerts;
     }
 
-    /**
-     * 검색어와 장르로 콘서트 필터링
-     */
     private List<Long> filterConcertsByQueryAndGenre(List<Long> concertLikedIds, String query, String genre) {
         // 검색어로 필터링
         if (query != null && !query.isEmpty()) {
