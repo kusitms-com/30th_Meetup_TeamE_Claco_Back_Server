@@ -64,6 +64,8 @@ public class TicketReviewInfoResponse {
 	// 관람 좌석
 	@Schema(description = "관람 좌석", example = "1층 3열")
 	private String watchSit;
+	@Schema(description = "티켓 이미지 url", example = "https://claco-server.com/image")
+	private String ticketImage;
 	// 관람 태그(공연 성격)
 	@Schema(description = "공연 성격들")
 	private List<TagCategoryVO> concertTags;
@@ -90,6 +92,7 @@ public class TicketReviewInfoResponse {
 		response.watchDate = ticketReview.getWatchDate();
 		response.watchRound = ticketReview.getWatchRound();
 		response.watchSit = ticketReview.getWatchSit();
+		response.ticketImage = ticketReview.getTicketImage();
 		response.concertTags = ticketReview.getReviewTags().stream()
 			.map(ReviewTag::getTagCategory)
 			.map(TagCategoryVO::fromEntity)
