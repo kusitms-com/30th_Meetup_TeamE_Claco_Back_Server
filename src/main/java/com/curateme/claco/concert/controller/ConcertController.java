@@ -53,11 +53,13 @@ import org.springframework.web.bind.annotation.RestController;
         @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy.MM.dd") LocalDate endDate,
         @RequestParam("direction") String direction,
         @RequestParam("page") int page,
-        @RequestParam(value = "size", defaultValue = "9") int size) {
+        @RequestParam(value = "size", defaultValue = "9") int size,
+        @RequestParam(value = "categories", required = false) List<String> categories)
+    {
 
         Pageable pageable = PageRequest.of(page - 1, size);
 
-        return ApiResponse.ok(concertService.getConcertInfosWithFilter(minPrice, maxPrice, area, startDate, endDate, direction, pageable));
+        return ApiResponse.ok(concertService.getConcertInfosWithFilter(minPrice, maxPrice, area, startDate, endDate, direction, categories, pageable));
     }
 
     @GetMapping("/queries")

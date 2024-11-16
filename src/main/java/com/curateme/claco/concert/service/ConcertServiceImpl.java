@@ -68,12 +68,12 @@ public class ConcertServiceImpl implements ConcertService {
 
     @Override
     public PageResponse<ConcertResponse> getConcertInfosWithFilter(Double minPrice, Double maxPrice,
-        String area, LocalDate startDate, LocalDate endDate, String direction, Pageable pageable) {
+        String area, LocalDate startDate, LocalDate endDate, String direction, List<String> categories, Pageable pageable) {
 
         Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by("prfpdfrom").ascending() : Sort.by("prfpdfrom").descending();
         Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
 
-        List<Long> concertIds = concertRepository.findConcertIdsByFilters(area, startDate, endDate);
+        List<Long> concertIds = concertRepository.findConcertIdsByFilters(area, startDate, endDate, categories);
 
         Page<Concert> concertPage = concertRepository.findByIdIn(concertIds, sortedPageable);
 
