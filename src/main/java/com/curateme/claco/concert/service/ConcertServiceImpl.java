@@ -53,14 +53,26 @@ public class ConcertServiceImpl implements ConcertService {
 
         List<Long> concertIds = concertRepository.findConcertIdsByGenre(genre);
 
+        List<ConcertResponse> concertLists = new ArrayList<>();
+
+        concertIds.forEach(concertId -> {
+            Concert concert = concertRepository.findConcertById(concertId);
+
+            List<Long> categoryIds = concertCategoryRepository.findCategoryIdsByCategoryName(concertId);
+            List<Category> categoryList = categoryRepository.findAllById(categoryIds);
+
+            List<ConcertCategoryResponse> categoryResponses = categoryList.stream()
+                .map(category -> new ConcertCategoryResponse(category.getCategory(), category.getImageUrl()))
+                .collect(Collectors.toList());
+
+            ConcertResponse response = ConcertResponse.fromEntity(concert, categoryResponses);
+            concertLists.add(response);
+        });
+
         Page<Concert> concertPage = concertRepository.findByIdIn(concertIds, sortedPageable);
 
-        List<ConcertResponse> concertResponses = concertPage.getContent().stream()
-            .map(ConcertResponse::fromEntity)
-            .collect(Collectors.toList());
-
         return PageResponse.<ConcertResponse>builder()
-            .listPageResponse(concertResponses)
+            .listPageResponse(concertLists)
             .totalCount(concertPage.getTotalElements())
             .size(concertPage.getSize())
             .build();
@@ -75,14 +87,26 @@ public class ConcertServiceImpl implements ConcertService {
 
         List<Long> concertIds = concertRepository.findConcertIdsByFilters(area, startDate, endDate, categories);
 
+        List<ConcertResponse> concertLists = new ArrayList<>();
+
+        concertIds.forEach(concertId -> {
+            Concert concert = concertRepository.findConcertById(concertId);
+
+            List<Long> categoryIds = concertCategoryRepository.findCategoryIdsByCategoryName(concertId);
+            List<Category> categoryList = categoryRepository.findAllById(categoryIds);
+
+            List<ConcertCategoryResponse> categoryResponses = categoryList.stream()
+                .map(category -> new ConcertCategoryResponse(category.getCategory(), category.getImageUrl()))
+                .collect(Collectors.toList());
+
+            ConcertResponse response = ConcertResponse.fromEntity(concert, categoryResponses);
+            concertLists.add(response);
+        });
+
         Page<Concert> concertPage = concertRepository.findByIdIn(concertIds, sortedPageable);
 
-        List<ConcertResponse> concertResponses = concertPage.getContent().stream()
-            .map(ConcertResponse::fromEntity)
-            .collect(Collectors.toList());
-
         return PageResponse.<ConcertResponse>builder()
-            .listPageResponse(concertResponses)
+            .listPageResponse(concertLists)
             .totalCount(concertPage.getTotalElements())
             .size(concertPage.getSize())
             .build();
@@ -96,14 +120,26 @@ public class ConcertServiceImpl implements ConcertService {
 
         List<Long> concertIds = concertRepository.findConcertIdsBySearchQuery(query);
 
+        List<ConcertResponse> concertLists = new ArrayList<>();
+
+        concertIds.forEach(concertId -> {
+            Concert concert = concertRepository.findConcertById(concertId);
+
+            List<Long> categoryIds = concertCategoryRepository.findCategoryIdsByCategoryName(concertId);
+            List<Category> categories = categoryRepository.findAllById(categoryIds);
+
+            List<ConcertCategoryResponse> categoryResponses = categories.stream()
+                .map(category -> new ConcertCategoryResponse(category.getCategory(), category.getImageUrl()))
+                .collect(Collectors.toList());
+
+            ConcertResponse response = ConcertResponse.fromEntity(concert, categoryResponses);
+            concertLists.add(response);
+        });
+
         Page<Concert> concertPage = concertRepository.findByIdIn(concertIds, sortedPageable);
 
-        List<ConcertResponse> concertResponses = concertPage.getContent().stream()
-            .map(ConcertResponse::fromEntity)
-            .collect(Collectors.toList());
-
         return PageResponse.<ConcertResponse>builder()
-            .listPageResponse(concertResponses)
+            .listPageResponse(concertLists)
             .totalCount(concertPage.getTotalElements())
             .size(concertPage.getSize())
             .build();
