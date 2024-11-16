@@ -34,13 +34,13 @@ import org.springframework.web.bind.annotation.RestController;
         @Parameter(name = "categoryName", description = "카테고리 명", required = true, example = "grand")
         @Parameter(name = "direction", description = "정렬 순서", required = true, example = "asc/dsc")
         public ApiResponse<PageResponse<ConcertResponse>> getConcerts(
-            @PathVariable("categoryName") String categoryName,
+            @PathVariable("genre") String genre,
             @PathVariable("direction") String direction,
             @RequestParam("page") int page,
             @RequestParam(value = "size", defaultValue = "9") int size) {
 
             Pageable pageable = PageRequest.of(page - 1, size);
-            return ApiResponse.ok(concertService.getConcertInfos(categoryName, direction, pageable));
+            return ApiResponse.ok(concertService.getConcertInfos(genre, direction, pageable));
         }
 
     @GetMapping("/filters")

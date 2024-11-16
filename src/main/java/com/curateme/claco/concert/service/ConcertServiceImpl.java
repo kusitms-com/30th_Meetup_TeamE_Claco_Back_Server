@@ -47,11 +47,11 @@ public class ConcertServiceImpl implements ConcertService {
 
 
     @Override
-    public PageResponse<ConcertResponse> getConcertInfos(String categoryName, String direction, Pageable pageable) {
+    public PageResponse<ConcertResponse> getConcertInfos(String genre, String direction, Pageable pageable) {
         Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by("prfpdfrom").ascending() : Sort.by("prfpdfrom").descending();
         Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
 
-        List<Long> concertIds = concertCategoryRepository.findConcertIdsByCategoryName(categoryName);
+        List<Long> concertIds = concertRepository.findConcertIdsByGenre(genre);
 
         Page<Concert> concertPage = concertRepository.findByIdIn(concertIds, sortedPageable);
 
