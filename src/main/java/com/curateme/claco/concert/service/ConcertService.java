@@ -1,6 +1,7 @@
 package com.curateme.claco.concert.service;
 
 import com.curateme.claco.concert.domain.dto.request.ConcertLikesRequest;
+import com.curateme.claco.concert.domain.dto.response.ConcertAutoCompleteResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertDetailResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertLikedResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertResponse;
@@ -22,4 +23,6 @@ public interface ConcertService {
     String postLikes(ConcertLikesRequest concertLikesRequest);
 
     List<ConcertLikedResponse> getLikedConcert(String query, String genre);
+
+    List<ConcertAutoCompleteResponse> getAutoComplete(String query);
 }

@@ -16,6 +16,7 @@ import com.curateme.claco.global.response.ApiStatus;
 import com.curateme.claco.member.domain.entity.Member;
 import com.curateme.claco.member.repository.MemberRepository;
 import com.curateme.claco.recommendation.domain.dto.RecommendationConcertResponseV2;
+import com.curateme.claco.recommendation.domain.dto.RecommendationConcertResponseV3;
 import com.curateme.claco.recommendation.domain.dto.RecommendationConcertsResponseV1;
 import com.curateme.claco.review.domain.dto.response.TicketReviewSummaryResponse;
 import com.curateme.claco.review.domain.entity.TicketReview;
@@ -74,30 +75,41 @@ public class RecommendationServiceImpl implements RecommendationService{
         return getConcertDetails(concertIds);
     }
 
-    //최근 좋아요한 공연 기반 추천
+    // 최근 좋아요한 공연 기반 추천
     @Override
-    public List<RecommendationConcertsResponseV1> getLikedConcertRecommendations() {
+    public RecommendationConcertResponseV3 getLikedConcertRecommendations() {
 
         Long memberId = securityContextUtil.getContextMemberInfo().getMemberId();
 
         Long concertId = concertLikeRepository.findMostRecentLikedConcert(memberId);
 
-        if (concertId == null){
-            Pageable pageable = PageRequest.of(0, 2); // 상위 두개만
+        List<RecommendationConcertsResponseV1> recommendedConcerts;
+
+        if (concertId == null) {
+            // 상위 두 개 공연 가져오기
+            Pageable pageable = PageRequest.of(0, 2);
             List<Long> concertIds = concertLikeRepository.findTopConcertIdsByLikeCount(pageable);
 
-            return getConcertDetails(concertIds);
+            recommendedConcerts = getConcertDetails(concertIds);
+        } else {
+            // Flask API 호출하여 추천 데이터 가져오기
+            String FLASK_API_URL = URL + "/recommendations/items/";
+
+            String jsonResponse = getConcertsFromFlask(concertId, FLASK_API_URL);
+            System.out.println("jsonResponse = " + jsonResponse);
+
+            List<Long> concertIds = parseConcertIdsFromJson(jsonResponse);
+
+            recommendedConcerts = getConcertDetails(concertIds);
         }
 
-        String FLASK_API_URL = URL + "/recommendations/items/";
-
-        String jsonResponse = getConcertsFromFlask(concertId, FLASK_API_URL);
-        System.out.println("jsonResponse = " + jsonResponse);
-
-        List<Long> concertIds = parseConcertIdsFromJson(jsonResponse);
-
-        return getConcertDetails(concertIds);
+        // RecommendationConcertResponseV3 객체 생성 후 반환
+        return RecommendationConcertResponseV3.builder()
+            .likedHistory(concertId != null)
+            .recommendationConcertsResponseV1s(recommendedConcerts)
+            .build();
     }
+
 
     // 유저 취향 기반 클라코북 추천
     @Override
