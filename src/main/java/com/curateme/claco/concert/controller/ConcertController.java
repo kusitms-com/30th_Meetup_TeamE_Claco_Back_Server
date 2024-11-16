@@ -35,68 +35,77 @@ import org.springframework.web.bind.annotation.RestController;
         @Parameter(name = "categoryName", description = "카테고리 명", required = true, example = "grand")
         @Parameter(name = "direction", description = "정렬 순서", required = true, example = "asc/dsc")
         public ApiResponse<PageResponse<ConcertResponse>> getConcerts(
-            @PathVariable("categoryName") String categoryName,
+            @PathVariable("genre") String genre,
             @PathVariable("direction") String direction,
             @RequestParam("page") int page,
             @RequestParam(value = "size", defaultValue = "9") int size) {
 
             Pageable pageable = PageRequest.of(page - 1, size);
-            return ApiResponse.ok(concertService.getConcertInfos(categoryName, direction, pageable));
+            return ApiResponse.ok(concertService.getConcertInfos(genre, direction, pageable));
         }
 
-    @GetMapping("/filters")
-    @Operation(summary = "공연 둘러보기 세부사항 필터", description = "기능명세서 화면번호 4.0.1")
-    public ApiResponse<PageResponse<ConcertResponse>> filterConcerts(
-        @RequestParam("minPrice") Double minPrice,
-        @RequestParam("maxPrice") Double maxPrice,
-        @RequestParam("area") String area,
-        @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy.MM.dd") LocalDate startDate,
-        @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy.MM.dd") LocalDate endDate,
-        @RequestParam("direction") String direction,
-        @RequestParam("page") int page,
-        @RequestParam(value = "size", defaultValue = "9") int size) {
+        @GetMapping("/filters")
+        @Operation(summary = "공연 둘러보기 세부사항 필터", description = "기능명세서 화면번호 4.0.1")
+        @Parameter(name = "direction", description = "정렬 순서", required = true, example = "asc/dsc")
+        @Parameter(name = "area", description = "지역", required = true, example = "서울특별시/경기도")
+        @Parameter(name = "startDate", description = "시작 날짜", required = true, example = "yyyy.MM.dd")
+        @Parameter(name = "endDate", description = "끝나는 날짜", required = true, example = "yyyy.MM.dd")
+        public ApiResponse<PageResponse<ConcertResponse>> filterConcerts(
+            @RequestParam("minPrice") Double minPrice,
+            @RequestParam("maxPrice") Double maxPrice,
+            @RequestParam("area") String area,
+            @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy.MM.dd") LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy.MM.dd") LocalDate endDate,
+            @RequestParam("direction") String direction,
+            @RequestParam("page") int page,
+            @RequestParam(value = "size", defaultValue = "9") int size,
+            @RequestParam(value = "categories", required = false) List<String> categories)
+        {
 
-        Pageable pageable = PageRequest.of(page - 1, size);
+            Pageable pageable = PageRequest.of(page - 1, size);
 
-        return ApiResponse.ok(concertService.getConcertInfosWithFilter(minPrice, maxPrice, area, startDate, endDate, direction, pageable));
-    }
+            return ApiResponse.ok(concertService.getConcertInfosWithFilter(minPrice, maxPrice, area, startDate, endDate, direction, categories, pageable));
+        }
 
-    @GetMapping("/queries")
-    @Operation(summary = "공연 둘러보기 검색하기", description = "기능명세서 화면번호 4.1.0")
-    public ApiResponse<PageResponse<ConcertResponse>> searchConcerts(
-        @RequestParam("query") String query,
-        @RequestParam("direction") String direction,
-        @RequestParam("page") int page,
-        @RequestParam(value = "size", defaultValue = "9") int size) {
+        @GetMapping("/queries")
+        @Operation(summary = "공연 둘러보기 검색하기", description = "기능명세서 화면번호 4.1.0")
+        @Parameter(name = "direction", description = "정렬 순서", required = true, example = "asc/dsc")
+        @Parameter(name = "query", description = "검색어", required = true)
+        public ApiResponse<PageResponse<ConcertResponse>> searchConcerts(
+            @RequestParam("query") String query,
+            @RequestParam("direction") String direction,
+            @RequestParam("page") int page,
+            @RequestParam(value = "size", defaultValue = "9") int size) {
 
-        Pageable pageable = PageRequest.of(page - 1, size);
-        return ApiResponse.ok(concertService.getSearchConcert(query,direction, pageable));
-    }
+            Pageable pageable = PageRequest.of(page - 1, size);
+            return ApiResponse.ok(concertService.getSearchConcert(query,direction, pageable));
+        }
 
-    @GetMapping("/details/{concertId}")
-    @Operation(summary = "공연 상세보기", description = "기능명세서 화면번호 3.0.0")
-    public ApiResponse<ConcertDetailResponse> getConcertDetails(
-        @PathVariable("concertId") Long concertId
-    ) {
-        return ApiResponse.ok(concertService.getConcertDetailWithCategories(concertId));
-    }
+        @GetMapping("/details/{concertId}")
+        @Operation(summary = "공연 상세보기", description = "기능명세서 화면번호 3.0.0")
+        public ApiResponse<ConcertDetailResponse> getConcertDetails(
+            @PathVariable("concertId") Long concertId
+        ) {
+            return ApiResponse.ok(concertService.getConcertDetailWithCategories(concertId));
+        }
 
-    @PostMapping("/likes")
-    @Operation(summary = "공연 좋아요", description = "특정 공연에 좋아요를 추가합니다")
-    public ApiResponse<String> postLikes(
-        @RequestBody ConcertLikesRequest concertLikesRequest
-    ) {
-        return ApiResponse.ok(concertService.postLikes(concertLikesRequest));
-    }
+        @PostMapping("/likes")
+        @Operation(summary = "공연 좋아요", description = "특정 공연에 좋아요를 추가합니다")
+        public ApiResponse<String> postLikes(
+            @RequestBody ConcertLikesRequest concertLikesRequest
+        ) {
+            return ApiResponse.ok(concertService.postLikes(concertLikesRequest));
+        }
 
-    @GetMapping("/likes")
-    @Operation(summary = "내가 좋아요한 공연", description = "기능명세서 화면번호 7.3.0")
-    public ApiResponse<List<ConcertLikedResponse>> getMyConcerts(
-        @RequestParam("query") String query,
-        @RequestParam("genre") String genre
-    ) {
-        return ApiResponse.ok(concertService.getLikedConcert(query, genre));
-    }
+        @GetMapping("/likes")
+        @Operation(summary = "내가 좋아요한 공연", description = "기능명세서 화면번호 7.3.0")
+        @Parameter(name = "query", description = "검색어", required = true)
+        public ApiResponse<List<ConcertLikedResponse>> getMyConcerts(
+            @RequestParam("query") String query,
+            @RequestParam("genre") String genre
+        ) {
+            return ApiResponse.ok(concertService.getLikedConcert(query, genre));
+        }
 
     @GetMapping("/search")
     @Operation(summary = "자동완성 API", description = "자동완성 기능으로 10개의 공연을 반환")

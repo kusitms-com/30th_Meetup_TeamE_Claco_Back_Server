@@ -56,50 +56,14 @@ public class ConcertDetailResponse {
     @Schema(description = "공연 캐스팅", example = "정태령, 유다영, 서해든, 민채우, 가은, 이른봄, 정진혁 등")
     private String prfcast;
 
-    @Schema(description = "공연 크루", example = " ")
-    private String prfcrew;
-
     @Schema(description = "공연 시간", example = "1시간 40분")
     private String prfruntime;
 
     @Schema(description = "공연 관람 나이", example = "만 13세 이상")
     private String prfage;
 
-    @Schema(description = "공연 회사 M", example = " ")
-    private String entrpsnm;
-
-    @Schema(description = "공연 회사 P", example = " ")
-    private String entrpsnmP;
-
-    @Schema(description = "공연 회사 A", example = " ")
-    private String entrpsnmA;
-
-    @Schema(description = "공연 회사 H", example = "(주)레드앤블루(구. 악어컴퍼니)")
-    private String entrpsnmH;
-
-    @Schema(description = "공연 회사 S", example = "(주)레드앤블루(구. 악어컴퍼니)")
-    private String entrpsnmS;
-
     @Schema(description = "자리별 가격", example = "전석 40,000원")
     private String pcseguidance;
-
-    @Schema(description = "방문 여부", example = "N")
-    private String visit;
-
-    @Schema(description = "어린이 관람 가능 여부", example = "N")
-    private String child;
-
-    @Schema(description = "대학로 공연 여부", example = "Y")
-    private String daehakro;
-
-    @Schema(description = "페스티벌 여부", example = "N")
-    private String festival;
-
-    @Schema(description = "저작권 여부", example = "N")
-    private String musicallicense;
-
-    @Schema(description = "뮤지컬 창작 여부", example = "N")
-    private String musicalcreate;
 
     @Schema(description = "업데이트 날짜", example = "2024-10-24 11:01:03")
     private String updatedate;
@@ -118,17 +82,30 @@ public class ConcertDetailResponse {
 
 
     public static ConcertDetailResponse fromEntity(Concert concert, List<ConcertCategoryResponse> categories){
-        return new ConcertDetailResponse(concert.getId(), concert.getMt20id(), concert.getPrfnm(),
-            concert.getPrfpdfrom(), concert.getPrfpdto(), concert.getFcltynm(), concert.getPoster(),
-            concert.getArea(), concert.getGenrenm(), concert.getOpenrun(), concert.getPrfstate(),
-            concert.getPrfcast(), concert.getPrfcrew(), concert.getPrfruntime(),
-            concert.getPrfage(), concert.getEntrpsnm(), concert.getEntrpsnmP(),
-            concert.getEntrpsnmA(), concert.getEntrpsnmH(), concert.getEntrpsnmS(),
-            concert.getPcseguidance(), concert.getVisit(), concert.getChild(), concert.getDaehakro(),
-            concert.getFestival(), concert.getMusicallicense(), concert.getMusicalcreate(),
-            concert.getUpdatedate(), concert.getDtguidance(), concert.getStyurl(), concert.getTicketReview(),
-            categories);
+        return ConcertDetailResponse.builder()
+            .id(concert.getId())
+            .mt20id(concert.getMt20id())
+            .prfnm(concert.getPrfnm())
+            .prfpdfrom(concert.getPrfpdfrom())
+            .prfpdto(concert.getPrfpdto())
+            .fcltynm(concert.getFcltynm())
+            .poster(concert.getPoster())
+            .area(concert.getArea())
+            .genrenm(concert.getGenrenm())
+            .openrun(concert.getOpenrun())
+            .prfstate(concert.getPrfstate())
+            .prfcast(concert.getPrfcast())
+            .prfruntime(concert.getPrfruntime())
+            .prfage(concert.getPrfage())
+            .pcseguidance(concert.getPcseguidance())
+            .updatedate(concert.getUpdatedate())
+            .dtguidance(concert.getDtguidance())
+            .styurl(concert.getStyurl())
+            .ticketReview(concert.getTicketReview())
+            .categories(categories)
+            .build();
     }
+
 
     public void setCategories(List<ConcertCategoryResponse> categories) {
         this.categories = categories;
