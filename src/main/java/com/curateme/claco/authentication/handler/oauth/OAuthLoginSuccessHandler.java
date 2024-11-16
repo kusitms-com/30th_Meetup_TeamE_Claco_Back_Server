@@ -82,9 +82,7 @@ public class OAuthLoginSuccessHandler implements AuthenticationSuccessHandler {
 
 		if (member.getRole() == Role.SOCIAL) {
 			redirectUrl = "http://localhost:5173/oauth/callback/sign-up?token=" +
-				URLEncoder.encode(accessToken, StandardCharsets.UTF_8) +
-				"&nickname=" +
-				URLEncoder.encode(member.getNickname(), StandardCharsets.UTF_8);
+				URLEncoder.encode(accessToken, StandardCharsets.UTF_8);
 		}
 
 		response.sendRedirect(redirectUrl);
