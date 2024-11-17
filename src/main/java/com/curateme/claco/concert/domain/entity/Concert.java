@@ -121,6 +121,9 @@ public class Concert extends BaseEntity {
     @Column(name = "introduction")
     private String styurl;
 
+    @Column(name = "summary", length = 1500)
+    private String summary;
+
     @OneToMany(mappedBy = "concert", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<TicketReview> ticketReview;
 

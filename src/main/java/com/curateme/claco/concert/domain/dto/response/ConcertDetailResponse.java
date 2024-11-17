@@ -77,6 +77,9 @@ public class ConcertDetailResponse {
     @Schema(description = "티켓 리뷰 리스트", example = "[...]")
     private List<TicketReview> ticketReview;
 
+    @Schema(name = "공연 요약 정보", example = "...")
+    private String summary;
+
     @Schema(description = "공연 성격 리스트", example = "[...]")
     private List<ConcertCategoryResponse> categories;
 
@@ -102,6 +105,7 @@ public class ConcertDetailResponse {
             .dtguidance(concert.getDtguidance())
             .styurl(concert.getStyurl())
             .ticketReview(concert.getTicketReview())
+            .summary(concert.getSummary())
             .categories(categories)
             .build();
     }
