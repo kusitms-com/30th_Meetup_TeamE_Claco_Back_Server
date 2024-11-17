@@ -27,9 +27,7 @@ class ConcertRepositoryTest {
     @Test
     void testFindByIdIn() {
         // Given
-        List<Long> ids = Stream.of("440", "441", "443")
-            .map(Long::valueOf)
-            .toList();
+        List<Long> ids = Arrays.asList(1L, 2L, 3L);
 
         PageRequest pageable = PageRequest.of(0, 10);
 
@@ -73,7 +71,7 @@ class ConcertRepositoryTest {
     @Test
     void testFindConcertById() {
         // Given
-        Long concertId = Long.valueOf("445");
+        Long concertId = 1L;
 
         // When
         Concert concert = concertRepository.findConcertById(concertId);

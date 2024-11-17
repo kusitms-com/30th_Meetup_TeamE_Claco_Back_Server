@@ -20,7 +20,7 @@ class ConcertCategoryRepositoryTest {
     @Test
     void testFindCategoryIdsByCategoryName() {
         // Given
-        Long concertId = Long.valueOf("445");
+        Long concertId = 1L;
 
         // When
         List<Long> categoryIds = concertCategoryRepository.findCategoryIdsByCategoryName(concertId);

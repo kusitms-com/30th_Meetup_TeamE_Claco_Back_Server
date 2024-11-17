@@ -22,7 +22,7 @@ class ConcertLikeRepositoryTest {
     @Test
     void testExistsByConcertId() {
         // Given
-        Long concertId = Long.valueOf("445");
+        Long concertId = 1L;
 
         // When
         boolean exists = concertLikeRepository.existsByConcertId(concertId);
@@ -34,7 +34,7 @@ class ConcertLikeRepositoryTest {
     @Test
     void testFindMostRecentLikedConcert() {
         // Given
-        Long userId = Long.valueOf("3");
+        Long userId = 1L;
 
         // When
         Long mostRecentLikedConcert = concertLikeRepository.findMostRecentLikedConcert(userId);
@@ -46,7 +46,7 @@ class ConcertLikeRepositoryTest {
     @Test
     void testFindConcertIdsByMemberId() {
         // Given
-        Long userId = Long.valueOf("3");
+        Long userId = 1L;
 
         // When
         List<Long> concertIds = concertLikeRepository.findConcertIdsByMemberId(userId);
