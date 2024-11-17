@@ -50,6 +50,7 @@ import org.springframework.web.bind.annotation.RestController;
         @Parameter(name = "area", description = "지역", required = true, example = "서울특별시/경기도")
         @Parameter(name = "startDate", description = "시작 날짜", required = true, example = "yyyy.MM.dd")
         @Parameter(name = "endDate", description = "끝나는 날짜", required = true, example = "yyyy.MM.dd")
+        @Parameter(name = "categories", description = "공연 성격 리스트", required = true, example = "웅장한, 현대적인(최대 5개)")
         public ApiResponse<PageResponse<ConcertResponse>> filterConcerts(
             @RequestParam("minPrice") Double minPrice,
             @RequestParam("maxPrice") Double maxPrice,
