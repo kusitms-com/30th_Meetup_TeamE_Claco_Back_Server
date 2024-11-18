@@ -73,5 +73,7 @@ jobs:
   
             sudo docker stop server || true
             sudo docker rm server || true
+            
+            sudo docker image prune -f
   
             sudo docker run -d --name server --env-file ~/env.list -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server
