@@ -63,7 +63,7 @@ public class SecurityConfig {
 			)
 			.authorizeHttpRequests((authorizeHttpRequests) ->
 				authorizeHttpRequests
-					.requestMatchers("/probe", "/oauth2/authorization/kakao",
+					.requestMatchers("/health-check", "/oauth2/authorization/kakao",
 						"/login/oauth2/code/kakao", "/favicon.ico")
 					.permitAll()
 					.requestMatchers("/swagger-ui/**")

@@ -47,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private static String GRANT_TYPE = "Bearer ";
 
 	protected List<String> filterPassList = List.of("/oauth2/authorization/kakao",
-		"/login/oauth2/code/kakao", "/favicon.ico", "/v3/api-docs", "/v3/api-docs/swagger-config", "/probe");
+		"/login/oauth2/code/kakao", "/favicon.ico", "/v3/api-docs", "/v3/api-docs/swagger-config", "/health-check");
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
