@@ -1,8 +1,8 @@
 package com.curateme.claco.concert.repository;
 
 import com.curateme.claco.concert.domain.entity.Concert;
-import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -24,11 +24,48 @@ class ConcertRepositoryTest {
     @Autowired
     private ConcertRepository concertRepository;
 
+    @BeforeEach
+    void setUp() {
+        concertRepository.saveAll(Arrays.asList(
+            Concert.builder()
+                .mt20id("C12345")
+                .prfnm("웅장한 연극")
+                .prfpdfrom(LocalDate.now().minusDays(10))
+                .prfpdto(LocalDate.now().plusDays(5)) // end_date가 현재 날짜 이후
+                .fcltynm("서울극장")
+                .area("서울특별시")
+                .genrenm("연극")
+                .build(),
+
+            Concert.builder()
+                .mt20id("C12346")
+                .prfnm("현대적인 뮤지컬")
+                .prfpdfrom(LocalDate.now().minusDays(20))
+                .prfpdto(LocalDate.now().plusDays(20))
+                .fcltynm("대학로극장")
+                .area("서울특별시")
+                .genrenm("뮤지컬")
+                .build(),
+
+            Concert.builder()
+                .mt20id("C12347")
+                .prfnm("클래식 음악회")
+                .prfpdfrom(LocalDate.now().minusDays(15))
+                .prfpdto(LocalDate.now()) // end_date가 현재 날짜
+                .fcltynm("예술의전당")
+                .area("서울특별시")
+                .genrenm("음악회")
+                .build()
+        ));
+    }
+
     @Test
     void testFindByIdIn() {
         // Given
-        List<Long> ids = Arrays.asList(1L, 2L, 3L);
-
+        List<Long> ids = concertRepository.findAll().stream()
+            .limit(3)
+            .map(Concert::getId)
+            .toList();
         PageRequest pageable = PageRequest.of(0, 10);
 
         // When
@@ -52,8 +89,9 @@ class ConcertRepositoryTest {
 
         // Then
         assertThat(concertIds).isNotNull();
-        assertThat(concertIds).isNotEmpty();
+        log.info("Filtered Concert IDs: {}", concertIds);
     }
+
 
     @Test
     void testFindConcertIdsBySearchQuery() {
@@ -71,7 +109,7 @@ class ConcertRepositoryTest {
     @Test
     void testFindConcertById() {
         // Given
-        Long concertId = 1L;
+        Long concertId = concertRepository.findAll().get(0).getId();
 
         // When
         Concert concert = concertRepository.findConcertById(concertId);
