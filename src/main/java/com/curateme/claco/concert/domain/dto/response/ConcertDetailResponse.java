@@ -1,6 +1,7 @@
 package com.curateme.claco.concert.domain.dto.response;
 
 import com.curateme.claco.concert.domain.entity.Concert;
+import com.curateme.claco.review.domain.dto.response.TicketReviewSimpleResponse;
 import com.curateme.claco.review.domain.entity.TicketReview;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
@@ -75,7 +76,7 @@ public class ConcertDetailResponse {
     private String styurl;
 
     @Schema(description = "티켓 리뷰 리스트", example = "[...]")
-    private List<TicketReview> ticketReview;
+    private List<TicketReviewSimpleResponse> ticketReviewSimpleResponses;
 
     @Schema(name = "공연 요약 정보", example = "...")
     private String summary;
@@ -84,7 +85,7 @@ public class ConcertDetailResponse {
     private List<ConcertCategoryResponse> categories;
 
 
-    public static ConcertDetailResponse fromEntity(Concert concert, List<ConcertCategoryResponse> categories){
+    public static ConcertDetailResponse fromEntity(Concert concert, List<TicketReviewSimpleResponse> ticketReviewSimpleResponses, List<ConcertCategoryResponse> categories){
         return ConcertDetailResponse.builder()
             .id(concert.getId())
             .mt20id(concert.getMt20id())
@@ -104,7 +105,7 @@ public class ConcertDetailResponse {
             .updatedate(concert.getUpdatedate())
             .dtguidance(concert.getDtguidance())
             .styurl(concert.getStyurl())
-            .ticketReview(concert.getTicketReview())
+            .ticketReviewSimpleResponses(ticketReviewSimpleResponses)
             .summary(concert.getSummary())
             .categories(categories)
             .build();
