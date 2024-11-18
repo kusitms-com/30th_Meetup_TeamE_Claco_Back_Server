@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.curateme.claco.global.annotation.TokenRefreshedCheck;
 import com.curateme.claco.global.response.ApiResponse;
 import com.curateme.claco.review.domain.dto.TicketReviewUpdateDto;
 import com.curateme.claco.review.domain.dto.request.OrderBy;
@@ -36,16 +37,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 
-/**
- * @author      : 이 건
- * @date        : 2024.11.04
- * @author devkeon(devkeon123@gmail.com)
- * ===========================================================
- * DATE               AUTHOR        NOTE
- * -----------------------------------------------------------
- * 2024.11.04		   이 건		   최초 생성
- * 2024.11.05   	   이 건        Swagger 적용
- */
+@TokenRefreshedCheck
 @RestController
 @RequestMapping("/api/ticket-reviews")
 @RequiredArgsConstructor

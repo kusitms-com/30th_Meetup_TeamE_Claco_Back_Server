@@ -6,6 +6,7 @@ import com.curateme.claco.concert.domain.dto.response.ConcertDetailResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertLikedResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertResponse;
 import com.curateme.claco.concert.service.ConcertService;
+import com.curateme.claco.global.annotation.TokenRefreshedCheck;
 import com.curateme.claco.global.response.ApiResponse;
 import com.curateme.claco.global.response.PageResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@TokenRefreshedCheck
 @RestController
 @RequestMapping("/api/concerts")
 @RequiredArgsConstructor
