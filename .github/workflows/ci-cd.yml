@@ -58,7 +58,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker-compose build --no-cache
+          docker compose build --no-cache
           docker tag server ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server
           docker tag nginx ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:nginx
 
