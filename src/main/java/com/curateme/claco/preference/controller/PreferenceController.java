@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.curateme.claco.global.annotation.TokenRefreshedCheck;
 import com.curateme.claco.global.response.ApiResponse;
 import com.curateme.claco.preference.domain.dto.request.PreferenceUpdateRequest;
 import com.curateme.claco.preference.domain.dto.response.PreferenceInfoResponse;
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
  * -----------------------------------------------------------
  * 2024.11.05   	   이 건        최초 생성
  */
+@TokenRefreshedCheck
 @RestController
 @RequestMapping("/api/preferences")
 @RequiredArgsConstructor

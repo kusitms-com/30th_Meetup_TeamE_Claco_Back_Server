@@ -1,5 +1,6 @@
 package com.curateme.claco.recommendation.controller;
 
+import com.curateme.claco.global.annotation.TokenRefreshedCheck;
 import com.curateme.claco.global.response.ApiResponse;
 import com.curateme.claco.recommendation.domain.dto.RecommendationConcertResponseV2;
 import com.curateme.claco.recommendation.domain.dto.RecommendationConcertResponseV3;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@TokenRefreshedCheck
 @RestController
 @RequestMapping("/api/recommendations")
 @RequiredArgsConstructor

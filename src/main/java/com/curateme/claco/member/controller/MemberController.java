@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.curateme.claco.global.annotation.TokenRefreshedCheck;
 import com.curateme.claco.global.response.ApiResponse;
 import com.curateme.claco.member.domain.dto.request.SignUpRequest;
 import com.curateme.claco.member.domain.dto.response.MemberInfoResponse;
@@ -33,6 +34,7 @@ import lombok.RequiredArgsConstructor;
  * 2024.10.22   	   이 건        최초 생성
  * 2024.11.05   	   이 건        회원 정보 조회 및 수정 추가, Swagger 적용
  */
+@TokenRefreshedCheck
 @RestController
 @RequestMapping("/api/members")
 @RequiredArgsConstructor
