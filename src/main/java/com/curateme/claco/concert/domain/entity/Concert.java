@@ -30,6 +30,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Builder
 public class Concert extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
