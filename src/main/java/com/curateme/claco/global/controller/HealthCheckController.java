@@ -4,10 +4,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ProbeController {
+public class HealthCheckController {
 
-	@RequestMapping("/probe")
-	public String probe() {
+	@RequestMapping("/health-check")
+	public String healthCheck() {
 		return "curate me!";
 	}
 
