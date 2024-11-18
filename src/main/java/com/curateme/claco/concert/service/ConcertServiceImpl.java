@@ -19,6 +19,9 @@ import com.curateme.claco.global.response.ApiStatus;
 import com.curateme.claco.global.response.PageResponse;
 import com.curateme.claco.member.domain.entity.Member;
 import com.curateme.claco.member.repository.MemberRepository;
+import com.curateme.claco.review.domain.dto.response.TicketReviewSimpleResponse;
+import com.curateme.claco.review.domain.entity.TicketReview;
+import com.curateme.claco.review.repository.TicketReviewRepository;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +48,7 @@ public class ConcertServiceImpl implements ConcertService {
     private final MemberRepository memberRepository;
     private final ConcertLikeRepository concertLikeRepository;
     private final SecurityContextUtil securityContextUtil;
+    private final TicketReviewRepository ticketReviewRepository;
 
 
     @Override
@@ -151,6 +155,14 @@ public class ConcertServiceImpl implements ConcertService {
 
         Concert concert = concertRepository.findConcertById(concertId);
 
+        List<Long> ticketReviewIds =  ticketReviewRepository.findByConcertId(concertId);
+
+        List<TicketReview> ticketReviews = ticketReviewRepository.findAllById(ticketReviewIds);
+
+        List<TicketReviewSimpleResponse> ticketReviewResponses = ticketReviews.stream()
+            .map(TicketReviewSimpleResponse::fromEntity)
+            .collect(Collectors.toList());
+
         List<Long> categoryIds = concertCategoryRepository.findCategoryIdsByCategoryName(concertId);
         List<Category> categories = categoryRepository.findAllById(categoryIds);
 
@@ -158,7 +170,7 @@ public class ConcertServiceImpl implements ConcertService {
             .map(category -> new ConcertCategoryResponse(category.getCategory(), category.getImageUrl()))
             .collect(Collectors.toList());
 
-        ConcertDetailResponse response = ConcertDetailResponse.fromEntity(concert, categoryResponses);
+        ConcertDetailResponse response = ConcertDetailResponse.fromEntity(concert, ticketReviewResponses, categoryResponses);
 
         return response;
     }
