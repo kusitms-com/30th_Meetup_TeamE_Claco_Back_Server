@@ -255,10 +255,11 @@ public class PreferenceServiceImpl implements PreferenceService {
 			.build();
 	}
 
-	private String FLASK_API_URL = URL + "/users/preferences";
+
 
 	public void sendPreferencesToAI(Long userId, List<String> preferences) {
 		// Prepare JSON body for Flask API
+		String FLASK_API_URL = URL + "/users/preferences";
 		Map<String, Object> body = new HashMap<>();
 		body.put("userId", userId);
 		body.put("preferences", preferences);
