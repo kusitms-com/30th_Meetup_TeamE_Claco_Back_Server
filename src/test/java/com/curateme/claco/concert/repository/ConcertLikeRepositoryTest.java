@@ -83,7 +83,7 @@ class ConcertLikeRepositoryTest {
     @Test
     void testFindMostRecentLikedConcert() {
         // Given
-        Long userId = 1L;
+        Long userId = memberRepository.findAll().get(0).getId();
 
         // When
         Long mostRecentLikedConcert = concertLikeRepository.findMostRecentLikedConcert(userId);
@@ -95,7 +95,7 @@ class ConcertLikeRepositoryTest {
     @Test
     void testFindConcertIdsByMemberId() {
         // Given
-        Long userId = memberRepository.findAll().get(0).getId();;
+        Long userId = memberRepository.findAll().get(0).getId();
 
         // When
         List<Long> concertIds = concertLikeRepository.findConcertIdsByMemberId(userId);
