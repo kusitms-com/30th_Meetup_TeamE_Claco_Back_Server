@@ -2,18 +2,22 @@ package com.curateme.claco.authentication.filter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.curateme.claco.authentication.util.JwtTokenUtil;
+import com.curateme.claco.authentication.util.RefreshContextHolder;
 import com.curateme.claco.global.exception.BusinessException;
 import com.curateme.claco.global.response.ApiStatus;
 import com.curateme.claco.member.domain.entity.Member;
 import com.curateme.claco.member.repository.MemberRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -112,6 +116,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			String generatedAccessToken = jwtTokenUtil.generateAccessToken(createdAuthentication);
 
 			response.setHeader("Authorization", generatedAccessToken);
+			RefreshContextHolder.setRefreshed(true);
 
 			ResponseCookie cookie = ResponseCookie.from("refreshToken", generateRefreshToken)
 				.path("/")
@@ -129,5 +134,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		filterChain.doFilter(request, response);
 
+		SecurityContextHolder.clearContext();
+		RefreshContextHolder.clear();
 	}
 }
