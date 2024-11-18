@@ -19,7 +19,7 @@ public class ConcertCategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "score")
+    @Column(name = "score", nullable = false)
     private Double score;
 
     @ManyToOne
@@ -29,6 +29,6 @@ public class ConcertCategory {
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
-
 }
+
 
