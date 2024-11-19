@@ -1,5 +1,6 @@
 package com.curateme.claco.recommendation.domain.dto;
 
+import com.curateme.claco.review.domain.dto.response.TicketInfoResponse;
 import com.curateme.claco.review.domain.dto.response.TicketReviewSummaryResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertClacoBookResponse;
 import lombok.AccessLevel;
@@ -14,13 +15,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RecommendationConcertResponseV2 {
 
-    private ConcertClacoBookResponse concertDetails;
+    private TicketInfoResponse ticketInfoResponse;
     private TicketReviewSummaryResponse ticketReviewSummary;
 
     public static RecommendationConcertResponseV2 from(
-        ConcertClacoBookResponse concertDetails,
+        TicketInfoResponse ticketInfoResponse,
         TicketReviewSummaryResponse ticketReviewSummary
     ) {
-        return new RecommendationConcertResponseV2(concertDetails, ticketReviewSummary);
+        return new RecommendationConcertResponseV2(ticketInfoResponse, ticketReviewSummary);
     }
 }

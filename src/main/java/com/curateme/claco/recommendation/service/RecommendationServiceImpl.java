@@ -18,6 +18,7 @@ import com.curateme.claco.member.repository.MemberRepository;
 import com.curateme.claco.recommendation.domain.dto.RecommendationConcertResponseV2;
 import com.curateme.claco.recommendation.domain.dto.RecommendationConcertResponseV3;
 import com.curateme.claco.recommendation.domain.dto.RecommendationConcertsResponseV1;
+import com.curateme.claco.review.domain.dto.response.TicketInfoResponse;
 import com.curateme.claco.review.domain.dto.response.TicketReviewSummaryResponse;
 import com.curateme.claco.review.domain.entity.TicketReview;
 import com.curateme.claco.review.repository.TicketReviewRepository;
@@ -130,8 +131,6 @@ public class RecommendationServiceImpl implements RecommendationService{
             .build();
     }
 
-
-    // TODO: 이미지 주소, 공연 제목, 멤버 닉네임
     // 유저 취향 기반 클라코북 추천
     @Override
     public List<RecommendationConcertResponseV2> getClacoBooksRecommendations() {
@@ -160,19 +159,10 @@ public class RecommendationServiceImpl implements RecommendationService{
 
             TicketReviewSummaryResponse ticketReviewSummaryResponse = ticketReviewRepository.findSummaryById(ticketReview.getId());
 
-            Concert concert = concertRepository.findById(ticketReviewSummaryResponse.getConcertId())
-                .orElseThrow(() -> new BusinessException(ApiStatus.CONCERT_NOT_FOUND));
-
-            List<Long> categoryIds = concertCategoryRepository.findCategoryIdsByCategoryName(concert.getId());
-            List<Category> categories = categoryRepository.findAllById(categoryIds);
-            List<ConcertCategoryResponse> categoryResponses = categories.stream()
-                .map(category -> new ConcertCategoryResponse(category.getCategory(), category.getImageUrl()))
-                .collect(Collectors.toList());
-
-            ConcertClacoBookResponse concertClacoBookResponse = ConcertClacoBookResponse.fromEntity(concert, categoryResponses);
+            TicketInfoResponse ticketInfoResponse = TicketInfoResponse.fromEntity(ticketReview);
 
             recommendationResponses.add(
-                RecommendationConcertResponseV2.from(concertClacoBookResponse, ticketReviewSummaryResponse)
+                RecommendationConcertResponseV2.from(ticketInfoResponse, ticketReviewSummaryResponse)
             );
         }
 
