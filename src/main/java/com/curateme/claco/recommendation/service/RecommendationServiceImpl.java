@@ -23,6 +23,7 @@ import com.curateme.claco.review.domain.entity.TicketReview;
 import com.curateme.claco.review.repository.TicketReviewRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -81,14 +82,23 @@ public class RecommendationServiceImpl implements RecommendationService{
 
         Long memberId = securityContextUtil.getContextMemberInfo().getMemberId();
 
-        Long concertId = concertLikeRepository.findMostRecentLikedConcert(memberId);
+        Pageable pageable = PageRequest.of(0, 1);
+        Long concertId = concertLikeRepository.findMostRecentLikedConcert(memberId, pageable).getContent().stream().findFirst().orElse(null);
+        Concert concert = (concertId != null) ? concertRepository.findConcertById(concertId) : null;
+
+        List<String> keywords = (concertId != null)
+            ? concertCategoryRepository.findCategoryNamesByConcertId(concertId).stream()
+            .limit(3)
+            .collect(Collectors.toList())
+            : null;
+
 
         List<RecommendationConcertsResponseV1> recommendedConcerts;
 
         if (concertId == null) {
             // 상위 두 개 공연 가져오기
-            Pageable pageable = PageRequest.of(0, 2);
-            List<Long> concertIds = concertLikeRepository.findTopConcertIdsByLikeCount(pageable);
+            Pageable pageable2 = PageRequest.of(0, 2);
+            List<Long> concertIds = concertLikeRepository.findTopConcertIdsByLikeCount(pageable2);
 
             recommendedConcerts = getConcertDetails(concertIds);
         } else {
@@ -106,9 +116,12 @@ public class RecommendationServiceImpl implements RecommendationService{
         // RecommendationConcertResponseV3 객체 생성 후 반환
         return RecommendationConcertResponseV3.builder()
             .likedHistory(concertId != null)
+            .prfnm(concert != null ? concert.getPrfnm() : null)
+            .keywords(keywords)
             .recommendationConcertsResponseV1s(recommendedConcerts)
             .build();
     }
+
 
 
     // 유저 취향 기반 클라코북 추천
@@ -154,6 +167,23 @@ public class RecommendationServiceImpl implements RecommendationService{
         return RecommendationConcertResponseV2.from(concertClacoBookResponse, ticketReviewSummaryResponse);
     }
 
+    @Override
+    public List<RecommendationConcertsResponseV1> getSearchedConcertRecommendations(Long concertId) {
+
+        List<RecommendationConcertsResponseV1> recommendedConcerts;
+
+        String FLASK_API_URL = URL + "/recommendations/items/";
+
+        String jsonResponse = getConcertsFromFlask(concertId, FLASK_API_URL);
+        System.out.println("jsonResponse = " + jsonResponse);
+
+        List<Long> concertIds = parseConcertIdsFromJson(jsonResponse);
+
+        recommendedConcerts = getConcertDetails(concertIds);
+
+        return recommendedConcerts;
+    }
+
 
     // JSON 응답을 파싱하여 concertIds 리스트 생성
     private List<Long> parseConcertIdsFromJson(String jsonResponse) {
@@ -188,7 +218,9 @@ public class RecommendationServiceImpl implements RecommendationService{
                 concert.getPrfnm(),
                 concert.getPoster(),
                 concert.getGenrenm(),
-                concertLikeRepository.existsByConcertId(id)
+                concert.getFcltynm(),
+                concert.getPrfpdfrom().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd (EEEE)", Locale.KOREAN)),
+                concert.getPrfpdto().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd (EEEE)", Locale.KOREAN))
             ));
         }
         return recommendations;

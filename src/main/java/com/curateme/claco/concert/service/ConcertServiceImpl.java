@@ -176,11 +176,11 @@ public class ConcertServiceImpl implements ConcertService {
     }
 
     @Override
-    public String postLikes(ConcertLikesRequest concertLikesRequest) {
+    public String postLikes(Long concertId) {
 
-        Member member = memberRepository.findById(concertLikesRequest.getMemberId())
-            .orElseThrow(() -> new BusinessException(ApiStatus.MEMBER_NOT_FOUND));
-        Concert concert = concertRepository.findById(concertLikesRequest.getConcertId())
+        Long memberId = securityContextUtil.getContextMemberInfo().getMemberId();
+        Member member = memberRepository.getById(memberId);
+        Concert concert = concertRepository.findById(concertId)
             .orElseThrow(() -> new BusinessException(ApiStatus.CONCERT_NOT_FOUND));
 
         // 좋아요가 이미 있는지 확인
@@ -190,7 +190,10 @@ public class ConcertServiceImpl implements ConcertService {
             concertLikeRepository.delete(existingLike.get());
             return "좋아요가 취소되었습니다.";
         } else {
-            ConcertLike concertLike = concertLikesRequest.toEntity(member, concert);
+            ConcertLike concertLike = ConcertLike.builder()
+                .member(member)
+                .concert(concert)
+                .build();
             concertLikeRepository.save(concertLike);
             return "좋아요가 등록되었습니다.";
         }

@@ -10,5 +10,8 @@ public interface RecommendationService {
     RecommendationConcertResponseV3 getLikedConcertRecommendations();
     RecommendationConcertResponseV2 getClacoBooksRecommendations();
 
+    List<RecommendationConcertsResponseV1> getSearchedConcertRecommendations(Long concertId);
+
+
 
 }
