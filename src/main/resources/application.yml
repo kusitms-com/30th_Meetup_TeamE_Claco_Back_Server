@@ -17,3 +17,16 @@ spring:
       resolve-lazily: true
       max-file-size: 10MB
       max-request-size: 10MB
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  metrics:
+    tags:
+      application: main-server
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+        step: 1m
