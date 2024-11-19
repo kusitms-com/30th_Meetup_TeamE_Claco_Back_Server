@@ -167,6 +167,23 @@ public class RecommendationServiceImpl implements RecommendationService{
         return RecommendationConcertResponseV2.from(concertClacoBookResponse, ticketReviewSummaryResponse);
     }
 
+    @Override
+    public List<RecommendationConcertsResponseV1> getSearchedConcertRecommendations(Long concertId) {
+
+        List<RecommendationConcertsResponseV1> recommendedConcerts;
+
+        String FLASK_API_URL = URL + "/recommendations/items/";
+
+        String jsonResponse = getConcertsFromFlask(concertId, FLASK_API_URL);
+        System.out.println("jsonResponse = " + jsonResponse);
+
+        List<Long> concertIds = parseConcertIdsFromJson(jsonResponse);
+
+        recommendedConcerts = getConcertDetails(concertIds);
+
+        return recommendedConcerts;
+    }
+
 
     // JSON 응답을 파싱하여 concertIds 리스트 생성
     private List<Long> parseConcertIdsFromJson(String jsonResponse) {

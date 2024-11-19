@@ -42,4 +42,13 @@ public class RecommendationController {
     ){
         return ApiResponse.ok(recommendationService.getClacoBooksRecommendations());
     }
+
+    @GetMapping("/concertbased")
+    @Operation(summary = "선택한 공연과 비슷한 공연 추천", description = "상세보(이 공연도 마음에 들거에요!)")
+    public ApiResponse<List<RecommendationConcertsResponseV1>> getSearchedConcertRecommendations(
+        @RequestParam("concertId") Long concertId
+
+    ){
+        return ApiResponse.ok(recommendationService.getSearchedConcertRecommendations(concertId));
+    }
 }
