@@ -136,7 +136,6 @@ public class RecommendationServiceImpl implements RecommendationService{
     @Override
     public List<RecommendationConcertResponseV2> getClacoBooksRecommendations() {
 
-        // Retrieve the authenticated member
         Member member = memberRepository.findById(securityContextUtil.getContextMemberInfo().getMemberId()).stream()
             .findAny()
             .orElseThrow(() -> new BusinessException(ApiStatus.MEMBER_NOT_FOUND));
@@ -146,47 +145,37 @@ public class RecommendationServiceImpl implements RecommendationService{
         String jsonResponse = getConcertsFromFlask(member.getId(), FLASK_API_URL);
         System.out.println("jsonResponse = " + jsonResponse);
 
-        // Get top 3 recommended user IDs
         List<Long> recUserIds = parseConcertIdsFromJson(jsonResponse).stream()
-            .limit(3) // Limit to 3 users
+            .limit(3)
             .collect(Collectors.toList());
 
-        // List to hold final responses
         List<RecommendationConcertResponseV2> recommendationResponses = new ArrayList<>();
 
         for (Long recUserId : recUserIds) {
-            // Fetch the recommended user's ClacoBook
             ClacoBook clacoBook = clacoBookRepository.findByMemberId(recUserId)
                 .orElseThrow(() -> new BusinessException(ApiStatus.CLACO_BOOK_NOT_FOUND));
 
-            // Fetch a random ticket review for the ClacoBook
             TicketReview ticketReview = clacoBookRepository.findRandomTicketReviewByClacoBookId(clacoBook.getId())
                 .orElseThrow(() -> new BusinessException(ApiStatus.TICKET_REVIEW_NOT_FOUND));
 
-            // DTO Mapping for TicketReviewSummaryResponse
             TicketReviewSummaryResponse ticketReviewSummaryResponse = ticketReviewRepository.findSummaryById(ticketReview.getId());
 
-            // Fetch the concert associated with the ticket review
             Concert concert = concertRepository.findById(ticketReviewSummaryResponse.getConcertId())
                 .orElseThrow(() -> new BusinessException(ApiStatus.CONCERT_NOT_FOUND));
 
-            // DTO Mapping for categories
             List<Long> categoryIds = concertCategoryRepository.findCategoryIdsByCategoryName(concert.getId());
             List<Category> categories = categoryRepository.findAllById(categoryIds);
             List<ConcertCategoryResponse> categoryResponses = categories.stream()
                 .map(category -> new ConcertCategoryResponse(category.getCategory(), category.getImageUrl()))
                 .collect(Collectors.toList());
 
-            // Create the ConcertClacoBookResponse for this concert
             ConcertClacoBookResponse concertClacoBookResponse = ConcertClacoBookResponse.fromEntity(concert, categoryResponses);
 
-            // Add the final response to the list
             recommendationResponses.add(
                 RecommendationConcertResponseV2.from(concertClacoBookResponse, ticketReviewSummaryResponse)
             );
         }
 
-        // Return the list of responses
         return recommendationResponses;
     }
 
