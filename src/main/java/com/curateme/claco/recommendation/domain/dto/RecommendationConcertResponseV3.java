@@ -17,6 +17,12 @@ public class RecommendationConcertResponseV3 {
     @Schema(description = "좋아요 기록 여부")
     private Boolean likedHistory;
 
+    @Schema(description = "최근 좋아요한 작품 이름")
+    private String prfnm;
+
+    @Schema(description = "키워드 3개")
+    private List<String> keywords;
+
     @Schema(description = "추천 결과")
     private List<RecommendationConcertsResponseV1> recommendationConcertsResponseV1s;
 
