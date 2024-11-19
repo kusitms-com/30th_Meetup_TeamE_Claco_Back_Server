@@ -1,6 +1,8 @@
 package com.curateme.claco.recommendation.domain.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,14 +23,22 @@ public class RecommendationConcertsResponseV1 {
     @Schema(description = "공연 장르")
     private String genrenm;
 
-    @Schema(description = "공연 좋아요 여부")
-    private boolean isLiked;
+    @Column(name = "공연 장소")
+    private String fcltynm;
 
-    public RecommendationConcertsResponseV1(Long id, String prfnm, String poster, String genrenm, boolean isLiked) {
+    @Column(name = "start_date")
+    private String prfpdfrom;
+
+    @Column(name = "end_date")
+    private String prfpdto;
+
+    public RecommendationConcertsResponseV1(Long id, String prfnm, String poster, String genrenm, String fcltynm, String prfpdfrom, String prfpdto) {
         this.id = id;
         this.prfnm = prfnm;
         this.poster = poster;
         this.genrenm = genrenm;
-        this.isLiked = isLiked;
+        this.fcltynm = fcltynm;
+        this.prfpdfrom = prfpdfrom;
+        this.prfpdto = prfpdto;
     }
 }

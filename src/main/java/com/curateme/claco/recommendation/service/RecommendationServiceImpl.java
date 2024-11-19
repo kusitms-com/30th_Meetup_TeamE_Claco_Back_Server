@@ -23,6 +23,7 @@ import com.curateme.claco.review.domain.entity.TicketReview;
 import com.curateme.claco.review.repository.TicketReviewRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -188,7 +189,9 @@ public class RecommendationServiceImpl implements RecommendationService{
                 concert.getPrfnm(),
                 concert.getPoster(),
                 concert.getGenrenm(),
-                concertLikeRepository.existsByConcertId(id)
+                concert.getFcltynm(),
+                concert.getPrfpdfrom().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd (EEEE)", Locale.KOREAN)),
+                concert.getPrfpdto().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd (EEEE)", Locale.KOREAN))
             ));
         }
         return recommendations;
