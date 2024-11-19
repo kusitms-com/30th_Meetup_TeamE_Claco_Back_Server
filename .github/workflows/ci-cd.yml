@@ -40,7 +40,7 @@ jobs:
         run: ./gradlew test --no-daemon
 
   CD:
-    if: ${{ github.event_name != 'pull_request' && success() }}
+    #if: ${{ github.event_name != 'pull_request' && success() }}
     needs: CI
     runs-on: ubuntu-latest
     steps:
@@ -61,8 +61,8 @@ jobs:
           docker compose build --no-cache
           docker tag server ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server
           docker tag nginx ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:nginx
-          docker tag prometheus ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:prometheus
-          docker tag grafana ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:grafana
+          docker tag prom/prometheus:latest ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:prometheus
+          docker tag grafana/grafana:latest ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:grafana
 
       - name: Push Docker image to Docker Hub
         run: |
