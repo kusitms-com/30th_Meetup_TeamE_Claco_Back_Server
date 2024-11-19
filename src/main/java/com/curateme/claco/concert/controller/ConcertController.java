@@ -95,9 +95,9 @@ import org.springframework.web.bind.annotation.RestController;
         @PostMapping("/likes")
         @Operation(summary = "공연 좋아요", description = "특정 공연에 좋아요를 추가합니다")
         public ApiResponse<String> postLikes(
-            @RequestBody ConcertLikesRequest concertLikesRequest
+            @PathVariable("concertId") Long concertId
         ) {
-            return ApiResponse.ok(concertService.postLikes(concertLikesRequest));
+            return ApiResponse.ok(concertService.postLikes(concertId));
         }
 
         @GetMapping("/likes")

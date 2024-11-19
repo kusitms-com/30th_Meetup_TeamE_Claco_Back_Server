@@ -158,7 +158,7 @@ class ConcertServiceTest {
         when(concertLikeRepository.findByMemberAndConcert(member, concert)).thenReturn(Optional.empty());
 
         // When
-        String result = concertService.postLikes(new ConcertLikesRequest(memberId, concertId));
+        String result = concertService.postLikes(concertId);
 
         // Then
         assertThat(result).isEqualTo("좋아요가 등록되었습니다.");
@@ -172,7 +172,7 @@ class ConcertServiceTest {
                     .concert(concert)
                     .build()
             ));
-        String cancelResult = concertService.postLikes(new ConcertLikesRequest(memberId, concertId));
+        String cancelResult = concertService.postLikes(concertId);
         assertThat(cancelResult).isEqualTo("좋아요가 취소되었습니다.");
     }
 
