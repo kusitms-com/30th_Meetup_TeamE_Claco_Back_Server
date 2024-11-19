@@ -69,8 +69,8 @@ public class RecommendationServiceImpl implements RecommendationService{
         // 현재 로그인 세션 유저 정보 추출
         Long memberId = securityContextUtil.getContextMemberInfo().getMemberId();
 
-
-        String jsonResponse = getConcertsFromFlask(memberId, FLASK_API_URL);
+        int topn = 2;
+        String jsonResponse = getConcertsFromFlask(memberId, topn, FLASK_API_URL);
         System.out.println("jsonResponse = " + jsonResponse);
 
         List<Long> concertIds = parseConcertIdsFromJson(jsonResponse);
@@ -110,8 +110,8 @@ public class RecommendationServiceImpl implements RecommendationService{
         } else {
             // Flask API 호출하여 추천 데이터 가져오기
             String FLASK_API_URL = URL + "/recommendations/items/";
-
-            String jsonResponse = getConcertsFromFlask(concertId, FLASK_API_URL);
+            int topn = 2;
+            String jsonResponse = getConcertsFromFlask(concertId, topn, FLASK_API_URL);
             System.out.println("jsonResponse = " + jsonResponse);
 
             List<Long> concertIds = parseConcertIdsFromJson(jsonResponse);
@@ -141,7 +141,7 @@ public class RecommendationServiceImpl implements RecommendationService{
 
         // Flask API call
         String FLASK_API_URL = URL + "/recommendations/clacobooks/";
-        String jsonResponse = getConcertsFromFlask(member.getId(), FLASK_API_URL);
+        String jsonResponse = getConcertsFromFlaskV2(member.getId(), FLASK_API_URL);
         System.out.println("jsonResponse = " + jsonResponse);
 
         List<Long> recUserIds = parseConcertIdsFromJson(jsonResponse).stream()
@@ -176,8 +176,8 @@ public class RecommendationServiceImpl implements RecommendationService{
         List<RecommendationConcertsResponseV1> recommendedConcerts;
 
         String FLASK_API_URL = URL + "/recommendations/items/";
-
-        String jsonResponse = getConcertsFromFlask(concertId, FLASK_API_URL);
+        int topn = 3;
+        String jsonResponse = getConcertsFromFlask(concertId, topn, FLASK_API_URL);
         System.out.println("jsonResponse = " + jsonResponse);
 
         List<Long> concertIds = parseConcertIdsFromJson(jsonResponse);
@@ -229,7 +229,28 @@ public class RecommendationServiceImpl implements RecommendationService{
         return recommendations;
     }
 
-    public String getConcertsFromFlask(Long Id, String FLASK_API_URL) {
+    public String getConcertsFromFlask(Long Id, int topn, String FLASK_API_URL) {
+        String urlWithUserId = FLASK_API_URL + Id + "/" + topn;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(urlWithUserId, HttpMethod.GET, requestEntity, String.class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                return response.getBody();
+            } else {
+                System.err.println("추천시스템 오류 발생. Status code: " + response.getStatusCode());
+            }
+        } catch (Exception e) {
+            System.err.println("추천시스템 실패.: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public String getConcertsFromFlaskV2(Long Id, String FLASK_API_URL) {
         String urlWithUserId = FLASK_API_URL + Id;
 
         HttpHeaders headers = new HttpHeaders();
