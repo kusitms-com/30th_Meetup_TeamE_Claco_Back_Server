@@ -59,7 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		String requestUri = request.getRequestURI();
 
-		if (filterPassList.contains(requestUri) || requestUri.startsWith("/swagger")) {
+		if (filterPassList.contains(requestUri) || requestUri.startsWith("/swagger") || requestUri.startsWith("/actuator")) {
 			filterChain.doFilter(request, response);
 			return;
 		}
