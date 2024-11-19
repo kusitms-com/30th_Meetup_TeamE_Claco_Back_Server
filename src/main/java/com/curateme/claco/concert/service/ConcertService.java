@@ -20,7 +20,7 @@ public interface ConcertService {
 
     ConcertDetailResponse getConcertDetailWithCategories(Long concertId);
 
-    String postLikes(ConcertLikesRequest concertLikesRequest);
+    String postLikes(Long concertId);
 
     List<ConcertLikedResponse> getLikedConcert(String query, String genre);
 

@@ -1,6 +1,5 @@
 package com.curateme.claco.concert.controller;
 
-import com.curateme.claco.concert.domain.dto.request.ConcertLikesRequest;
 import com.curateme.claco.concert.domain.dto.response.ConcertAutoCompleteResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertDetailResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertLikedResponse;
@@ -20,7 +19,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,13 +30,13 @@ import org.springframework.web.bind.annotation.RestController;
     public class ConcertController {
         private final ConcertService concertService;
 
-        @GetMapping("/views/{categoryName}/{direction}")
+        @GetMapping("/views/{genre}/{direction}")
         @Operation(summary = "공연 둘러보기", description = "기능명세서 화면번호 4.0.0")
-        @Parameter(name = "categoryName", description = "카테고리 명", required = true, example = "grand")
-        @Parameter(name = "direction", description = "정렬 순서", required = true, example = "asc/dsc")
+        @Parameter(name = "genre", description = "장르명", example = "웅장한")
+        @Parameter(name = "direction", description = "정렬 순서", example = "asc/dsc")
         public ApiResponse<PageResponse<ConcertResponse>> getConcerts(
-            @PathVariable("genre") String genre,
-            @PathVariable("direction") String direction,
+            @RequestParam(value = "genre", defaultValue = "all") String genre,
+            @RequestParam(value = "direction", defaultValue = "asc") String direction,
             @RequestParam("page") int page,
             @RequestParam(value = "size", defaultValue = "9") int size) {
 
@@ -46,9 +44,10 @@ import org.springframework.web.bind.annotation.RestController;
             return ApiResponse.ok(concertService.getConcertInfos(genre, direction, pageable));
         }
 
-        @GetMapping("/filters")
+
+    @GetMapping("/filters")
         @Operation(summary = "공연 둘러보기 세부사항 필터", description = "기능명세서 화면번호 4.0.1")
-        @Parameter(name = "direction", description = "정렬 순서", required = true, example = "asc/dsc")
+        @Parameter(name = "direction", description = "정렬 순서", example = "asc/dsc")
         @Parameter(name = "area", description = "지역", required = true, example = "서울특별시/경기도")
         @Parameter(name = "startDate", description = "시작 날짜", required = true, example = "yyyy.MM.dd")
         @Parameter(name = "endDate", description = "끝나는 날짜", required = true, example = "yyyy.MM.dd")
@@ -59,7 +58,7 @@ import org.springframework.web.bind.annotation.RestController;
             @RequestParam("area") String area,
             @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy.MM.dd") LocalDate startDate,
             @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy.MM.dd") LocalDate endDate,
-            @RequestParam("direction") String direction,
+            @RequestParam(value = "direction", defaultValue = "asc") String direction,
             @RequestParam("page") int page,
             @RequestParam(value = "size", defaultValue = "9") int size,
             @RequestParam(value = "categories", required = false) List<String> categories)
@@ -72,11 +71,11 @@ import org.springframework.web.bind.annotation.RestController;
 
         @GetMapping("/queries")
         @Operation(summary = "공연 둘러보기 검색하기", description = "기능명세서 화면번호 4.1.0")
-        @Parameter(name = "direction", description = "정렬 순서", required = true, example = "asc/dsc")
+        @Parameter(name = "direction", description = "정렬 순서", example = "asc/dsc")
         @Parameter(name = "query", description = "검색어", required = true)
         public ApiResponse<PageResponse<ConcertResponse>> searchConcerts(
             @RequestParam("query") String query,
-            @RequestParam("direction") String direction,
+            @RequestParam(value = "direction", defaultValue = "asc") String direction,
             @RequestParam("page") int page,
             @RequestParam(value = "size", defaultValue = "9") int size) {
 
@@ -92,12 +91,12 @@ import org.springframework.web.bind.annotation.RestController;
             return ApiResponse.ok(concertService.getConcertDetailWithCategories(concertId));
         }
 
-        @PostMapping("/likes")
+        @PostMapping("/likes/{concertId}")
         @Operation(summary = "공연 좋아요", description = "특정 공연에 좋아요를 추가합니다")
         public ApiResponse<String> postLikes(
-            @RequestBody ConcertLikesRequest concertLikesRequest
+            @PathVariable("concertId") Long concertId
         ) {
-            return ApiResponse.ok(concertService.postLikes(concertLikesRequest));
+            return ApiResponse.ok(concertService.postLikes(concertId));
         }
 
         @GetMapping("/likes")

@@ -15,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -86,10 +87,11 @@ class ConcertLikeRepositoryTest {
         Long userId = memberRepository.findAll().get(0).getId();
 
         // When
-        Long mostRecentLikedConcert = concertLikeRepository.findMostRecentLikedConcert(userId);
+        Pageable pageable = PageRequest.of(0, 1);
+        Long concertId = concertLikeRepository.findMostRecentLikedConcert(userId, pageable).getContent().stream().findFirst().orElse(null);
 
         // Then
-        assertThat(mostRecentLikedConcert).isNotNull();
+        assertThat(concertId).isNotNull();
     }
 
     @Test
