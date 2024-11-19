@@ -18,10 +18,12 @@ import com.curateme.claco.member.repository.MemberRepository;
 import com.curateme.claco.recommendation.domain.dto.RecommendationConcertResponseV2;
 import com.curateme.claco.recommendation.domain.dto.RecommendationConcertResponseV3;
 import com.curateme.claco.recommendation.domain.dto.RecommendationConcertsResponseV1;
+import com.curateme.claco.review.domain.dto.response.TicketInfoResponse;
 import com.curateme.claco.review.domain.dto.response.TicketReviewSummaryResponse;
 import com.curateme.claco.review.domain.entity.TicketReview;
 import com.curateme.claco.review.repository.TicketReviewRepository;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -83,22 +85,26 @@ public class RecommendationServiceImpl implements RecommendationService{
         Long memberId = securityContextUtil.getContextMemberInfo().getMemberId();
 
         Pageable pageable = PageRequest.of(0, 1);
-        Long concertId = concertLikeRepository.findMostRecentLikedConcert(memberId, pageable).getContent().stream().findFirst().orElse(null);
-        Concert concert = (concertId != null) ? concertRepository.findConcertById(concertId) : null;
+        Long concertId = concertLikeRepository.findMostRecentLikedConcert(memberId, pageable)
+            .getContent().stream().findFirst().orElse(null);
 
-        List<String> keywords = (concertId != null)
-            ? concertCategoryRepository.findCategoryNamesByConcertId(concertId).stream()
-            .limit(3)
-            .collect(Collectors.toList())
-            : null;
-
-
+        List<String> keywords;
         List<RecommendationConcertsResponseV1> recommendedConcerts;
 
         if (concertId == null) {
-            // 상위 두 개 공연 가져오기
-            Pageable pageable2 = PageRequest.of(0, 2);
+            // 상위 3개 공연 가져오기
+            Pageable pageable2 = PageRequest.of(0, 3);
             List<Long> concertIds = concertLikeRepository.findTopConcertIdsByLikeCount(pageable2);
+
+            // 첫 번째 콘서트의 ID로 키워드 추출
+            if (!concertIds.isEmpty()) {
+                Long firstConcertId = concertIds.get(0);
+                keywords = concertCategoryRepository.findCategoryNamesByConcertId(firstConcertId).stream()
+                    .limit(3)
+                    .collect(Collectors.toList());
+            } else {
+                keywords = Collections.emptyList();
+            }
 
             recommendedConcerts = getConcertDetails(concertIds);
         } else {
@@ -111,6 +117,11 @@ public class RecommendationServiceImpl implements RecommendationService{
             List<Long> concertIds = parseConcertIdsFromJson(jsonResponse);
 
             recommendedConcerts = getConcertDetails(concertIds);
+
+            // Use the keywords from the liked concert
+            keywords = concertCategoryRepository.findCategoryNamesByConcertId(concertId).stream()
+                .limit(3)
+                .collect(Collectors.toList());
         }
 
         return RecommendationConcertResponseV3.builder()
@@ -120,50 +131,44 @@ public class RecommendationServiceImpl implements RecommendationService{
             .build();
     }
 
-
-
     // 유저 취향 기반 클라코북 추천
     @Override
-    public RecommendationConcertResponseV2 getClacoBooksRecommendations() {
-
+    public List<RecommendationConcertResponseV2> getClacoBooksRecommendations() {
 
         Member member = memberRepository.findById(securityContextUtil.getContextMemberInfo().getMemberId()).stream()
             .findAny()
             .orElseThrow(() -> new BusinessException(ApiStatus.MEMBER_NOT_FOUND));
 
-
+        // Flask API call
         String FLASK_API_URL = URL + "/recommendations/clacobooks/";
         String jsonResponse = getConcertsFromFlask(member.getId(), FLASK_API_URL);
         System.out.println("jsonResponse = " + jsonResponse);
 
-        // 추천 받은 유저 아이디
-        List<Long> recUserIds = parseConcertIdsFromJson(jsonResponse);
-        Long recUserId = recUserIds.get(0);
-
-        // 추천 받은 유저의 클라코 북 및 리뷰 담기
-        ClacoBook clacoBook = clacoBookRepository.findByMemberId(recUserId)
-            .orElseThrow(() -> new BusinessException(ApiStatus.CLACO_BOOK_NOT_FOUND));
-        TicketReview ticketReview = clacoBookRepository.findRandomTicketReviewByClacoBookId(clacoBook.getId())
-            .orElseThrow(() -> new BusinessException(ApiStatus.TICKET_REVIEW_NOT_FOUND));
-
-        // DTO Mapping
-        TicketReviewSummaryResponse ticketReviewSummaryResponse = ticketReviewRepository.findSummaryById(ticketReview.getId());
-
-        Concert concert = concertRepository.findById(ticketReviewSummaryResponse.getConcertId())
-            .orElseThrow(() -> new BusinessException(ApiStatus.CONCERT_NOT_FOUND));
-
-        // DTO Mapping
-        List<Long> categoryIds = concertCategoryRepository.findCategoryIdsByCategoryName(concert.getId());
-        List<Category> categories = categoryRepository.findAllById(categoryIds);
-        List<ConcertCategoryResponse> categoryResponses = categories.stream()
-            .map(category -> new ConcertCategoryResponse(category.getCategory(), category.getImageUrl()))
+        List<Long> recUserIds = parseConcertIdsFromJson(jsonResponse).stream()
+            .limit(3)
             .collect(Collectors.toList());
 
-        // 최종 Response
-        ConcertClacoBookResponse concertClacoBookResponse = ConcertClacoBookResponse.fromEntity(concert, categoryResponses);
+        List<RecommendationConcertResponseV2> recommendationResponses = new ArrayList<>();
 
-        return RecommendationConcertResponseV2.from(concertClacoBookResponse, ticketReviewSummaryResponse);
+        for (Long recUserId : recUserIds) {
+            ClacoBook clacoBook = clacoBookRepository.findByMemberId(recUserId)
+                .orElseThrow(() -> new BusinessException(ApiStatus.CLACO_BOOK_NOT_FOUND));
+
+            TicketReview ticketReview = clacoBookRepository.findRandomTicketReviewByClacoBookId(clacoBook.getId())
+                .orElseThrow(() -> new BusinessException(ApiStatus.TICKET_REVIEW_NOT_FOUND));
+
+            TicketReviewSummaryResponse ticketReviewSummaryResponse = ticketReviewRepository.findSummaryById(ticketReview.getId());
+
+            TicketInfoResponse ticketInfoResponse = TicketInfoResponse.fromEntity(ticketReview);
+
+            recommendationResponses.add(
+                RecommendationConcertResponseV2.from(ticketInfoResponse, ticketReviewSummaryResponse)
+            );
+        }
+
+        return recommendationResponses;
     }
+
 
     @Override
     public List<RecommendationConcertsResponseV1> getSearchedConcertRecommendations(Long concertId) {

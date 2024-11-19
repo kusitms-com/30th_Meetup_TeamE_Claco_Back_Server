@@ -38,7 +38,7 @@ public class RecommendationController {
 
     @GetMapping("/clacobooks")
     @Operation(summary = "유저 취향 기반 클라코북 맞춤 추천", description = "기능명세서 화면번호 2.2.0")
-    public ApiResponse<RecommendationConcertResponseV2> getClacoBooksRecommendations(
+    public ApiResponse<List<RecommendationConcertResponseV2>> getClacoBooksRecommendations(
     ){
         return ApiResponse.ok(recommendationService.getClacoBooksRecommendations());
     }

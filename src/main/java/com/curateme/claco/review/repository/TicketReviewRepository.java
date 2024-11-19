@@ -81,7 +81,7 @@ public interface TicketReviewRepository extends JpaRepository<TicketReview, Long
 
 	List<TicketReview> findByClacoBook(ClacoBook clacoBook);
 
-	@Query("SELECT new com.curateme.claco.review.domain.dto.response.TicketReviewSummaryResponse(tr.concert.id, tr.createdAt, tr.content) " +
+	@Query("SELECT new com.curateme.claco.review.domain.dto.response.TicketReviewSummaryResponse(tr.member.nickname, tr.concert.prfnm , tr.concert.id, tr.createdAt, tr.content) " +
 		"FROM TicketReview tr WHERE tr.id = :id")
 	TicketReviewSummaryResponse findSummaryById(@Param("id") Long id);
 
