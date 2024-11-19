@@ -8,7 +8,7 @@ import java.util.List;
 public interface RecommendationService {
     List<RecommendationConcertsResponseV1> getConcertRecommendations();
     RecommendationConcertResponseV3 getLikedConcertRecommendations();
-    RecommendationConcertResponseV2 getClacoBooksRecommendations();
+    List<RecommendationConcertResponseV2> getClacoBooksRecommendations();
 
     List<RecommendationConcertsResponseV1> getSearchedConcertRecommendations(Long concertId);
 
