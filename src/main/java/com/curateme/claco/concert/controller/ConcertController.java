@@ -32,9 +32,9 @@ import org.springframework.web.bind.annotation.RestController;
     public class ConcertController {
         private final ConcertService concertService;
 
-        @GetMapping("/views/{categoryName}/{direction}")
+        @GetMapping("/views/{genre}/{direction}")
         @Operation(summary = "공연 둘러보기", description = "기능명세서 화면번호 4.0.0")
-        @Parameter(name = "categoryName", description = "카테고리 명", required = true, example = "grand")
+        @Parameter(name = "genre", description = "장르명", required = true, example = "웅장한")
         @Parameter(name = "direction", description = "정렬 순서", required = true, example = "asc/dsc")
         public ApiResponse<PageResponse<ConcertResponse>> getConcerts(
             @PathVariable("genre") String genre,
@@ -46,7 +46,8 @@ import org.springframework.web.bind.annotation.RestController;
             return ApiResponse.ok(concertService.getConcertInfos(genre, direction, pageable));
         }
 
-        @GetMapping("/filters")
+
+    @GetMapping("/filters")
         @Operation(summary = "공연 둘러보기 세부사항 필터", description = "기능명세서 화면번호 4.0.1")
         @Parameter(name = "direction", description = "정렬 순서", required = true, example = "asc/dsc")
         @Parameter(name = "area", description = "지역", required = true, example = "서울특별시/경기도")

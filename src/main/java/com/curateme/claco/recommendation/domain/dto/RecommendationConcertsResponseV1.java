@@ -2,7 +2,6 @@ package com.curateme.claco.recommendation.domain.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
-import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

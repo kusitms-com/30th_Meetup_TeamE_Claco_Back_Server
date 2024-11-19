@@ -113,10 +113,8 @@ public class RecommendationServiceImpl implements RecommendationService{
             recommendedConcerts = getConcertDetails(concertIds);
         }
 
-        // RecommendationConcertResponseV3 객체 생성 후 반환
         return RecommendationConcertResponseV3.builder()
             .likedHistory(concertId != null)
-            .prfnm(concert != null ? concert.getPrfnm() : null)
             .keywords(keywords)
             .recommendationConcertsResponseV1s(recommendedConcerts)
             .build();
