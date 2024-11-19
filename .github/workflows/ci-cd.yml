@@ -40,7 +40,7 @@ jobs:
         run: ./gradlew test --no-daemon
 
   CD:
-    if: ${{ github.event_name != 'pull_request' && success() }}
+    #if: ${{ github.event_name != 'pull_request' && success() }}
     needs: CI
     runs-on: ubuntu-latest
     steps:
@@ -61,15 +61,11 @@ jobs:
           docker compose build --no-cache
           docker tag server ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server
           docker tag nginx ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:nginx
-          docker tag prometheus ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:prometheus
-          docker tag grafana ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:grafana
 
       - name: Push Docker image to Docker Hub
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server
           docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:nginx
-          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:prometheus
-          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:grafana
 
       - name: Deploy
         uses: appleboy/ssh-action@v1.1.0
@@ -83,8 +79,8 @@ jobs:
   
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:nginx
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:prometheus
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:grafana
+            sudo docker pull prom/prometheus:latest
+            sudo docker pull grafana/grafana:latest
   
             sudo docker-compose down
             sudo docker-compose up -d
