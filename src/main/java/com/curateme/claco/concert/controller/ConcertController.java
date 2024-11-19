@@ -32,10 +32,10 @@ import org.springframework.web.bind.annotation.RestController;
 
         @GetMapping("/views/{genre}/{direction}")
         @Operation(summary = "공연 둘러보기", description = "기능명세서 화면번호 4.0.0")
-        @Parameter(name = "genre", description = "장르명", required = true, example = "웅장한")
+        @Parameter(name = "genre", description = "장르명", example = "웅장한")
         @Parameter(name = "direction", description = "정렬 순서", example = "asc/dsc")
         public ApiResponse<PageResponse<ConcertResponse>> getConcerts(
-            @PathVariable("genre") String genre,
+            @RequestParam(value = "genre", defaultValue = "all") String genre,
             @RequestParam(value = "direction", defaultValue = "asc") String direction,
             @RequestParam("page") int page,
             @RequestParam(value = "size", defaultValue = "9") int size) {

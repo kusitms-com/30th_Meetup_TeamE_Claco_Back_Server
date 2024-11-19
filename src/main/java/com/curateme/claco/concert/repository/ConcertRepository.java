@@ -21,7 +21,8 @@ public interface ConcertRepository extends JpaRepository<Concert,Long> {
     @Query("SELECT c FROM Concert c WHERE c.id = :concertId")
     Concert findConcertById(@Param("concertId") Long concertId);
 
-    @Query("SELECT c.id FROM Concert c WHERE c.genrenm = :genre AND c.prfpdto >= CURRENT_DATE")
+    @Query("SELECT c.id FROM Concert c WHERE (:genre = 'all' OR c.genrenm = :genre) AND c.prfpdto >= CURRENT_DATE")
     List<Long> findConcertIdsByGenre(@Param("genre") String genre);
+
 
 }
