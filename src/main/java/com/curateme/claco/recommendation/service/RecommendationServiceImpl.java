@@ -22,6 +22,7 @@ import com.curateme.claco.review.domain.dto.response.TicketReviewSummaryResponse
 import com.curateme.claco.review.domain.entity.TicketReview;
 import com.curateme.claco.review.repository.TicketReviewRepository;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -83,22 +84,26 @@ public class RecommendationServiceImpl implements RecommendationService{
         Long memberId = securityContextUtil.getContextMemberInfo().getMemberId();
 
         Pageable pageable = PageRequest.of(0, 1);
-        Long concertId = concertLikeRepository.findMostRecentLikedConcert(memberId, pageable).getContent().stream().findFirst().orElse(null);
-        Concert concert = (concertId != null) ? concertRepository.findConcertById(concertId) : null;
+        Long concertId = concertLikeRepository.findMostRecentLikedConcert(memberId, pageable)
+            .getContent().stream().findFirst().orElse(null);
 
-        List<String> keywords = (concertId != null)
-            ? concertCategoryRepository.findCategoryNamesByConcertId(concertId).stream()
-            .limit(3)
-            .collect(Collectors.toList())
-            : null;
-
-
+        List<String> keywords;
         List<RecommendationConcertsResponseV1> recommendedConcerts;
 
         if (concertId == null) {
-            // 상위 두 개 공연 가져오기
-            Pageable pageable2 = PageRequest.of(0, 2);
+            // 상위 3개 공연 가져오기
+            Pageable pageable2 = PageRequest.of(0, 3);
             List<Long> concertIds = concertLikeRepository.findTopConcertIdsByLikeCount(pageable2);
+
+            // 첫 번째 콘서트의 ID로 키워드 추출
+            if (!concertIds.isEmpty()) {
+                Long firstConcertId = concertIds.get(0);
+                keywords = concertCategoryRepository.findCategoryNamesByConcertId(firstConcertId).stream()
+                    .limit(3)
+                    .collect(Collectors.toList());
+            } else {
+                keywords = Collections.emptyList();
+            }
 
             recommendedConcerts = getConcertDetails(concertIds);
         } else {
@@ -111,6 +116,11 @@ public class RecommendationServiceImpl implements RecommendationService{
             List<Long> concertIds = parseConcertIdsFromJson(jsonResponse);
 
             recommendedConcerts = getConcertDetails(concertIds);
+
+            // Use the keywords from the liked concert
+            keywords = concertCategoryRepository.findCategoryNamesByConcertId(concertId).stream()
+                .limit(3)
+                .collect(Collectors.toList());
         }
 
         return RecommendationConcertResponseV3.builder()
@@ -137,6 +147,8 @@ public class RecommendationServiceImpl implements RecommendationService{
         System.out.println("jsonResponse = " + jsonResponse);
 
         // 추천 받은 유저 아이디
+        // TODO: 3개로 바꾸기
+        // TODO: 이미지 주소, 공연 제목, 멤버 닉네임
         List<Long> recUserIds = parseConcertIdsFromJson(jsonResponse);
         Long recUserId = recUserIds.get(0);
 
