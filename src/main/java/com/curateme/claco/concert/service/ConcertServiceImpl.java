@@ -53,35 +53,35 @@ public class ConcertServiceImpl implements ConcertService {
 
     @Override
     public PageResponse<ConcertResponse> getConcertInfos(String genre, String direction, Pageable pageable) {
+
+        System.out.println("Genre received: " + genre);
+
         Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by("prfpdfrom").ascending() : Sort.by("prfpdfrom").descending();
         Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
 
-        List<Long> concertIds = concertRepository.findConcertIdsByGenre(genre);
+        Page<Concert> concertPage = concertRepository.findConcertsByGenreWithPagination(genre, sortedPageable);
 
-        List<ConcertResponse> concertLists = new ArrayList<>();
+        List<ConcertResponse> concertResponses = concertPage.getContent().stream()
+            .map(concert -> {
+                // 카테고리 정보 조회 및 매핑
+                List<Long> categoryIds = concertCategoryRepository.findCategoryIdsByCategoryName(concert.getId());
+                List<Category> categoryList = categoryRepository.findAllById(categoryIds);
 
-        concertIds.forEach(concertId -> {
-            Concert concert = concertRepository.findConcertById(concertId);
+                List<ConcertCategoryResponse> categoryResponses = categoryList.stream()
+                    .map(category -> new ConcertCategoryResponse(category.getCategory(), category.getImageUrl()))
+                    .collect(Collectors.toList());
 
-            List<Long> categoryIds = concertCategoryRepository.findCategoryIdsByCategoryName(concertId);
-            List<Category> categoryList = categoryRepository.findAllById(categoryIds);
-
-            List<ConcertCategoryResponse> categoryResponses = categoryList.stream()
-                .map(category -> new ConcertCategoryResponse(category.getCategory(), category.getImageUrl()))
-                .collect(Collectors.toList());
-
-            ConcertResponse response = ConcertResponse.fromEntity(concert, categoryResponses);
-            concertLists.add(response);
-        });
-
-        Page<Concert> concertPage = concertRepository.findByIdIn(concertIds, sortedPageable);
+                return ConcertResponse.fromEntity(concert, categoryResponses);
+            })
+            .collect(Collectors.toList());
 
         return PageResponse.<ConcertResponse>builder()
-            .listPageResponse(concertLists)
+            .listPageResponse(concertResponses)
             .totalCount(concertPage.getTotalElements())
             .size(concertPage.getSize())
             .build();
     }
+
 
     @Override
     public PageResponse<ConcertResponse> getConcertInfosWithFilter(Double minPrice, Double maxPrice,
@@ -90,28 +90,24 @@ public class ConcertServiceImpl implements ConcertService {
         Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by("prfpdfrom").ascending() : Sort.by("prfpdfrom").descending();
         Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
 
-        List<Long> concertIds = concertRepository.findConcertIdsByFilters(area, startDate, endDate, categories);
+        Page<Concert> concertPage = concertRepository.findConcertsByFilters(area, startDate, endDate, categories, sortedPageable);
 
-        List<ConcertResponse> concertLists = new ArrayList<>();
+        List<ConcertResponse> concertResponses = concertPage.getContent().stream()
+            .map(concert -> {
+                List<Long> categoryIds = concertCategoryRepository.findCategoryIdsByCategoryName(concert.getId());
+                List<Category> categoryList = categoryRepository.findAllById(categoryIds);
 
-        concertIds.forEach(concertId -> {
-            Concert concert = concertRepository.findConcertById(concertId);
+                List<ConcertCategoryResponse> categoryResponses = categoryList.stream()
+                    .map(category -> new ConcertCategoryResponse(category.getCategory(), category.getImageUrl()))
+                    .collect(Collectors.toList());
 
-            List<Long> categoryIds = concertCategoryRepository.findCategoryIdsByCategoryName(concertId);
-            List<Category> categoryList = categoryRepository.findAllById(categoryIds);
+                return ConcertResponse.fromEntity(concert, categoryResponses);
+            })
+            .collect(Collectors.toList());
 
-            List<ConcertCategoryResponse> categoryResponses = categoryList.stream()
-                .map(category -> new ConcertCategoryResponse(category.getCategory(), category.getImageUrl()))
-                .collect(Collectors.toList());
-
-            ConcertResponse response = ConcertResponse.fromEntity(concert, categoryResponses);
-            concertLists.add(response);
-        });
-
-        Page<Concert> concertPage = concertRepository.findByIdIn(concertIds, sortedPageable);
-
+        // PageResponse 생성
         return PageResponse.<ConcertResponse>builder()
-            .listPageResponse(concertLists)
+            .listPageResponse(concertResponses)
             .totalCount(concertPage.getTotalElements())
             .size(concertPage.getSize())
             .build();
@@ -123,35 +119,35 @@ public class ConcertServiceImpl implements ConcertService {
         Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by("prfpdfrom").ascending() : Sort.by("prfpdfrom").descending();
         Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
 
-        List<Long> concertIds = concertRepository.findConcertIdsBySearchQuery(query);
+        Page<Concert> concertPage = concertRepository.findBySearchQuery(query, sortedPageable);
+        System.out.println("count" + concertPage.stream().count());
 
-        List<ConcertResponse> concertLists = new ArrayList<>();
+        List<ConcertResponse> concertResponses = concertPage.getContent().stream()
+            .map(concert -> {
+                List<Long> categoryIds = concertCategoryRepository.findCategoryIdsByCategoryName(concert.getId());
+                List<Category> categories = categoryRepository.findAllById(categoryIds);
 
-        concertIds.forEach(concertId -> {
-            Concert concert = concertRepository.findConcertById(concertId);
+                List<ConcertCategoryResponse> categoryResponses = categories.stream()
+                    .map(category -> new ConcertCategoryResponse(category.getCategory(), category.getImageUrl()))
+                    .collect(Collectors.toList());
 
-            List<Long> categoryIds = concertCategoryRepository.findCategoryIdsByCategoryName(concertId);
-            List<Category> categories = categoryRepository.findAllById(categoryIds);
+                return ConcertResponse.fromEntity(concert, categoryResponses);
+            })
+            .collect(Collectors.toList());
 
-            List<ConcertCategoryResponse> categoryResponses = categories.stream()
-                .map(category -> new ConcertCategoryResponse(category.getCategory(), category.getImageUrl()))
-                .collect(Collectors.toList());
-
-            ConcertResponse response = ConcertResponse.fromEntity(concert, categoryResponses);
-            concertLists.add(response);
-        });
-
-        Page<Concert> concertPage = concertRepository.findByIdIn(concertIds, sortedPageable);
-
+        // PageResponse 생성
         return PageResponse.<ConcertResponse>builder()
-            .listPageResponse(concertLists)
+            .listPageResponse(concertResponses)
             .totalCount(concertPage.getTotalElements())
             .size(concertPage.getSize())
             .build();
     }
 
+
     @Override
     public ConcertDetailResponse getConcertDetailWithCategories(Long concertId) {
+
+        Long memberId = securityContextUtil.getContextMemberInfo().getMemberId();
 
         Concert concert = concertRepository.findConcertById(concertId);
 
@@ -170,9 +166,9 @@ public class ConcertServiceImpl implements ConcertService {
             .map(category -> new ConcertCategoryResponse(category.getCategory(), category.getImageUrl()))
             .collect(Collectors.toList());
 
-        ConcertDetailResponse response = ConcertDetailResponse.fromEntity(concert, ticketReviewResponses, categoryResponses);
+        boolean liked = concertLikeRepository.existsByConcertIdAndMemberId(concertId, memberId);
 
-        return response;
+        return ConcertDetailResponse.fromEntity(concert, ticketReviewResponses, categoryResponses, liked);
     }
 
     @Override

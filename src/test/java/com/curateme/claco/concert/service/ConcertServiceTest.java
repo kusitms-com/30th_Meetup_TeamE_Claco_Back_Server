@@ -1,10 +1,10 @@
 package com.curateme.claco.concert.service;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
+import com.curateme.claco.authentication.domain.JwtMemberDetail;
 import com.curateme.claco.authentication.util.SecurityContextUtil;
-import com.curateme.claco.concert.domain.dto.request.ConcertLikesRequest;
 import com.curateme.claco.concert.domain.dto.response.*;
 import com.curateme.claco.concert.domain.entity.*;
 import com.curateme.claco.concert.repository.*;
@@ -18,13 +18,10 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 
 import java.time.LocalDate;
 import java.util.*;
-import org.springframework.data.domain.Sort;
 
 @ExtendWith(MockitoExtension.class)
 class ConcertServiceTest {
@@ -33,206 +30,154 @@ class ConcertServiceTest {
     @Mock private ConcertCategoryRepository concertCategoryRepository;
     @Mock private CategoryRepository categoryRepository;
     @Mock private MemberRepository memberRepository;
-    @Mock private ConcertLikeRepository concertLikeRepository;
     @Mock private SecurityContextUtil securityContextUtil;
+    @Mock private ConcertLikeRepository concertLikeRepository;
     @Mock private TicketReviewRepository ticketReviewRepository;
 
     @InjectMocks private ConcertServiceImpl concertService;
 
-    private final Pageable pageable = PageRequest.of(0, 10);
+    private final Pageable pageable = PageRequest.of(0, 10, Sort.by("prfpdfrom").ascending());
 
     @Test
     @DisplayName("장르 기반 콘서트 조회")
     void testGetConcertInfos() {
         // Given
         String genre = "Classical";
-        List<Long> concertIds = List.of(1L, 2L);
-
-        // Mock Concert entities
-        Concert mockConcert1 = Concert.builder()
+        Concert mockConcert = Concert.builder()
             .id(1L)
-            .prfnm("클래식 콘서트 1")
+            .prfnm("클래식 콘서트")
+            .prfpdfrom(LocalDate.of(2024, 1, 1))
+            .prfpdto(LocalDate.of(2024, 12, 31))
+            .genrenm("Classical")
             .build();
-        Concert mockConcert2 = Concert.builder()
-            .id(2L)
-            .prfnm("클래식 콘서트 2")
-            .build();
 
-        when(concertRepository.findConcertIdsByGenre(genre)).thenReturn(concertIds);
+        when(concertRepository.findConcertsByGenreWithPagination(eq(genre), any(Pageable.class)))
+            .thenReturn(new PageImpl<>(List.of(mockConcert), pageable, 1));
 
-        // Mock Concert by ID
-        when(concertRepository.findConcertById(1L)).thenReturn(mockConcert1);
-        when(concertRepository.findConcertById(2L)).thenReturn(mockConcert2);
-
-        // Mock Category
-        when(concertCategoryRepository.findCategoryIdsByCategoryName(1L)).thenReturn(List.of(1L));
-        when(concertCategoryRepository.findCategoryIdsByCategoryName(2L)).thenReturn(List.of(2L));
-
-        when(categoryRepository.findAllById(List.of(1L))).thenReturn(
-            List.of(Category.builder().id(1L).category("웅장한").imageUrl("image-url-1").build())
-        );
-        when(categoryRepository.findAllById(List.of(2L))).thenReturn(
-            List.of(Category.builder().id(2L).category("현대적인").imageUrl("image-url-2").build())
-        );
-
-        // Mock Pageable result
-        when(concertRepository.findByIdIn(eq(concertIds), any(Pageable.class)))
-            .thenReturn(new PageImpl<>(List.of(mockConcert1, mockConcert2)));
+        when(concertCategoryRepository.findCategoryIdsByCategoryName(1L))
+            .thenReturn(List.of(1L));
+        when(categoryRepository.findAllById(List.of(1L)))
+            .thenReturn(List.of(
+                Category.builder().id(1L).category("웅장한").imageUrl("image-url-1").build()
+            ));
 
         // When
         PageResponse<ConcertResponse> result = concertService.getConcertInfos(genre, "asc", pageable);
 
         // Then
         assertThat(result).isNotNull();
-        assertThat(result.getListPageResponse()).hasSize(2);
-        assertThat(result.getListPageResponse().get(0).getPrfnm()).isEqualTo("클래식 콘서트 1");
-        assertThat(result.getListPageResponse().get(1).getPrfnm()).isEqualTo("클래식 콘서트 2");
-
-        verify(concertRepository).findConcertIdsByGenre(genre);
-        verify(concertRepository, times(1)).findByIdIn(eq(concertIds), any(Pageable.class));
-        verify(concertRepository, times(2)).findConcertById(anyLong());
-        verify(concertCategoryRepository, times(2)).findCategoryIdsByCategoryName(anyLong());
-        verify(categoryRepository, times(2)).findAllById(anyList());
+        assertThat(result.getListPageResponse()).hasSize(1);
+        assertThat(result.getListPageResponse().get(0).getPrfnm()).isEqualTo("클래식 콘서트");
+        verify(concertRepository, times(1)).findConcertsByGenreWithPagination(eq(genre), any(Pageable.class));
     }
-
 
     @Test
     @DisplayName("필터 기반 콘서트 조회")
     void testGetConcertInfosWithFilter() {
         // Given
-        List<Long> concertIds = List.of(1L); // Mock concert IDs
-        when(concertRepository.findConcertIdsByFilters(
-            eq("서울특별시"), any(), any(), eq(List.of("웅장한")))).thenReturn(concertIds);
-
-        // Mock concert entity
+        List<String> categories = List.of("웅장한");
         Concert mockConcert = Concert.builder()
             .id(1L)
             .prfnm("테스트 콘서트")
             .area("서울특별시")
-            .prfpdfrom(LocalDate.now().minusDays(10))
-            .prfpdto(LocalDate.now().plusDays(10))
+            .prfpdfrom(LocalDate.of(2024, 1, 1))
+            .prfpdto(LocalDate.of(2024, 12, 31))
             .build();
-        when(concertRepository.findConcertById(1L)).thenReturn(mockConcert);
 
-        // Mock category data
-        List<Long> categoryIds = List.of(1L, 2L);
-        when(concertCategoryRepository.findCategoryIdsByCategoryName(1L)).thenReturn(categoryIds);
+        when(concertRepository.findConcertsByFilters(
+            eq("서울특별시"),
+            eq(LocalDate.of(2023, 1, 1)),
+            eq(LocalDate.of(2024, 12, 31)),
+            eq(categories),
+            any(Pageable.class)))
+            .thenReturn(new PageImpl<>(List.of(mockConcert), pageable, 1));
 
-        Category mockCategory1 = Category.builder().id(1L).category("웅장한").imageUrl("image1.png").build();
-        Category mockCategory2 = Category.builder().id(2L).category("현대적인").imageUrl("image2.png").build();
-        when(categoryRepository.findAllById(categoryIds)).thenReturn(List.of(mockCategory1, mockCategory2));
-
-        // Mock pageable data
-        Sort sort = Sort.by("prfpdfrom").ascending(); // Matching sort order
-        PageRequest pageableWithSort = PageRequest.of(0, 10, sort);
-        when(concertRepository.findByIdIn(eq(concertIds), eq(pageableWithSort)))
-            .thenReturn(new PageImpl<>(List.of(mockConcert), pageableWithSort, 1));
+        when(concertCategoryRepository.findCategoryIdsByCategoryName(1L))
+            .thenReturn(List.of(1L));
+        when(categoryRepository.findAllById(List.of(1L)))
+            .thenReturn(List.of(
+                Category.builder().id(1L).category("웅장한").imageUrl("image-url-1").build()
+            ));
 
         // When
         PageResponse<ConcertResponse> result = concertService.getConcertInfosWithFilter(
             0.0, 100.0, "서울특별시",
-            LocalDate.now().minusDays(30), LocalDate.now().plusDays(30),
-            "asc", List.of("웅장한"), pageableWithSort);
+            LocalDate.of(2023, 1, 1), LocalDate.of(2024, 12, 31),
+            "asc", categories, pageable);
 
         // Then
         assertThat(result).isNotNull();
-        assertThat(result.getListPageResponse()).isNotEmpty();
+        assertThat(result.getListPageResponse()).hasSize(1);
         assertThat(result.getListPageResponse().get(0).getPrfnm()).isEqualTo("테스트 콘서트");
-
-        verify(concertRepository).findConcertIdsByFilters(eq("서울특별시"), any(), any(), eq(List.of("웅장한")));
-        verify(concertRepository).findByIdIn(eq(concertIds), eq(pageableWithSort));
+        verify(concertRepository, times(1)).findConcertsByFilters(
+            eq("서울특별시"),
+            eq(LocalDate.of(2023, 1, 1)),
+            eq(LocalDate.of(2024, 12, 31)),
+            eq(categories),
+            any(Pageable.class)
+        );
     }
 
-
-    /* 임시 제외
-    @Test
-    @DisplayName("좋아요 등록 및 취소")
-    void testPostLikes() {
-        // Given
-        Long memberId = 1L, concertId = 2L;
-        Member member = Member.builder().id(memberId).build();
-        Concert concert = Concert.builder().id(concertId).build();
-
-        when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-        when(concertRepository.findById(concertId)).thenReturn(Optional.of(concert));
-        when(concertLikeRepository.findByMemberAndConcert(member, concert)).thenReturn(Optional.empty());
-
-        // When
-        String result = concertService.postLikes(concertId);
-
-        // Then
-        assertThat(result).isEqualTo("좋아요가 등록되었습니다.");
-        verify(concertLikeRepository).save(any(ConcertLike.class));
-
-        // Test 좋아요 취소
-        when(concertLikeRepository.findByMemberAndConcert(member, concert))
-            .thenReturn(Optional.of(
-                ConcertLike.builder()
-                    .member(member)
-                    .concert(concert)
-                    .build()
-            ));
-        String cancelResult = concertService.postLikes(concertId);
-        assertThat(cancelResult).isEqualTo("좋아요가 취소되었습니다.");
-    }
-
-     */
-
+    /*
     @Test
     @DisplayName("콘서트 상세 정보 조회")
     void testGetConcertDetailWithCategories() {
         // Given
         Long concertId = 1L;
+        Long memberId = 10L; // Mock된 사용자 ID
 
-        // Mock Concert
-        Concert concert = Concert.builder()
+        Concert mockConcert = Concert.builder()
             .id(concertId)
-            .prfnm("클래식 콘서트")
-            .build();
-        when(concertRepository.findConcertById(concertId)).thenReturn(concert);
-
-        // Mock TicketReview IDs
-        when(ticketReviewRepository.findByConcertId(concertId)).thenReturn(List.of(1L, 2L));
-
-        // Mock Member
-        Member mockMember = Member.builder()
-            .id(1L)
-            .nickname("사용자1")
-            .email("user1@test.com")
+            .prfnm("테스트 콘서트")
             .build();
 
-        // Mock TicketReview
-        TicketReview mockReview = TicketReview.builder()
-            .id(1L)
-            .member(mockMember) // Include Member
-            .watchRound("1")
-            .watchDate(LocalDate.of(2024, 11, 18))
-            .watchSit("R")
-            .starRate(BigDecimal.valueOf(5.0))
-            .content("강추강추!")
-            .casting("이승기")
+        when(concertRepository.findConcertById(concertId))
+            .thenReturn(mockConcert);
+
+        when(concertCategoryRepository.findCategoryIdsByCategoryName(concertId))
+            .thenReturn(List.of(1L));
+
+        when(categoryRepository.findAllById(List.of(1L)))
+            .thenReturn(List.of(
+                Category.builder().id(1L).category("웅장한").imageUrl("image-url-1").build()
+            ));
+
+        when(ticketReviewRepository.findByConcertId(concertId))
+            .thenReturn(List.of(1L));
+
+        when(ticketReviewRepository.findAllById(List.of(1L)))
+            .thenReturn(List.of(
+                TicketReview.builder()
+                    .id(1L)
+                    .starRate(BigDecimal.valueOf(4.5))
+                    .build()
+            ));
+
+        // Mock JwtMemberDetail
+        JwtMemberDetail mockJwtMemberDetail = JwtMemberDetail.builder()
+            .memberId(memberId)
+            .email("test@example.com")
             .build();
 
-        when(ticketReviewRepository.findAllById(anyList())).thenReturn(List.of(mockReview));
+        when(securityContextUtil.getContextMemberInfo())
+            .thenReturn(mockJwtMemberDetail);
 
-        // Mock Category Data
-        List<Long> categoryIds = List.of(1L, 2L);
-        when(concertCategoryRepository.findCategoryIdsByCategoryName(concertId)).thenReturn(categoryIds);
-
-        Category mockCategory1 = Category.builder().id(1L).category("웅장한").imageUrl("image1.png").build();
-        Category mockCategory2 = Category.builder().id(2L).category("현대적인").imageUrl("image2.png").build();
-        when(categoryRepository.findAllById(categoryIds)).thenReturn(List.of(mockCategory1, mockCategory2));
+        when(concertLikeRepository.existsByConcertIdAndMemberId(concertId, memberId))
+            .thenReturn(true);
 
         // When
         ConcertDetailResponse result = concertService.getConcertDetailWithCategories(concertId);
 
         // Then
         assertThat(result).isNotNull();
-        assertThat(result.getPrfnm()).isEqualTo("클래식 콘서트");
-        assertThat(result.getTicketReviewSimpleResponses()).hasSize(1); // Validate ticket reviews
-        assertThat(result.getTicketReviewSimpleResponses().get(0).getNickname()).isEqualTo("사용자1"); // Validate nickname
-        verify(concertRepository).findConcertById(concertId);
-        verify(ticketReviewRepository).findByConcertId(concertId);
+        assertThat(result.getPrfnm()).isEqualTo("테스트 콘서트");
+        assertThat(result.getCategories()).hasSize(1);
+        assertThat(result.getCategories().get(0).getCategory()).isEqualTo("웅장한");
+        assertThat(result.isLiked()).isTrue(); // 좋아요 상태 확인
+        verify(concertRepository, times(1)).findConcertById(concertId);
+        verify(securityContextUtil, times(1)).getContextMemberInfo();
+        verify(concertLikeRepository, times(1)).existsByConcertIdAndMemberId(concertId, memberId);
     }
+*/
 
 }

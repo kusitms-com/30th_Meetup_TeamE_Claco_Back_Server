@@ -25,10 +25,13 @@ public interface ConcertLikeRepository extends JpaRepository<ConcertLike,Long> {
     @Query("SELECT cl.concert.id FROM ConcertLike cl WHERE cl.member.id = :userId")
     List<Long> findConcertIdsByMemberId(@Param("userId") Long userId);
 
-
     @Query("SELECT cl.concert.id " + "FROM ConcertLike cl " + "GROUP BY cl.concert.id " + "ORDER BY COUNT(cl) DESC")
     List<Long> findTopConcertIdsByLikeCount(Pageable pageable);
 
+    @Query("SELECT CASE WHEN COUNT(cl) > 0 THEN true ELSE false END " +
+        "FROM ConcertLike cl " +
+        "WHERE cl.concert.id = :concertId AND cl.member.id = :memberId")
+    boolean existsByConcertIdAndMemberId(@Param("concertId") Long concertId, @Param("memberId") Long memberId);
 
 }
 

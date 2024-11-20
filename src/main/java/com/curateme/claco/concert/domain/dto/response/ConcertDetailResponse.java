@@ -81,11 +81,14 @@ public class ConcertDetailResponse {
     @Schema(name = "공연 요약 정보", example = "...")
     private String summary;
 
+    @Schema(name = "공연 좋아요 여부")
+    private boolean liked;
+
     @Schema(description = "공연 성격 리스트", example = "[...]")
     private List<ConcertCategoryResponse> categories;
 
 
-    public static ConcertDetailResponse fromEntity(Concert concert, List<TicketReviewSimpleResponse> ticketReviewSimpleResponses, List<ConcertCategoryResponse> categories){
+    public static ConcertDetailResponse fromEntity(Concert concert, List<TicketReviewSimpleResponse> ticketReviewSimpleResponses, List<ConcertCategoryResponse> categories, boolean liked){
         return ConcertDetailResponse.builder()
             .id(concert.getId())
             .mt20id(concert.getMt20id())
@@ -107,6 +110,7 @@ public class ConcertDetailResponse {
             .styurl(concert.getStyurl())
             .ticketReviewSimpleResponses(ticketReviewSimpleResponses)
             .summary(concert.getSummary())
+            .liked(liked)
             .categories(categories)
             .build();
     }
