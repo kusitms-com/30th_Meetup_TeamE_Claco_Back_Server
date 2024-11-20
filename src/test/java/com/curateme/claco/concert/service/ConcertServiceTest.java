@@ -120,7 +120,6 @@ class ConcertServiceTest {
         );
     }
 
-
     @Test
     void testGetConcertDetailWithCategories() {
         // Given
@@ -184,6 +183,7 @@ class ConcertServiceTest {
         assertThat(result.getCategories().get(0).getImageURL()).isEqualTo("image-url-1");
         assertThat(result.isLiked()).isTrue();
     }
+
 
     @Test
     @DisplayName("콘서트 자동 완성 결과 조회")
@@ -309,6 +309,11 @@ class ConcertServiceTest {
         assertThat(result.get(0).getPrfnm()).isEqualTo("테스트 콘서트");
         assertThat(result.get(0).getCategories()).hasSize(1);
         assertThat(result.get(0).getCategories().get(0).getCategory()).isEqualTo("웅장한");
+
+        verify(concertLikeRepository).findConcertIdsByMemberId(memberId);
+        verify(concertRepository).findConcertById(concertId);
+        verify(concertCategoryRepository).findCategoryIdsByCategoryName(concertId);
+        verify(categoryRepository).findAllById(List.of(1L));
 
     }
 
