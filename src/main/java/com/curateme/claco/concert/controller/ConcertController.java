@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
     public class ConcertController {
         private final ConcertService concertService;
 
-        @GetMapping("/views/{genre}/{direction}")
+        @GetMapping("/views")
         @Operation(summary = "공연 둘러보기", description = "기능명세서 화면번호 4.0.0")
         @Parameter(name = "genre", description = "장르명", example = "웅장한")
         @Parameter(name = "direction", description = "정렬 순서", example = "asc/dsc")
