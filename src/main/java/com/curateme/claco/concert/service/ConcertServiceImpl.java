@@ -147,6 +147,8 @@ public class ConcertServiceImpl implements ConcertService {
     @Override
     public ConcertDetailResponse getConcertDetailWithCategories(Long concertId) {
 
+        Long memberId = securityContextUtil.getContextMemberInfo().getMemberId();
+
         Concert concert = concertRepository.findConcertById(concertId);
 
         List<Long> ticketReviewIds =  ticketReviewRepository.findByConcertId(concertId);
@@ -164,9 +166,9 @@ public class ConcertServiceImpl implements ConcertService {
             .map(category -> new ConcertCategoryResponse(category.getCategory(), category.getImageUrl()))
             .collect(Collectors.toList());
 
-        ConcertDetailResponse response = ConcertDetailResponse.fromEntity(concert, ticketReviewResponses, categoryResponses);
+        boolean liked = concertLikeRepository.existsByConcertIdAndMemberId(concertId, memberId);
 
-        return response;
+        return ConcertDetailResponse.fromEntity(concert, ticketReviewResponses, categoryResponses, liked);
     }
 
     @Override
