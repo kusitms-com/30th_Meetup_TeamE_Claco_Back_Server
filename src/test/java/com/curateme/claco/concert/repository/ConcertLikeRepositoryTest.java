@@ -7,6 +7,7 @@ import com.curateme.claco.member.domain.entity.Role;
 import com.curateme.claco.member.repository.MemberRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -119,4 +120,35 @@ class ConcertLikeRepositoryTest {
         assertThat(topConcertIds).isNotNull();
         assertThat(topConcertIds).hasSizeLessThanOrEqualTo(topCount);
     }
+
+    @Test
+    void testFindByMemberAndConcert() {
+        // Given
+        Member testMember = memberRepository.findAll().get(0);
+        Concert testConcert = concertRepository.findAll().get(0);
+
+        // When
+        Optional<ConcertLike> concertLike = concertLikeRepository.findByMemberAndConcert(testMember, testConcert);
+
+        // Then
+        assertThat(concertLike).isPresent();
+        assertThat(concertLike.get().getMember().getId()).isEqualTo(testMember.getId());
+        assertThat(concertLike.get().getConcert().getId()).isEqualTo(testConcert.getId());
+    }
+
+    @Test
+    void testExistsByConcertIdAndMemberId() {
+        // Given
+        Member testMember = memberRepository.findAll().get(0);
+        Concert testConcert = concertRepository.findAll().get(0);
+
+        // When
+        boolean exists = concertLikeRepository.existsByConcertIdAndMemberId(testConcert.getId(), testMember.getId());
+
+        // Then
+        assertThat(exists).isTrue();
+    }
+
+
+
 }

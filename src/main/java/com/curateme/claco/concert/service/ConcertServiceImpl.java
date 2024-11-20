@@ -82,7 +82,6 @@ public class ConcertServiceImpl implements ConcertService {
             .build();
     }
 
-
     @Override
     public PageResponse<ConcertResponse> getConcertInfosWithFilter(Double minPrice, Double maxPrice,
         String area, LocalDate startDate, LocalDate endDate, String direction, List<String> categories, Pageable pageable) {
@@ -142,7 +141,6 @@ public class ConcertServiceImpl implements ConcertService {
             .size(concertPage.getSize())
             .build();
     }
-
 
     @Override
     public ConcertDetailResponse getConcertDetailWithCategories(Long concertId) {

@@ -31,12 +31,11 @@ class ConcertRepositoryTest {
                 .mt20id("C12345")
                 .prfnm("웅장한 연극")
                 .prfpdfrom(LocalDate.now().minusDays(10))
-                .prfpdto(LocalDate.now().plusDays(5)) // end_date가 현재 날짜 이후
+                .prfpdto(LocalDate.now().plusDays(5))
                 .fcltynm("서울극장")
                 .area("서울특별시")
                 .genrenm("연극")
                 .build(),
-
             Concert.builder()
                 .mt20id("C12346")
                 .prfnm("현대적인 뮤지컬")
@@ -46,12 +45,11 @@ class ConcertRepositoryTest {
                 .area("서울특별시")
                 .genrenm("뮤지컬")
                 .build(),
-
             Concert.builder()
                 .mt20id("C12347")
                 .prfnm("클래식 음악회")
                 .prfpdfrom(LocalDate.now().minusDays(15))
-                .prfpdto(LocalDate.now()) // end_date가 현재 날짜
+                .prfpdto(LocalDate.now())
                 .fcltynm("예술의전당")
                 .area("서울특별시")
                 .genrenm("음악회")
@@ -74,6 +72,7 @@ class ConcertRepositoryTest {
         // Then
         assertThat(result).isNotNull();
         assertThat(result.getContent()).isNotEmpty();
+        assertThat(result.getContent().size()).isEqualTo(ids.size());
     }
 
     @Test
@@ -89,9 +88,7 @@ class ConcertRepositoryTest {
 
         // Then
         assertThat(concertIds).isNotNull();
-        log.info("Filtered Concert IDs: {}", concertIds);
     }
-
 
     @Test
     void testFindConcertIdsBySearchQuery() {
@@ -130,5 +127,51 @@ class ConcertRepositoryTest {
         // Then
         assertThat(concertIds).isNotNull();
         assertThat(concertIds).isNotEmpty();
+    }
+
+    @Test
+    void testFindBySearchQuery() {
+        // Given
+        String query = "뮤지컬";
+        PageRequest pageable = PageRequest.of(0, 10);
+
+        // When
+        Page<Concert> result = concertRepository.findBySearchQuery(query, pageable);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getContent()).isNotEmpty();
+        assertThat(result.getContent().get(0).getPrfnm()).contains("뮤지컬");
+    }
+
+    @Test
+    void testFindConcertsByFilters() {
+        // Given
+        String area = "서울특별시";
+        LocalDate startDate = LocalDate.now().minusDays(30);
+        LocalDate endDate = LocalDate.now().plusDays(30);
+        List<String> categories = Arrays.asList("웅장한", "현대적인");
+        PageRequest pageable = PageRequest.of(0, 10);
+
+        // When
+        Page<Concert> result = concertRepository.findConcertsByFilters(area, startDate, endDate, categories, pageable);
+
+        // Then
+        assertThat(result).isNotNull();
+    }
+
+    @Test
+    void testFindConcertsByGenreWithPagination() {
+        // Given
+        String genre = "음악회";
+        PageRequest pageable = PageRequest.of(0, 10);
+
+        // When
+        Page<Concert> result = concertRepository.findConcertsByGenreWithPagination(genre, pageable);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getContent()).isNotEmpty();
+        assertThat(result.getContent().get(0).getGenrenm()).isEqualTo(genre);
     }
 }
