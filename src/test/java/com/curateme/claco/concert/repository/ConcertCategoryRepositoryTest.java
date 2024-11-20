@@ -58,7 +58,6 @@ class ConcertCategoryRepositoryTest {
 
     }
 
-
     @Test
     void testFindCategoryIdsByCategoryName() {
         // Given

@@ -19,6 +19,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
+import com.curateme.claco.member.domain.entity.Role;
+
 
 import java.time.LocalDate;
 import java.util.*;
@@ -118,66 +120,203 @@ class ConcertServiceTest {
         );
     }
 
-    /*
     @Test
-    @DisplayName("콘서트 상세 정보 조회")
     void testGetConcertDetailWithCategories() {
         // Given
         Long concertId = 1L;
-        Long memberId = 10L; // Mock된 사용자 ID
+        Long memberId = 10L;
+
+        JwtMemberDetail jwtMemberDetailMock = mock(JwtMemberDetail.class);
+
+        Member testMember = Member.builder()
+            .id(memberId)
+            .nickname("test_user")
+            .email("test@test.com")
+            .role(Role.MEMBER)
+            .build();
+
+        Concert mockConcert = Concert.builder()
+            .id(concertId)
+            .prfnm("테스트 콘서트")
+            .genrenm("Classical")
+            .build();
+
+        TicketReview mockReview = TicketReview.builder()
+            .id(1L)
+            .starRate(BigDecimal.valueOf(4.5))
+            .member(testMember)
+            .build();
+
+        // Mock Category 객체 생성
+        Category mockCategory = mock(Category.class);
+        lenient().when(mockCategory.getId()).thenReturn(1L);
+        lenient().when(mockCategory.getCategory()).thenReturn("웅장한");
+        lenient().when(mockCategory.getImageUrl()).thenReturn("image-url-1");
+
+        // Mock 설정
+        when(securityContextUtil.getContextMemberInfo()).thenReturn(jwtMemberDetailMock);
+        when(jwtMemberDetailMock.getMemberId()).thenReturn(memberId);
+        when(concertRepository.findConcertById(concertId)).thenReturn(mockConcert);
+        when(ticketReviewRepository.findByConcertId(concertId)).thenReturn(List.of(mockReview.getId()));
+        when(ticketReviewRepository.findAllById(List.of(mockReview.getId()))).thenReturn(List.of(mockReview));
+        when(concertCategoryRepository.findCategoryIdsByCategoryName(concertId)).thenReturn(List.of(1L));
+        when(categoryRepository.findAllById(List.of(1L))).thenReturn(List.of(mockCategory));
+        when(concertLikeRepository.existsByConcertIdAndMemberId(concertId, memberId)).thenReturn(true);
+
+        // When
+        ConcertDetailResponse result = concertService.getConcertDetailWithCategories(concertId);
+
+        // Then
+        verify(securityContextUtil).getContextMemberInfo();
+        verify(jwtMemberDetailMock).getMemberId();
+        verify(concertRepository).findConcertById(concertId);
+        verify(ticketReviewRepository).findByConcertId(concertId);
+        verify(ticketReviewRepository).findAllById(List.of(mockReview.getId()));
+        verify(concertCategoryRepository).findCategoryIdsByCategoryName(concertId);
+        verify(categoryRepository).findAllById(List.of(1L));
+        verify(concertLikeRepository).existsByConcertIdAndMemberId(concertId, memberId);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getPrfnm()).isEqualTo("테스트 콘서트");
+        assertThat(result.getCategories()).hasSize(1);
+        assertThat(result.getCategories().get(0).getCategory()).isEqualTo("웅장한");
+        assertThat(result.getCategories().get(0).getImageURL()).isEqualTo("image-url-1");
+        assertThat(result.isLiked()).isTrue();
+    }
+
+
+    @Test
+    @DisplayName("콘서트 자동 완성 결과 조회")
+    void testGetAutoComplete() {
+        // Given
+        String query = "클래식";
+        Concert mockConcert1 = Concert.builder()
+            .id(1L)
+            .prfnm("클래식 콘서트 1")
+            .build();
+
+        Concert mockConcert2 = Concert.builder()
+            .id(2L)
+            .prfnm("클래식 콘서트 2")
+            .build();
+
+        when(concertRepository.findConcertIdsBySearchQuery(query)).thenReturn(List.of(1L, 2L));
+        when(concertRepository.findAllById(List.of(1L, 2L))).thenReturn(List.of(mockConcert1, mockConcert2));
+
+        // When
+        List<ConcertAutoCompleteResponse> result = concertService.getAutoComplete(query);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0).getPrfnm()).isEqualTo("클래식 콘서트 1");
+        assertThat(result.get(1).getPrfnm()).isEqualTo("클래식 콘서트 2");
+
+        verify(concertRepository, times(1)).findConcertIdsBySearchQuery(query);
+        verify(concertRepository, times(1)).findAllById(List.of(1L, 2L));
+    }
+
+    @Test
+    @DisplayName("콘서트 좋아요 등록 및 취소")
+    void testPostLikes() {
+        // Given
+        Long concertId = 1L;
+        Long memberId = 10L;
+
+        JwtMemberDetail jwtMemberDetailMock = mock(JwtMemberDetail.class);
+
+        // Mock Member와 Concert 객체 생성
+        Member mockMember = Member.builder()
+            .id(memberId)
+            .nickname("test_user")
+            .build();
 
         Concert mockConcert = Concert.builder()
             .id(concertId)
             .prfnm("테스트 콘서트")
             .build();
 
-        when(concertRepository.findConcertById(concertId))
-            .thenReturn(mockConcert);
-
-        when(concertCategoryRepository.findCategoryIdsByCategoryName(concertId))
-            .thenReturn(List.of(1L));
-
-        when(categoryRepository.findAllById(List.of(1L)))
-            .thenReturn(List.of(
-                Category.builder().id(1L).category("웅장한").imageUrl("image-url-1").build()
-            ));
-
-        when(ticketReviewRepository.findByConcertId(concertId))
-            .thenReturn(List.of(1L));
-
-        when(ticketReviewRepository.findAllById(List.of(1L)))
-            .thenReturn(List.of(
-                TicketReview.builder()
-                    .id(1L)
-                    .starRate(BigDecimal.valueOf(4.5))
-                    .build()
-            ));
-
-        // Mock JwtMemberDetail
-        JwtMemberDetail mockJwtMemberDetail = JwtMemberDetail.builder()
-            .memberId(memberId)
-            .email("test@example.com")
+        ConcertLike mockLike = ConcertLike.builder()
+            .member(mockMember)
+            .concert(mockConcert)
             .build();
 
-        when(securityContextUtil.getContextMemberInfo())
-            .thenReturn(mockJwtMemberDetail);
+        // Mock 설정
+        when(securityContextUtil.getContextMemberInfo()).thenReturn(jwtMemberDetailMock);
+        when(jwtMemberDetailMock.getMemberId()).thenReturn(memberId);
+        when(memberRepository.getById(memberId)).thenReturn(mockMember);
+        when(concertRepository.findById(concertId)).thenReturn(Optional.of(mockConcert));
 
-        when(concertLikeRepository.existsByConcertIdAndMemberId(concertId, memberId))
-            .thenReturn(true);
+        // 좋아요가 이미 있는 상태 Mock
+        when(concertLikeRepository.findByMemberAndConcert(eq(mockMember), eq(mockConcert)))
+            .thenReturn(Optional.of(mockLike));
+
+        // When - 좋아요 취소
+        String result = concertService.postLikes(concertId);
+
+        // Then - 좋아요 취소 확인
+        assertThat(result).isEqualTo("좋아요가 취소되었습니다.");
+        verify(concertLikeRepository, times(1)).delete(mockLike);
+
+        // 좋아요가 없는 상태 Mock
+        when(concertLikeRepository.findByMemberAndConcert(eq(mockMember), eq(mockConcert)))
+            .thenReturn(Optional.empty());
+
+        // When - 좋아요 등록
+        String result2 = concertService.postLikes(concertId);
+
+        // Then - 좋아요 등록 확인
+        assertThat(result2).isEqualTo("좋아요가 등록되었습니다.");
+        verify(concertLikeRepository, times(1)).save(any(ConcertLike.class));
+    }
+
+
+
+    @Test
+    @DisplayName("회원이 좋아요한 콘서트 조회")
+    void testGetLikedConcert() {
+        // Given
+        Long memberId = 10L;
+        Long concertId = 1L;
+
+        JwtMemberDetail jwtMemberDetailMock = mock(JwtMemberDetail.class);
+
+        Concert mockConcert = Concert.builder()
+            .id(concertId)
+            .prfnm("테스트 콘서트")
+            .genrenm("Classical")
+            .build();
+
+        Category mockCategory = Category.builder()
+            .id(1L)
+            .category("웅장한")
+            .imageUrl("image-url-1")
+            .build();
+
+        when(securityContextUtil.getContextMemberInfo()).thenReturn(jwtMemberDetailMock);
+        when(jwtMemberDetailMock.getMemberId()).thenReturn(memberId);
+        when(concertLikeRepository.findConcertIdsByMemberId(memberId)).thenReturn(List.of(concertId));
+        when(concertRepository.findConcertById(concertId)).thenReturn(mockConcert);
+        when(concertCategoryRepository.findCategoryIdsByCategoryName(concertId)).thenReturn(List.of(1L));
+        when(categoryRepository.findAllById(List.of(1L))).thenReturn(List.of(mockCategory));
 
         // When
-        ConcertDetailResponse result = concertService.getConcertDetailWithCategories(concertId);
+        List<ConcertLikedResponse> result = concertService.getLikedConcert(null, null);
 
         // Then
         assertThat(result).isNotNull();
-        assertThat(result.getPrfnm()).isEqualTo("테스트 콘서트");
-        assertThat(result.getCategories()).hasSize(1);
-        assertThat(result.getCategories().get(0).getCategory()).isEqualTo("웅장한");
-        assertThat(result.isLiked()).isTrue(); // 좋아요 상태 확인
-        verify(concertRepository, times(1)).findConcertById(concertId);
-        verify(securityContextUtil, times(1)).getContextMemberInfo();
-        verify(concertLikeRepository, times(1)).existsByConcertIdAndMemberId(concertId, memberId);
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getPrfnm()).isEqualTo("테스트 콘서트");
+        assertThat(result.get(0).getCategories()).hasSize(1);
+        assertThat(result.get(0).getCategories().get(0).getCategory()).isEqualTo("웅장한");
+
+        verify(concertLikeRepository).findConcertIdsByMemberId(memberId);
+        verify(concertRepository).findConcertById(concertId);
+        verify(concertCategoryRepository).findCategoryIdsByCategoryName(concertId);
+        verify(categoryRepository).findAllById(List.of(1L));
+
     }
-*/
+
+
 
 }
