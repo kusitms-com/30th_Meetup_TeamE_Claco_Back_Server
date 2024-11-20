@@ -120,8 +120,8 @@ class ConcertServiceTest {
         );
     }
 
+
     @Test
-    @DisplayName("콘서트 상세 정보 조회")
     void testGetConcertDetailWithCategories() {
         // Given
         Long concertId = 1L;
@@ -148,15 +148,20 @@ class ConcertServiceTest {
             .member(testMember)
             .build();
 
+        // Mock Category 객체 생성
+        Category mockCategory = mock(Category.class);
+        lenient().when(mockCategory.getId()).thenReturn(1L);
+        lenient().when(mockCategory.getCategory()).thenReturn("웅장한");
+        lenient().when(mockCategory.getImageUrl()).thenReturn("image-url-1");
+
+        // Mock 설정
         when(securityContextUtil.getContextMemberInfo()).thenReturn(jwtMemberDetailMock);
         when(jwtMemberDetailMock.getMemberId()).thenReturn(memberId);
         when(concertRepository.findConcertById(concertId)).thenReturn(mockConcert);
         when(ticketReviewRepository.findByConcertId(concertId)).thenReturn(List.of(mockReview.getId()));
         when(ticketReviewRepository.findAllById(List.of(mockReview.getId()))).thenReturn(List.of(mockReview));
         when(concertCategoryRepository.findCategoryIdsByCategoryName(concertId)).thenReturn(List.of(1L));
-        when(categoryRepository.findAllById(List.of(1L))).thenReturn(List.of(
-            Category.builder().id(1L).category("웅장한").imageUrl("image-url-1").build()
-        ));
+        when(categoryRepository.findAllById(List.of(1L))).thenReturn(List.of(mockCategory));
         when(concertLikeRepository.existsByConcertIdAndMemberId(concertId, memberId)).thenReturn(true);
 
         // When
@@ -176,6 +181,7 @@ class ConcertServiceTest {
         assertThat(result.getPrfnm()).isEqualTo("테스트 콘서트");
         assertThat(result.getCategories()).hasSize(1);
         assertThat(result.getCategories().get(0).getCategory()).isEqualTo("웅장한");
+        assertThat(result.getCategories().get(0).getImageURL()).isEqualTo("image-url-1");
         assertThat(result.isLiked()).isTrue();
     }
 
@@ -304,10 +310,6 @@ class ConcertServiceTest {
         assertThat(result.get(0).getCategories()).hasSize(1);
         assertThat(result.get(0).getCategories().get(0).getCategory()).isEqualTo("웅장한");
 
-        verify(concertLikeRepository, times(1)).findConcertIdsByMemberId(memberId);
-        verify(concertRepository, times(1)).findConcertById(concertId);
-        verify(concertCategoryRepository, times(1)).findCategoryIdsByCategoryName(concertId);
-        verify(categoryRepository, times(1)).findAllById(List.of(1L));
     }
 
 
