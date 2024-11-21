@@ -54,6 +54,7 @@ public class RecommendationServiceImpl implements RecommendationService{
     private final SecurityContextUtil securityContextUtil;
     private final MemberRepository memberRepository;
 
+
     @Value("${cloud.ai.url}")
     private String URL;
 
@@ -204,7 +205,7 @@ public class RecommendationServiceImpl implements RecommendationService{
     }
 
     // concertIds를 기반으로 콘서트 정보를 조회하여 recommendations 리스트 생성
-    private List<RecommendationConcertsResponseV1> getConcertDetails(List<Long> concertIds) {
+    public List<RecommendationConcertsResponseV1> getConcertDetails(List<Long> concertIds) {
         List<RecommendationConcertsResponseV1> recommendations = new ArrayList<>();
 
         for (Long concertId : concertIds) {

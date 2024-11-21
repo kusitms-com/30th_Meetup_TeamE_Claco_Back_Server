@@ -1,152 +1,262 @@
 package com.curateme.claco.recommendation;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
-import com.curateme.claco.recommendation.domain.dto.RecommendationConcertResponseV2;
+import com.curateme.claco.authentication.util.SecurityContextUtil;
+import com.curateme.claco.clacobook.repository.ClacoBookRepository;
+import com.curateme.claco.concert.domain.entity.Concert;
+import com.curateme.claco.concert.repository.ConcertCategoryRepository;
+import com.curateme.claco.concert.repository.ConcertLikeRepository;
+import com.curateme.claco.concert.repository.ConcertRepository;
+import com.curateme.claco.member.repository.MemberRepository;
+import com.curateme.claco.recommendation.domain.dto.RecommendationConcertResponseV3;
 import com.curateme.claco.recommendation.domain.dto.RecommendationConcertsResponseV1;
-import com.curateme.claco.review.domain.dto.response.TicketInfoResponse;
-import com.curateme.claco.review.domain.dto.response.TicketReviewSummaryResponse;
+import com.curateme.claco.recommendation.service.RecommendationServiceImpl;
+import com.curateme.claco.review.repository.TicketReviewRepository;
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Collections;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockedConstruction;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.*;
+import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Locale;
 
 @ExtendWith(MockitoExtension.class)
 class RecommendationServiceImplTest {
 
-    @Test
-    void testGetMockRecommendations() {
+    @InjectMocks
+    private RecommendationServiceImpl recommendationService;
 
-        // Given
-        List<RecommendationConcertsResponseV1> mockRecommendations = List.of(
-            new RecommendationConcertsResponseV1(
-                101L,
-                "Mock Concert 1",
-                "https://mock.poster/1",
-                "Classical",
-                "Mock Facility 1",
-                LocalDate.of(2024, 1, 1).format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd (EEEE)", Locale.KOREAN)),
-                LocalDate.of(2024, 12, 31).format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd (EEEE)", Locale.KOREAN))
-            ),
-            new RecommendationConcertsResponseV1(
-                102L,
-                "Mock Concert 2",
-                "https://mock.poster/2",
-                "Jazz",
-                "Mock Facility 2",
-                LocalDate.of(2024, 2, 1).format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd (EEEE)", Locale.KOREAN)),
-                LocalDate.of(2024, 11, 30).format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd (EEEE)", Locale.KOREAN))
-            )
+    @Mock
+    private ConcertRepository concertRepository;
+
+    @Mock
+    private ConcertLikeRepository concertLikeRepository;
+
+    @Mock
+    private ConcertCategoryRepository concertCategoryRepository;
+
+    @Mock
+    private RestTemplate restTemplate;
+
+    @BeforeEach
+    void setup() {
+        // Mock Concert entities
+        when(concertRepository.findConcertById(1L)).thenReturn(
+            Concert.builder()
+                .id(1L)
+                .prfnm("클래식 콘서트")
+                .prfpdfrom(LocalDate.of(2024, 1, 1))
+                .prfpdto(LocalDate.of(2024, 12, 31))
+                .genrenm("Classical")
+                .build()
         );
 
-        // When
-        List<RecommendationConcertsResponseV1> recommendations = mockRecommendations;
-
-        // Then
-        assertThat(recommendations).isNotNull();
-        assertThat(recommendations).hasSize(2);
-        assertThat(recommendations.get(0).getPrfnm()).isEqualTo("Mock Concert 1");
-        assertThat(recommendations.get(1).getPrfnm()).isEqualTo("Mock Concert 2");
+        when(concertRepository.findConcertById(2L)).thenReturn(
+            Concert.builder()
+                .id(2L)
+                .prfnm("클래식 콘서트 2")
+                .prfpdfrom(LocalDate.of(2024, 1, 1))
+                .prfpdto(LocalDate.of(2024, 12, 31))
+                .genrenm("Classical")
+                .build()
+        );
 
     }
 
+
     @Test
-    void testGetMockLikedRecommendations() {
+    void testGetConcertRecommendations_Success() {
+
         // Given
-        List<RecommendationConcertsResponseV1> mockLikedRecommendations = List.of(
-            new RecommendationConcertsResponseV1(
-                201L,
-                "Liked Concert 1",
-                "https://mock.poster/201",
-                "Pop",
-                "Mock Facility A",
-                LocalDate.of(2024, 3, 1).format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd (EEEE)", Locale.KOREAN)),
-                LocalDate.of(2024, 9, 30).format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd (EEEE)", Locale.KOREAN))
-            ),
-            new RecommendationConcertsResponseV1(
-                202L,
-                "Liked Concert 2",
-                "https://mock.poster/202",
-                "Rock",
-                "Mock Facility B",
-                LocalDate.of(2024, 5, 1).format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd (EEEE)", Locale.KOREAN)),
-                LocalDate.of(2024, 10, 31).format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd (EEEE)", Locale.KOREAN))
-            )
-        );
+        String mockJsonResponse = """
+            {
+                "recommendations": [
+                    [1, 0.9],
+                    [2, 0.7]
+                ]
+            }
+        """;
 
-        // When
-        List<RecommendationConcertsResponseV1> recommendations = mockLikedRecommendations;
+        // RestTemplate Mock 설정
+        try (MockedConstruction<RestTemplate> mocked = mockConstruction(RestTemplate.class, (mock, context) -> {
+            when(mock.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
+                .thenReturn(ResponseEntity.ok(mockJsonResponse));
+        })) {
+            // When
+            List<Long> concertIds = recommendationService.parseConcertIdsFromJson(mockJsonResponse);
+            List<RecommendationConcertsResponseV1> recommendations = recommendationService.getConcertDetails(concertIds);
 
-        // Then
-        assertThat(recommendations).isNotNull();
-        assertThat(recommendations).hasSize(2);
-        assertThat(recommendations.get(0).getPrfnm()).isEqualTo("Liked Concert 1");
-        assertThat(recommendations.get(1).getPrfnm()).isEqualTo("Liked Concert 2");
+            // Then
+            assertThat(recommendations).isNotNull();
+            assertThat(recommendations).hasSize(2);
+            assertThat(recommendations.get(0).getId()).isEqualTo(1L);
+            assertThat(recommendations.get(1).getId()).isEqualTo(2L);
+        }
     }
 
     @Test
-    void testGetMockClacoBooksRecommendations() {
-        // Given
-        List<RecommendationConcertResponseV2> mockClacoBooksRecommendations = List.of(
-            RecommendationConcertResponseV2.from(
-                new TicketInfoResponse(301L, "https://mock.ticket/301"),
-                new TicketReviewSummaryResponse(
-                    "User1", "Concert 301", 301L, LocalDateTime.of(2024, 5, 10, 15, 30), "Amazing concert!"
-                )
-            ),
-            RecommendationConcertResponseV2.from(
-                new TicketInfoResponse(302L, "https://mock.ticket/302"),
-                new TicketReviewSummaryResponse(
-                    "User2", "Concert 302", 302L, LocalDateTime.of(2024, 6, 20, 18, 0), "Great performance!"
-                )
-            )
+    void testGetLikedConcertRecommendations_WithLikedConcert() {
+        // Given: The user has liked a concert
+        when(concertLikeRepository.findMostRecentLikedConcert(eq(1L), any(Pageable.class)))
+            .thenReturn(new PageImpl<>(Collections.singletonList(1L)));
+
+        when(concertCategoryRepository.findCategoryNamesByConcertId(1L))
+            .thenReturn(Arrays.asList("Category1", "Category2", "Category3"));
+
+        when(concertRepository.findConcertById(1L)).thenReturn(
+            Concert.builder()
+                .id(1L)
+                .prfnm("Classical Concert")
+                .prfpdfrom(LocalDate.of(2024, 1, 1))
+                .prfpdto(LocalDate.of(2024, 12, 31))
+                .genrenm("Classical")
+                .build()
         );
 
+        String mockJsonResponse = """
+            {
+                "recommendations": [[1, 0.9], [2, 0.8]]
+            }
+        """;
         // When
-        List<RecommendationConcertResponseV2> recommendations = mockClacoBooksRecommendations;
+        Pageable pageable = PageRequest.of(0, 1);
+        Long concertId = concertLikeRepository.findMostRecentLikedConcert(1L, pageable)
+            .getContent().stream().findFirst().orElse(null);
+        List<Long> concertIds = recommendationService.parseConcertIdsFromJson(mockJsonResponse);
+        List<RecommendationConcertsResponseV1> recommendedConcerts = recommendationService.getConcertDetails(concertIds);
+        List<String> keywords = concertCategoryRepository.findCategoryNamesByConcertId(concertId);
+        // When
+        RecommendationConcertResponseV3 response =
+            RecommendationConcertResponseV3.builder()
+            .likedHistory(true)
+            .keywords(keywords)
+            .recommendationConcertsResponseV1s(recommendedConcerts)
+            .build();
 
         // Then
-        assertThat(recommendations).isNotNull();
-        assertThat(recommendations).hasSize(2);
-        assertThat(recommendations.get(0).getTicketInfoResponse().getTicketImage()).isEqualTo("https://mock.ticket/301");
-        assertThat(recommendations.get(1).getTicketReviewSummary().getContent()).isEqualTo("Great performance!");
+        assertThat(response).isNotNull();
+        assertThat(response.getLikedHistory()).isTrue();
+        assertThat(response.getKeywords()).containsExactly("Category1", "Category2", "Category3");
+        assertThat(response.getRecommendationConcertsResponseV1s()).hasSize(2);
+        assertThat(response.getRecommendationConcertsResponseV1s().get(0).getId()).isEqualTo(1L);
+        assertThat(response.getRecommendationConcertsResponseV1s().get(1).getId()).isEqualTo(2L);
     }
 
     @Test
-    void testGetMockSearchedConcertRecommendations() {
+    void testGetLikedConcertRecommendations_NoLikedConcert() {
         // Given
-        List<RecommendationConcertsResponseV1> mockSearchedConcertRecommendations = List.of(
-            new RecommendationConcertsResponseV1(
-                401L,
-                "Searched Concert 1",
-                "https://mock.poster/401",
-                "Jazz",
-                "Mock Facility C",
-                LocalDate.of(2024, 7, 1).format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd (EEEE)", Locale.KOREAN)),
-                LocalDate.of(2024, 12, 31).format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd (EEEE)", Locale.KOREAN))
-            ),
-            new RecommendationConcertsResponseV1(
-                402L,
-                "Searched Concert 2",
-                "https://mock.poster/402",
-                "Classical",
-                "Mock Facility D",
-                LocalDate.of(2024, 8, 1).format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd (EEEE)", Locale.KOREAN)),
-                LocalDate.of(2024, 11, 30).format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd (EEEE)", Locale.KOREAN))
-            )
+        when(concertLikeRepository.findTopConcertIdsByLikeCount(any(Pageable.class)))
+            .thenReturn(Arrays.asList(1L, 2L));
+
+        when(concertCategoryRepository.findCategoryNamesByConcertId(1L))
+            .thenReturn(Arrays.asList("TopCategory1", "TopCategory2"));
+
+        when(concertRepository.findConcertById(1L)).thenReturn(
+            Concert.builder()
+                .id(1L)
+                .prfnm("Classical Concert")
+                .prfpdfrom(LocalDate.of(2024, 1, 1))
+                .prfpdto(LocalDate.of(2024, 12, 31))
+                .genrenm("Classical")
+                .build()
+        );
+
+        when(concertRepository.findConcertById(2L)).thenReturn(
+            Concert.builder()
+                .id(2L)
+                .prfnm("Pop Concert")
+                .prfpdfrom(LocalDate.of(2024, 2, 1))
+                .prfpdto(LocalDate.of(2024, 12, 31))
+                .genrenm("Pop")
+                .build()
         );
 
         // When
-        List<RecommendationConcertsResponseV1> recommendations = mockSearchedConcertRecommendations;
+        Pageable pageable = PageRequest.of(0, 3);
+        List<Long> topConcertIds = concertLikeRepository.findTopConcertIdsByLikeCount(pageable);
+        List<RecommendationConcertsResponseV1> recommendedConcerts = recommendationService.getConcertDetails(topConcertIds);
+        List<String> keywords = concertCategoryRepository.findCategoryNamesByConcertId(1L);
+
+        RecommendationConcertResponseV3 response =
+            RecommendationConcertResponseV3.builder()
+                .likedHistory(false)
+                .keywords(keywords)
+                .recommendationConcertsResponseV1s(recommendedConcerts)
+                .build();
+
+        // Then
+        assertThat(response).isNotNull();
+        assertThat(response.getLikedHistory()).isFalse();
+        assertThat(response.getKeywords()).containsExactly("TopCategory1", "TopCategory2");
+        assertThat(response.getRecommendationConcertsResponseV1s()).hasSize(2);
+        assertThat(response.getRecommendationConcertsResponseV1s().get(0).getId()).isEqualTo(1L);
+        assertThat(response.getRecommendationConcertsResponseV1s().get(1).getId()).isEqualTo(2L);
+    }
+
+    @Test
+    void testGetSearchedConcertRecommendations_Success() {
+        // Given
+        String mockJsonResponse = """
+        {
+            "recommendations": [[1, 0.9], [2, 0.8], [3, 0.7]]
+        }
+    """;
+
+        when(concertRepository.findConcertById(1L)).thenReturn(
+            Concert.builder()
+                .id(1L)
+                .prfnm("Classical Concert")
+                .prfpdfrom(LocalDate.of(2024, 1, 1))
+                .prfpdto(LocalDate.of(2024, 12, 31))
+                .genrenm("Classical")
+                .build()
+        );
+
+        when(concertRepository.findConcertById(2L)).thenReturn(
+            Concert.builder()
+                .id(2L)
+                .prfnm("Pop Concert")
+                .prfpdfrom(LocalDate.of(2024, 2, 1))
+                .prfpdto(LocalDate.of(2024, 12, 31))
+                .genrenm("Pop")
+                .build()
+        );
+
+        when(concertRepository.findConcertById(3L)).thenReturn(
+            Concert.builder()
+                .id(3L)
+                .prfnm("Jazz Concert")
+                .prfpdfrom(LocalDate.of(2024, 3, 1))
+                .prfpdto(LocalDate.of(2024, 12, 31))
+                .genrenm("Jazz")
+                .build()
+        );
+
+        // When
+        List<Long> concertIds = recommendationService.parseConcertIdsFromJson(mockJsonResponse);
+        List<RecommendationConcertsResponseV1> recommendations = recommendationService.getConcertDetails(concertIds);
 
         // Then
         assertThat(recommendations).isNotNull();
-        assertThat(recommendations).hasSize(2);
-        assertThat(recommendations.get(0).getPrfnm()).isEqualTo("Searched Concert 1");
-        assertThat(recommendations.get(1).getPrfnm()).isEqualTo("Searched Concert 2");
+        assertThat(recommendations).hasSize(3);
+        assertThat(recommendations.get(0).getId()).isEqualTo(1L);
+        assertThat(recommendations.get(1).getId()).isEqualTo(2L);
+        assertThat(recommendations.get(2).getId()).isEqualTo(3L);
     }
+
 }
+
