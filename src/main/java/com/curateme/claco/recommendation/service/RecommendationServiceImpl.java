@@ -3,11 +3,7 @@ package com.curateme.claco.recommendation.service;
 import com.curateme.claco.authentication.util.SecurityContextUtil;
 import com.curateme.claco.clacobook.domain.entity.ClacoBook;
 import com.curateme.claco.clacobook.repository.ClacoBookRepository;
-import com.curateme.claco.concert.domain.dto.response.ConcertCategoryResponse;
-import com.curateme.claco.concert.domain.dto.response.ConcertClacoBookResponse;
-import com.curateme.claco.concert.domain.entity.Category;
 import com.curateme.claco.concert.domain.entity.Concert;
-import com.curateme.claco.concert.repository.CategoryRepository;
 import com.curateme.claco.concert.repository.ConcertCategoryRepository;
 import com.curateme.claco.concert.repository.ConcertLikeRepository;
 import com.curateme.claco.concert.repository.ConcertRepository;
@@ -54,7 +50,6 @@ public class RecommendationServiceImpl implements RecommendationService{
     private final ConcertLikeRepository concertLikeRepository;
     private final ClacoBookRepository clacoBookRepository;
     private final TicketReviewRepository ticketReviewRepository;
-    private final CategoryRepository categoryRepository;
     private final ConcertCategoryRepository concertCategoryRepository;
     private final SecurityContextUtil securityContextUtil;
     private final MemberRepository memberRepository;
@@ -189,7 +184,7 @@ public class RecommendationServiceImpl implements RecommendationService{
 
 
     // JSON 응답을 파싱하여 concertIds 리스트 생성
-    private List<Long> parseConcertIdsFromJson(String jsonResponse) {
+    public List<Long> parseConcertIdsFromJson(String jsonResponse) {
         List<Long> concertIds = new ArrayList<>();
         if (jsonResponse != null) {
             try {
