@@ -5,17 +5,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
+import com.curateme.claco.authentication.domain.JwtMemberDetail;
 import com.curateme.claco.authentication.util.SecurityContextUtil;
-import com.curateme.claco.clacobook.repository.ClacoBookRepository;
 import com.curateme.claco.concert.domain.entity.Concert;
 import com.curateme.claco.concert.repository.ConcertCategoryRepository;
 import com.curateme.claco.concert.repository.ConcertLikeRepository;
 import com.curateme.claco.concert.repository.ConcertRepository;
-import com.curateme.claco.member.repository.MemberRepository;
 import com.curateme.claco.recommendation.domain.dto.RecommendationConcertResponseV3;
 import com.curateme.claco.recommendation.domain.dto.RecommendationConcertsResponseV1;
 import com.curateme.claco.recommendation.service.RecommendationServiceImpl;
-import com.curateme.claco.review.repository.TicketReviewRepository;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,6 +23,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedConstruction;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -52,10 +51,18 @@ class RecommendationServiceImplTest {
     @Mock
     private RestTemplate restTemplate;
 
+    @Spy
+    @InjectMocks
+    private RecommendationServiceImpl spyRecommendationService;
+
+    @Mock
+    private SecurityContextUtil securityContextUtil;
+
+
     @BeforeEach
     void setup() {
         // Mock Concert entities
-        when(concertRepository.findConcertById(1L)).thenReturn(
+        lenient().when(concertRepository.findConcertById(1L)).thenReturn(
             Concert.builder()
                 .id(1L)
                 .prfnm("클래식 콘서트")
@@ -65,7 +72,7 @@ class RecommendationServiceImplTest {
                 .build()
         );
 
-        when(concertRepository.findConcertById(2L)).thenReturn(
+        lenient().when(concertRepository.findConcertById(2L)).thenReturn(
             Concert.builder()
                 .id(2L)
                 .prfnm("클래식 콘서트 2")
@@ -74,8 +81,8 @@ class RecommendationServiceImplTest {
                 .genrenm("Classical")
                 .build()
         );
-
     }
+
 
 
     @Test
@@ -256,6 +263,143 @@ class RecommendationServiceImplTest {
         assertThat(recommendations.get(0).getId()).isEqualTo(1L);
         assertThat(recommendations.get(1).getId()).isEqualTo(2L);
         assertThat(recommendations.get(2).getId()).isEqualTo(3L);
+    }
+
+    @Test
+    void testGetConcertsFromFlaskSuccess() {
+        // Given
+        String FLASK_API_URL = "http://43.203.228.177:5000/recommendations/users/";
+        Long id = 1L;
+        int topn = 3;
+        String expectedResponse = "{\"recommendations\":[[\"101\"],[\"102\"],[\"103\"]]}";
+
+        // Mock RestTemplate 동작
+        String fullUrl = FLASK_API_URL + id + "/" + topn;
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        ResponseEntity<String> mockResponse = ResponseEntity.ok(expectedResponse);
+        lenient().when(restTemplate.exchange(eq(fullUrl), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
+            .thenReturn(mockResponse);
+
+        // When
+        String actualResponse = recommendationService.getConcertsFromFlask(id, topn, FLASK_API_URL);
+
+        // Then
+        assertThat(actualResponse).isNotNull();
+    }
+
+    @Test
+    void testGetConcertsFromFlaskV2Success() {
+        // Given
+        String FLASK_API_URL = "http://43.203.228.177:5000/recommendations/clacobooks/";
+        Long id = 1L;
+        String expectedResponse = "{\"recommendations\":[[\"201\"],[\"202\"]]}";
+
+        // Mock RestTemplate 동작
+        String fullUrl = FLASK_API_URL + id;
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        ResponseEntity<String> mockResponse = ResponseEntity.ok(expectedResponse);
+        lenient().when(restTemplate.exchange(eq(fullUrl), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
+            .thenReturn(mockResponse);
+
+        // When
+        String actualResponse = recommendationService.getConcertsFromFlaskV2(id, FLASK_API_URL);
+
+        // Then
+        assertThat(actualResponse).isNotNull();
+    }
+
+    @Test
+    void testGetSearchedConcertRecommendations() {
+        // Given
+        Long concertId = 1L;
+        String FLASK_API_URL = "http://mock-api.com/recommendations/items/";
+        String jsonResponse = "{\"recommendations\":[[\"101\"],[\"102\"],[\"103\"]]}";
+        List<Long> concertIds = List.of(101L, 102L, 103L);
+        List<RecommendationConcertsResponseV1> mockRecommendations = List.of(
+            new RecommendationConcertsResponseV1(101L, "Mock Concert 101", "poster1.jpg", "Genre1", "Venue1", "2024-01-01", "2024-01-31"),
+            new RecommendationConcertsResponseV1(102L, "Mock Concert 102", "poster2.jpg", "Genre2", "Venue2", "2024-02-01", "2024-02-28"),
+            new RecommendationConcertsResponseV1(103L, "Mock Concert 103", "poster3.jpg", "Genre3", "Venue3", "2024-03-01", "2024-03-31")
+        );
+
+        // Mocking 내부 메서드 호출
+        lenient().doReturn(jsonResponse).when(spyRecommendationService).getConcertsFromFlask(eq(concertId), eq(3), eq(FLASK_API_URL));
+        lenient().doReturn(concertIds).when(spyRecommendationService).parseConcertIdsFromJson(eq(jsonResponse));
+        lenient().doReturn(mockRecommendations).when(spyRecommendationService).getConcertDetails(eq(concertIds));
+
+        // When
+        List<RecommendationConcertsResponseV1> result = spyRecommendationService.getSearchedConcertRecommendations(concertId);
+
+        // Then
+        assertThat(result).isNotNull();
+    }
+
+    @Test
+    void testGetConcertRecommendations() {
+        // Given
+        Long memberId = 1L;
+        String FLASK_API_URL = "http://mock-api.com/recommendations/users/";
+        String jsonResponse = "{\"recommendations\":[[\"101\"],[\"102\"]]}";
+        List<Long> concertIds = List.of(101L, 102L);
+        List<RecommendationConcertsResponseV1> mockRecommendations = List.of(
+            new RecommendationConcertsResponseV1(101L, "Mock Concert 101", "poster1.jpg", "Genre1", "Venue1", "2024-01-01", "2024-01-31"),
+            new RecommendationConcertsResponseV1(102L, "Mock Concert 102", "poster2.jpg", "Genre2", "Venue2", "2024-02-01", "2024-02-28")
+        );
+        JwtMemberDetail jwtMemberDetailMock = mock(JwtMemberDetail.class);
+
+
+        // Mock 내부 메서드 호출
+        when(securityContextUtil.getContextMemberInfo()).thenReturn(jwtMemberDetailMock);
+        when(jwtMemberDetailMock.getMemberId()).thenReturn(memberId);
+        lenient().doReturn(jsonResponse).when(spyRecommendationService).getConcertsFromFlask(eq(memberId), eq(2), eq(FLASK_API_URL));
+        lenient().doReturn(concertIds).when(spyRecommendationService).parseConcertIdsFromJson(eq(jsonResponse));
+        lenient().doReturn(mockRecommendations).when(spyRecommendationService).getConcertDetails(eq(concertIds));
+
+        // When
+        List<RecommendationConcertsResponseV1> result = spyRecommendationService.getConcertRecommendations();
+
+        // Then
+        assertThat(result).isNotNull();
+    }
+
+    @Test
+    void testGetLikedConcertRecommendations() {
+        // Given
+        Long memberId = 1L;
+        Long concertId = 101L;
+        String FLASK_API_URL = "http://mock-api.com/recommendations/items/";
+        String jsonResponse = "{\"recommendations\":[[\"102\"],[\"103\"]]}";
+        List<Long> concertIds = List.of(102L, 103L);
+        List<String> keywords = List.of("Keyword1", "Keyword2");
+        List<RecommendationConcertsResponseV1> mockRecommendations = List.of(
+            new RecommendationConcertsResponseV1(102L, "Mock Concert 102", "poster2.jpg", "Genre2", "Venue2", "2024-02-01", "2024-02-28"),
+            new RecommendationConcertsResponseV1(103L, "Mock Concert 103", "poster3.jpg", "Genre3", "Venue3", "2024-03-01", "2024-03-31")
+        );
+
+        // Mock 내부 메서드 호출
+        JwtMemberDetail jwtMemberDetailMock = mock(JwtMemberDetail.class);
+
+
+        // Mock 내부 메서드 호출
+        when(securityContextUtil.getContextMemberInfo()).thenReturn(jwtMemberDetailMock);
+        when(jwtMemberDetailMock.getMemberId()).thenReturn(memberId);
+        lenient().when(concertLikeRepository.findMostRecentLikedConcert(eq(memberId), any(Pageable.class)))
+            .thenReturn(new PageImpl<>(List.of(concertId)));
+        lenient().doReturn(jsonResponse).when(spyRecommendationService).getConcertsFromFlask(eq(concertId), eq(2), eq(FLASK_API_URL));
+        lenient().doReturn(concertIds).when(spyRecommendationService).parseConcertIdsFromJson(eq(jsonResponse));
+        lenient().doReturn(mockRecommendations).when(spyRecommendationService).getConcertDetails(eq(concertIds));
+        lenient().when(concertCategoryRepository.findCategoryNamesByConcertId(eq(concertId))).thenReturn(keywords);
+
+        // When
+        RecommendationConcertResponseV3 result = spyRecommendationService.getLikedConcertRecommendations();
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getLikedHistory()).isTrue();
+        assertThat(result.getKeywords()).isEqualTo(keywords);
     }
 
 }
