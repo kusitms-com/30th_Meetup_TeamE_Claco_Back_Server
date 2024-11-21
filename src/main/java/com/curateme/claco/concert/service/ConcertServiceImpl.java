@@ -237,7 +237,7 @@ public class ConcertServiceImpl implements ConcertService {
     }
 
 
-    private List<Long> filterConcertsByQueryAndGenre(List<Long> concertLikedIds, String query, String genre) {
+    List<Long> filterConcertsByQueryAndGenre(List<Long> concertLikedIds, String query, String genre) {
         // 검색어로 필터링
         if (query != null && !query.isEmpty()) {
             List<Long> filteredByQuery = concertRepository.findConcertIdsBySearchQuery(query);
