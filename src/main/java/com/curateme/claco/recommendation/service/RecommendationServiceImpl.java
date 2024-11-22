@@ -60,12 +60,11 @@ public class RecommendationServiceImpl implements RecommendationService{
 
     // 유저 취향 기반 공연 추천
     @Override
-    public List<RecommendationConcertsResponseV1> getConcertRecommendations() {
+    public List<RecommendationConcertsResponseV1> getConcertRecommendations(int topn) {
         String FLASK_API_URL = URL + "/recommendations/users/";
         // 현재 로그인 세션 유저 정보 추출
         Long memberId = securityContextUtil.getContextMemberInfo().getMemberId();
 
-        int topn = 2;
         String jsonResponse = getConcertsFromFlask(memberId, topn, FLASK_API_URL);
         System.out.println("jsonResponse = " + jsonResponse);
 

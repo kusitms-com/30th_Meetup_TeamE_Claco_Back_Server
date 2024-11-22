@@ -86,20 +86,24 @@ class ConcertServiceTest {
             .prfpdto(LocalDate.of(2024, 12, 31))
             .build();
 
-        when(concertRepository.findConcertsByFilters(
+        // Mock repository responses
+        when(concertRepository.findConcertsByFiltersWithoutPaging(
             eq("서울특별시"),
             eq(LocalDate.of(2023, 1, 1)),
             eq(LocalDate.of(2024, 12, 31)),
-            eq(categories),
-            any(Pageable.class)))
-            .thenReturn(new PageImpl<>(List.of(mockConcert), pageable, 1));
+            eq(categories)))
+            .thenReturn(List.of(mockConcert));
 
         when(concertCategoryRepository.findCategoryIdsByCategoryName(1L))
             .thenReturn(List.of(1L));
+
         when(categoryRepository.findAllById(List.of(1L)))
             .thenReturn(List.of(
                 Category.builder().id(1L).category("웅장한").imageUrl("image-url-1").build()
             ));
+
+        // Mock pageable
+        Pageable pageable = PageRequest.of(0, 10);
 
         // When
         PageResponse<ConcertResponse> result = concertService.getConcertInfosWithFilter(
@@ -111,14 +115,10 @@ class ConcertServiceTest {
         assertThat(result).isNotNull();
         assertThat(result.getListPageResponse()).hasSize(1);
         assertThat(result.getListPageResponse().get(0).getPrfnm()).isEqualTo("테스트 콘서트");
-        verify(concertRepository, times(1)).findConcertsByFilters(
-            eq("서울특별시"),
-            eq(LocalDate.of(2023, 1, 1)),
-            eq(LocalDate.of(2024, 12, 31)),
-            eq(categories),
-            any(Pageable.class)
-        );
+        assertThat(result.getListPageResponse().get(0).getCategories()).hasSize(1);
+        assertThat(result.getListPageResponse().get(0).getCategories().get(0).getCategory()).isEqualTo("웅장한");
     }
+
 
     @Test
     void testGetConcertDetailWithCategories() {

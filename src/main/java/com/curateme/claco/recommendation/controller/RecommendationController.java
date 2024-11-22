@@ -26,8 +26,18 @@ public class RecommendationController {
     @Operation(summary = "나의 취향 기반 맞춤 추천", description = "기능명세서 화면번호 2.0.0(C)")
     public ApiResponse<List<RecommendationConcertsResponseV1>> getConcertRecommendations(
     ){
-        return ApiResponse.ok(recommendationService.getConcertRecommendations());
+        int topn = 5;
+        return ApiResponse.ok(recommendationService.getConcertRecommendations(topn));
     }
+
+    @GetMapping("/userbased/searches")
+    @Operation(summary = "(검색어 없을시)나의 취향 기반 맞춤 추천", description = "기능명세서 화면번호 2.0.0(C)")
+    public ApiResponse<List<RecommendationConcertsResponseV1>> getConcertRecommendationsSearches(
+    ){
+        int topn = 3;
+        return ApiResponse.ok(recommendationService.getConcertRecommendations(topn));
+    }
+
 
     @GetMapping("/itembased")
     @Operation(summary = "최근 좋아요 한 공연 기반 맞춤 추천", description = "기능명세서 화면번호 2.1.0(C)")

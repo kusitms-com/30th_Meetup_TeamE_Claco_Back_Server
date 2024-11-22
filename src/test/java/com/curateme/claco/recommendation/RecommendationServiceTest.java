@@ -359,7 +359,7 @@ class RecommendationServiceImplTest {
         lenient().doReturn(mockRecommendations).when(spyRecommendationService).getConcertDetails(eq(concertIds));
 
         // When
-        List<RecommendationConcertsResponseV1> result = spyRecommendationService.getConcertRecommendations();
+        List<RecommendationConcertsResponseV1> result = spyRecommendationService.getConcertRecommendations(5);
 
         // Then
         assertThat(result).isNotNull();

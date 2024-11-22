@@ -32,16 +32,33 @@ public interface ConcertRepository extends JpaRepository<Concert,Long> {
     Page<Concert> findBySearchQuery(@Param("query") String query, Pageable pageable);
 
     @Query("SELECT c FROM Concert c " +
-        "JOIN c.categories cat " +
-        "WHERE c.area = :area " +
+        "LEFT JOIN c.categories cat " +
+        "WHERE (:area = 'all' OR c.area = :area) " +
         "AND c.prfpdto BETWEEN :startDate AND :endDate " +
-        "AND EXISTS (SELECT 1 FROM ConcertCategory cc WHERE cc.concert = c AND cc.category.category IN :categories)")
+        "AND (:categories IS NULL OR EXISTS (" +
+        "    SELECT 1 FROM ConcertCategory cc " +
+        "    WHERE cc.concert = c AND cc.category.category IN :categories))")
     Page<Concert> findConcertsByFilters(
         @Param("area") String area,
         @Param("startDate") LocalDate startDate,
         @Param("endDate") LocalDate endDate,
         @Param("categories") List<String> categories,
         Pageable pageable);
+
+    @Query("SELECT c FROM Concert c " +
+        "LEFT JOIN c.categories cat " +
+        "WHERE (:area = 'all' OR c.area = :area) " +
+        "AND c.prfpdto BETWEEN :startDate AND :endDate " +
+        "AND (:categories IS NULL OR EXISTS (" +
+        "    SELECT 1 FROM ConcertCategory cc " +
+        "    WHERE cc.concert = c AND cc.category.category IN :categories))")
+    List<Concert> findConcertsByFiltersWithoutPaging(
+        @Param("area") String area,
+        @Param("startDate") LocalDate startDate,
+        @Param("endDate") LocalDate endDate,
+        @Param("categories") List<String> categories);
+
+
 
     @Query("SELECT c FROM Concert c " +
         "WHERE (:genre = 'all' OR c.genrenm = :genre) " +

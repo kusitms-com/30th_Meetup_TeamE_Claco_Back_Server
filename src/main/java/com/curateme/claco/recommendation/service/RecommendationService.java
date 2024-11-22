@@ -6,7 +6,7 @@ import com.curateme.claco.recommendation.domain.dto.RecommendationConcertsRespon
 import java.util.List;
 
 public interface RecommendationService {
-    List<RecommendationConcertsResponseV1> getConcertRecommendations();
+    List<RecommendationConcertsResponseV1> getConcertRecommendations(int topn);
     RecommendationConcertResponseV3 getLikedConcertRecommendations();
     List<RecommendationConcertResponseV2> getClacoBooksRecommendations();
 
