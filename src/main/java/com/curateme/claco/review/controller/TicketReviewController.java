@@ -68,9 +68,9 @@ public class TicketReviewController {
 	})
 	public ApiResponse<TicketReviewInfoResponse> createTicketReview(
 		@Validated @RequestPart("request") TicketReviewCreateRequest request,
-		@RequestPart("files") MultipartFile[] files) throws IOException {
+		@RequestPart(value = "files", required = false) MultipartFile[] files) throws IOException {
 
-		return ApiResponse.ok(ticketReviewService.createTicketReview(request, files));
+		return ApiResponse.ok(ticketReviewService.createTicketReview(request, files == null ? new MultipartFile[]{} : null));
 	}
 
 	/**
