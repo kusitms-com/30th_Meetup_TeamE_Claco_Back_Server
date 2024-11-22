@@ -158,7 +158,7 @@ public class TicketReviewServiceImpl implements TicketReviewService{
 				}
 			);
 
-		// 티켓 이미지 생성
+		// 리뷰 이미지 생성
 		String baseUrl = "review-image/" + savedTicketReview.getId() + "/";
 		IntStream.range(0, multipartFile.length).forEach(idx -> {
 			MultipartFile file = multipartFile[idx];
