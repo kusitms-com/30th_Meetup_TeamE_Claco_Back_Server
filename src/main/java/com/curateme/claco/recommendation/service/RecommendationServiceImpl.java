@@ -3,11 +3,7 @@ package com.curateme.claco.recommendation.service;
 import com.curateme.claco.authentication.util.SecurityContextUtil;
 import com.curateme.claco.clacobook.domain.entity.ClacoBook;
 import com.curateme.claco.clacobook.repository.ClacoBookRepository;
-import com.curateme.claco.concert.domain.dto.response.ConcertCategoryResponse;
-import com.curateme.claco.concert.domain.dto.response.ConcertClacoBookResponse;
-import com.curateme.claco.concert.domain.entity.Category;
 import com.curateme.claco.concert.domain.entity.Concert;
-import com.curateme.claco.concert.repository.CategoryRepository;
 import com.curateme.claco.concert.repository.ConcertCategoryRepository;
 import com.curateme.claco.concert.repository.ConcertLikeRepository;
 import com.curateme.claco.concert.repository.ConcertRepository;
@@ -54,22 +50,21 @@ public class RecommendationServiceImpl implements RecommendationService{
     private final ConcertLikeRepository concertLikeRepository;
     private final ClacoBookRepository clacoBookRepository;
     private final TicketReviewRepository ticketReviewRepository;
-    private final CategoryRepository categoryRepository;
     private final ConcertCategoryRepository concertCategoryRepository;
     private final SecurityContextUtil securityContextUtil;
     private final MemberRepository memberRepository;
+
 
     @Value("${cloud.ai.url}")
     private String URL;
 
     // 유저 취향 기반 공연 추천
     @Override
-    public List<RecommendationConcertsResponseV1> getConcertRecommendations() {
+    public List<RecommendationConcertsResponseV1> getConcertRecommendations(int topn) {
         String FLASK_API_URL = URL + "/recommendations/users/";
         // 현재 로그인 세션 유저 정보 추출
         Long memberId = securityContextUtil.getContextMemberInfo().getMemberId();
 
-        int topn = 2;
         String jsonResponse = getConcertsFromFlask(memberId, topn, FLASK_API_URL);
         System.out.println("jsonResponse = " + jsonResponse);
 
@@ -189,7 +184,7 @@ public class RecommendationServiceImpl implements RecommendationService{
 
 
     // JSON 응답을 파싱하여 concertIds 리스트 생성
-    private List<Long> parseConcertIdsFromJson(String jsonResponse) {
+    public List<Long> parseConcertIdsFromJson(String jsonResponse) {
         List<Long> concertIds = new ArrayList<>();
         if (jsonResponse != null) {
             try {
@@ -209,7 +204,7 @@ public class RecommendationServiceImpl implements RecommendationService{
     }
 
     // concertIds를 기반으로 콘서트 정보를 조회하여 recommendations 리스트 생성
-    private List<RecommendationConcertsResponseV1> getConcertDetails(List<Long> concertIds) {
+    public List<RecommendationConcertsResponseV1> getConcertDetails(List<Long> concertIds) {
         List<RecommendationConcertsResponseV1> recommendations = new ArrayList<>();
 
         for (Long concertId : concertIds) {

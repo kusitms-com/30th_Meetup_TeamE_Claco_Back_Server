@@ -24,6 +24,7 @@ import com.curateme.claco.review.domain.entity.TicketReview;
 import com.curateme.claco.review.repository.TicketReviewRepository;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -86,12 +87,21 @@ public class ConcertServiceImpl implements ConcertService {
     public PageResponse<ConcertResponse> getConcertInfosWithFilter(Double minPrice, Double maxPrice,
         String area, LocalDate startDate, LocalDate endDate, String direction, List<String> categories, Pageable pageable) {
 
-        Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by("prfpdfrom").ascending() : Sort.by("prfpdfrom").descending();
-        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        Comparator<Concert> comparator = direction.equalsIgnoreCase("asc")
+            ? Comparator.comparing(Concert::getPrfpdfrom)
+            : Comparator.comparing(Concert::getPrfpdfrom).reversed();
 
-        Page<Concert> concertPage = concertRepository.findConcertsByFilters(area, startDate, endDate, categories, sortedPageable);
+        List<Concert> concertList = new ArrayList<>(concertRepository.findConcertsByFiltersWithoutPaging(area, startDate, endDate, categories));
 
-        List<ConcertResponse> concertResponses = concertPage.getContent().stream()
+        concertList.sort(comparator);
+
+        long totalElements = concertList.size();
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), concertList.size());
+        List<Concert> paginatedConcerts = concertList.subList(start, end);
+
+        List<ConcertResponse> concertResponses = paginatedConcerts.stream()
             .map(concert -> {
                 List<Long> categoryIds = concertCategoryRepository.findCategoryIdsByCategoryName(concert.getId());
                 List<Category> categoryList = categoryRepository.findAllById(categoryIds);
@@ -104,13 +114,14 @@ public class ConcertServiceImpl implements ConcertService {
             })
             .collect(Collectors.toList());
 
-        // PageResponse 생성
+        // PageResponse 생성 및 반환
         return PageResponse.<ConcertResponse>builder()
             .listPageResponse(concertResponses)
-            .totalCount(concertPage.getTotalElements())
-            .size(concertPage.getSize())
+            .totalCount(totalElements)
+            .size(pageable.getPageSize())
             .build();
     }
+
 
     @Override
     public PageResponse<ConcertResponse> getSearchConcert(String query, String direction, Pageable pageable) {
@@ -237,7 +248,7 @@ public class ConcertServiceImpl implements ConcertService {
     }
 
 
-    private List<Long> filterConcertsByQueryAndGenre(List<Long> concertLikedIds, String query, String genre) {
+    List<Long> filterConcertsByQueryAndGenre(List<Long> concertLikedIds, String query, String genre) {
         // 검색어로 필터링
         if (query != null && !query.isEmpty()) {
             List<Long> filteredByQuery = concertRepository.findConcertIdsBySearchQuery(query);

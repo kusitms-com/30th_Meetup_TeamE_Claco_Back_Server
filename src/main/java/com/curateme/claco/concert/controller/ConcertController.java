@@ -44,31 +44,36 @@ import org.springframework.web.bind.annotation.RestController;
             return ApiResponse.ok(concertService.getConcertInfos(genre, direction, pageable));
         }
 
-        @GetMapping("/filters")
-        @Operation(summary = "공연 둘러보기 세부사항 필터", description = "기능명세서 화면번호 4.0.1")
-        @Parameter(name = "direction", description = "정렬 순서", example = "asc/dsc")
-        @Parameter(name = "area", description = "지역", required = true, example = "서울특별시/경기도")
-        @Parameter(name = "startDate", description = "시작 날짜", required = true, example = "yyyy.MM.dd")
-        @Parameter(name = "endDate", description = "끝나는 날짜", required = true, example = "yyyy.MM.dd")
-        @Parameter(name = "categories", description = "공연 성격 리스트", required = true, example = "웅장한, 현대적인(최대 5개)")
-        public ApiResponse<PageResponse<ConcertResponse>> filterConcerts(
-            @RequestParam("minPrice") Double minPrice,
-            @RequestParam("maxPrice") Double maxPrice,
-            @RequestParam("area") String area,
-            @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy.MM.dd") LocalDate startDate,
-            @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy.MM.dd") LocalDate endDate,
-            @RequestParam(value = "direction", defaultValue = "asc") String direction,
-            @RequestParam("page") int page,
-            @RequestParam(value = "size", defaultValue = "9") int size,
-            @RequestParam(value = "categories", required = false) List<String> categories)
-        {
+    @GetMapping("/filters")
+    @Operation(summary = "공연 둘러보기 세부사항 필터", description = "기능명세서 화면번호 4.0.1")
+    @Parameter(name = "direction", description = "정렬 순서", example = "asc/dsc")
+    @Parameter(name = "area", description = "지역", example = "서울특별시/경기도")
+    @Parameter(name = "startDate", description = "시작 날짜", example = "yyyy.MM.dd")
+    @Parameter(name = "endDate", description = "끝나는 날짜", example = "yyyy.MM.dd")
+    @Parameter(name = "categories", description = "공연 성격 리스트", example = "웅장한, 현대적인(최대 5개)")
+    public ApiResponse<PageResponse<ConcertResponse>> filterConcerts(
+        @RequestParam(value = "minPrice", defaultValue = "0") Double minPrice,
+        @RequestParam(value = "maxPrice", defaultValue = "10000000") Double maxPrice,
+        @RequestParam(value = "area", defaultValue = "all") String area,
+        @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy.MM.dd") LocalDate startDate,
+        @RequestParam(value = "endDate", defaultValue = "9999.12.31") @DateTimeFormat(pattern = "yyyy.MM.dd") LocalDate endDate,
+        @RequestParam(value = "direction", defaultValue = "asc") String direction,
+        @RequestParam(value = "page") int page,
+        @RequestParam(value = "size", defaultValue = "9") int size,
+        @RequestParam(value = "categories", defaultValue = "웅장한,섬세한,고전적인,현대적인,서정적인,역동적인,낭만적인,비극적인,친숙한,새로운"
+        ) List<String> categories)
+    {
+        Pageable pageable = PageRequest.of(page - 1, size);
 
-            Pageable pageable = PageRequest.of(page - 1, size);
-
-            return ApiResponse.ok(concertService.getConcertInfosWithFilter(minPrice, maxPrice, area, startDate, endDate, direction, categories, pageable));
+        if (startDate == null) {
+            startDate = LocalDate.now();
         }
 
-        @GetMapping("/queries")
+        return ApiResponse.ok(concertService.getConcertInfosWithFilter(minPrice, maxPrice, area, startDate, endDate, direction, categories, pageable));
+    }
+
+
+    @GetMapping("/queries")
         @Operation(summary = "공연 둘러보기 검색하기", description = "기능명세서 화면번호 4.1.0")
         @Parameter(name = "direction", description = "정렬 순서", example = "asc/dsc")
         @Parameter(name = "query", description = "검색어", required = true)
