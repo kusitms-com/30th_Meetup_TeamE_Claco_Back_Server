@@ -1,6 +1,7 @@
 package com.curateme.claco.concert.domain.dto.response;
 
 import com.curateme.claco.concert.domain.entity.Concert;
+import com.curateme.claco.recommendation.domain.dto.RecommendationConcertsResponseV1;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -49,18 +50,28 @@ public class ConcertResponse {
     @Schema(description = "공연 성격 리스트")
     private List<ConcertCategoryResponse> categories;
 
-    public static ConcertResponse fromEntity(Concert concert, List<ConcertCategoryResponse> categories) {
+    @Schema(description = "추천 공연 리스트")
+    private List<RecommendationConcertsResponseV1> recommendationConcertsResponseV1s;
+
+    public static ConcertResponse fromEntity(Concert concert, List<ConcertCategoryResponse> categories, List<RecommendationConcertsResponseV1> recommendationConcertsResponseV1s) {
         return ConcertResponse.builder()
-            .id(concert.getId())
-            .mt20id(concert.getMt20id())
-            .prfnm(concert.getPrfnm())
-            .prfpdfrom(concert.getPrfpdfrom())
-            .prfpdto(concert.getPrfpdto())
-            .fcltynm(concert.getFcltynm())
-            .poster(concert.getPoster())
-            .genrenm(concert.getGenrenm())
-            .prfstate(concert.getPrfstate())
+            .id(concert != null ? concert.getId() : null)
+            .mt20id(concert != null ? concert.getMt20id() : null)
+            .prfnm(concert != null ? concert.getPrfnm() : null)
+            .prfpdfrom(concert != null ? concert.getPrfpdfrom() : null)
+            .prfpdto(concert != null ? concert.getPrfpdto() : null)
+            .fcltynm(concert != null ? concert.getFcltynm() : null)
+            .poster(concert != null ? concert.getPoster() : null)
+            .genrenm(concert != null ? concert.getGenrenm() : null)
+            .prfstate(concert != null ? concert.getPrfstate() : null)
             .categories(categories)
+            .recommendationConcertsResponseV1s(recommendationConcertsResponseV1s)
+            .build();
+    }
+
+    public static ConcertResponse fromRecommendations(List<RecommendationConcertsResponseV1> recommendationConcertsResponseV1s) {
+        return ConcertResponse.builder()
+            .recommendationConcertsResponseV1s(recommendationConcertsResponseV1s)
             .build();
     }
 }

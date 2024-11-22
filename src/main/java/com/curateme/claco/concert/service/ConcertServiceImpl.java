@@ -19,6 +19,9 @@ import com.curateme.claco.global.response.ApiStatus;
 import com.curateme.claco.global.response.PageResponse;
 import com.curateme.claco.member.domain.entity.Member;
 import com.curateme.claco.member.repository.MemberRepository;
+import com.curateme.claco.recommendation.domain.dto.RecommendationConcertsResponseV1;
+import com.curateme.claco.recommendation.service.RecommendationService;
+import com.curateme.claco.recommendation.service.RecommendationServiceImpl;
 import com.curateme.claco.review.domain.dto.response.TicketReviewSimpleResponse;
 import com.curateme.claco.review.domain.entity.TicketReview;
 import com.curateme.claco.review.repository.TicketReviewRepository;
@@ -50,6 +53,7 @@ public class ConcertServiceImpl implements ConcertService {
     private final ConcertLikeRepository concertLikeRepository;
     private final SecurityContextUtil securityContextUtil;
     private final TicketReviewRepository ticketReviewRepository;
+    private final RecommendationServiceImpl recommendationServiceImpl;
 
 
     @Override
@@ -72,7 +76,7 @@ public class ConcertServiceImpl implements ConcertService {
                     .map(category -> new ConcertCategoryResponse(category.getCategory(), category.getImageUrl()))
                     .collect(Collectors.toList());
 
-                return ConcertResponse.fromEntity(concert, categoryResponses);
+                return ConcertResponse.fromEntity(concert, categoryResponses,null);
             })
             .collect(Collectors.toList());
 
@@ -110,7 +114,7 @@ public class ConcertServiceImpl implements ConcertService {
                     .map(category -> new ConcertCategoryResponse(category.getCategory(), category.getImageUrl()))
                     .collect(Collectors.toList());
 
-                return ConcertResponse.fromEntity(concert, categoryResponses);
+                return ConcertResponse.fromEntity(concert, categoryResponses,null);
             })
             .collect(Collectors.toList());
 
@@ -130,20 +134,26 @@ public class ConcertServiceImpl implements ConcertService {
         Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
 
         Page<Concert> concertPage = concertRepository.findBySearchQuery(query, sortedPageable);
-        System.out.println("count" + concertPage.stream().count());
 
-        List<ConcertResponse> concertResponses = concertPage.getContent().stream()
-            .map(concert -> {
-                List<Long> categoryIds = concertCategoryRepository.findCategoryIdsByCategoryName(concert.getId());
-                List<Category> categories = categoryRepository.findAllById(categoryIds);
+        List<ConcertResponse> concertResponses;
 
-                List<ConcertCategoryResponse> categoryResponses = categories.stream()
-                    .map(category -> new ConcertCategoryResponse(category.getCategory(), category.getImageUrl()))
-                    .collect(Collectors.toList());
+        if (concertPage.isEmpty()) { // `concertPage`가 비어 있는 경우 처리
+            List<RecommendationConcertsResponseV1> recommendationConcertsResponseV1s = recommendationServiceImpl.getConcertRecommendations(3);
+            concertResponses = List.of(ConcertResponse.fromRecommendations(recommendationConcertsResponseV1s));
+        } else {
+            concertResponses = concertPage.getContent().stream()
+                .map(concert -> {
+                    List<Long> categoryIds = concertCategoryRepository.findCategoryIdsByCategoryName(concert.getId());
+                    List<Category> categories = categoryRepository.findAllById(categoryIds);
 
-                return ConcertResponse.fromEntity(concert, categoryResponses);
-            })
-            .collect(Collectors.toList());
+                    List<ConcertCategoryResponse> categoryResponses = categories.stream()
+                        .map(category -> new ConcertCategoryResponse(category.getCategory(), category.getImageUrl()))
+                        .collect(Collectors.toList());
+
+                    return ConcertResponse.fromEntity(concert, categoryResponses, null);
+                })
+                .collect(Collectors.toList());
+        }
 
         // PageResponse 생성
         return PageResponse.<ConcertResponse>builder()
@@ -152,6 +162,7 @@ public class ConcertServiceImpl implements ConcertService {
             .size(concertPage.getSize())
             .build();
     }
+
 
     @Override
     public ConcertDetailResponse getConcertDetailWithCategories(Long concertId) {
