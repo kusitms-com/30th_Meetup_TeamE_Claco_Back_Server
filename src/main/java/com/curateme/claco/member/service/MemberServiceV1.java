@@ -89,7 +89,7 @@ public class MemberServiceV1 implements MemberService {
 
 		String profileImageLocation = "member/profile-image/" + member.getId();
 
-		if (updateImage != null || !updateImage.isEmpty()) {
+		if (updateImage != null) {
 			String url = s3Util.uploadImage(updateImage, profileImageLocation);
 			member.updateProfileImage(url);
 		}
