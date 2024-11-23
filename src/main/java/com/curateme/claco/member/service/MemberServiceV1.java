@@ -85,7 +85,9 @@ public class MemberServiceV1 implements MemberService {
 			.findAny()
 			.orElseThrow(() -> new BusinessException(ApiStatus.MEMBER_NOT_FOUND));
 
-		member.updateNickname(updateNickname);
+		if (updateNickname != null) {
+			member.updateNickname(updateNickname);
+		}
 
 		String profileImageLocation = "member/profile-image/" + member.getId();
 
