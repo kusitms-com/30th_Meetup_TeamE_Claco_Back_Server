@@ -18,26 +18,16 @@ import com.curateme.claco.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * @author      : 이 건
- * @date        : 2024.10.24
- * @author devkeon(devkeon123@gmail.com)
- * ===========================================================
- * DATE               AUTHOR        NOTE
- * -----------------------------------------------------------
- * 2024.10.24   	   이 건        최초 생성
- */
 @Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ClacoBookServiceImpl implements ClacoBookService {
+public class ClacoBookServiceImpl {
 
 	private final ClacoBookRepository clacoBookRepository;
 	private final MemberRepository memberRepository;
 	private final SecurityContextUtil securityContextUtil;
 
-	@Override
 	public ClacoBookResponse createClacoBook(UpdateClacoBookRequest request) {
 		// 접근 사용자의 ClacoBook 생성
 		Member member = memberRepository.findMemberByIdWithClacoBook(
@@ -58,7 +48,6 @@ public class ClacoBookServiceImpl implements ClacoBookService {
 		return ClacoBookResponse.fromEntity(clacoBookRepository.save(clacoBook));
 	}
 
-	@Override
 	public List<ClacoBookResponse> readClacoBooks() {
 		// 접근 사용자의 ClacoBook 조회
 		Member member = memberRepository.findMemberByIdWithClacoBook(
@@ -71,7 +60,6 @@ public class ClacoBookServiceImpl implements ClacoBookService {
 			.toList();
 	}
 
-	@Override
 	public ClacoBookResponse updateClacoBook(UpdateClacoBookRequest updateRequest) {
 		// 소유주 검사
 		Long contextMemberId = securityContextUtil.getContextMemberInfo().getMemberId();
@@ -88,7 +76,6 @@ public class ClacoBookServiceImpl implements ClacoBookService {
 		return ClacoBookResponse.fromEntity(clacoBook);
 	}
 
-	@Override
 	public void deleteClacoBook(Long bookId) {
 		// 소유주 검사
 		Long contextMemberId = securityContextUtil.getContextMemberInfo().getMemberId();

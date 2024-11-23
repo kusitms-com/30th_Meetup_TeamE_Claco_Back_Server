@@ -1,10 +1,7 @@
 package com.curateme.claco.clacobook.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import java.util.List;
-import java.util.Map;
 
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.curateme.claco.clacobook.domain.dto.request.UpdateClacoBookRequest;
 import com.curateme.claco.clacobook.domain.dto.response.ClacoBookListResponse;
 import com.curateme.claco.clacobook.domain.dto.response.ClacoBookResponse;
-import com.curateme.claco.clacobook.service.ClacoBookService;
+import com.curateme.claco.clacobook.service.ClacoBookServiceImpl;
 import com.curateme.claco.global.annotation.TokenRefreshedCheck;
 import com.curateme.claco.global.response.ApiResponse;
 
@@ -31,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ClacoBookController {
 
-	private final ClacoBookService clacoBookService;
+	private final ClacoBookServiceImpl clacoBookService;
 
 	@PostMapping
 	@Operation(summary = "클라코북 생성", description = "클라코북 생성")
