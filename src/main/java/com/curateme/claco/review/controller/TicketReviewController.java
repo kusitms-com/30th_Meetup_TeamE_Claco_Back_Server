@@ -28,7 +28,7 @@ import com.curateme.claco.review.domain.dto.response.ReviewListResponse;
 import com.curateme.claco.review.domain.dto.response.TicketListResponse;
 import com.curateme.claco.review.domain.dto.response.TicketReviewInfoResponse;
 import com.curateme.claco.review.domain.vo.ImageUrlVO;
-import com.curateme.claco.review.service.TicketReviewService;
+import com.curateme.claco.review.service.TicketReviewServiceImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -43,7 +43,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TicketReviewController {
 
-	private final TicketReviewService ticketReviewService;
+	private final TicketReviewServiceImpl ticketReviewService;
 
 	/**
 	 * TicketReview 생성
@@ -215,6 +215,16 @@ public class TicketReviewController {
 	})
 	public ApiResponse<Void> deleteTicketReview(@PathVariable("ticketReviewId") Long id) {
 		ticketReviewService.deleteTicket(id);
+		return ApiResponse.ok();
+	}
+
+	@PutMapping("/{ticketReviewId}/claco-books/{clacoBookId}")
+	@Operation(summary = "티켓리뷰 이동", description = "티켓리뷰 클라코북 이동")
+	@Parameter(name = "ticketReviewId", description = "이동 대상 티켓리뷰 id")
+	@Parameter(name = "clacoBookId", description = "이동 대상 클라코북 id")
+	public ApiResponse<Void> moveTicketReview(@PathVariable("ticketReviewId") Long ticketReviewId,
+		@PathVariable("clacoBookId") Long clacoBookId) {
+		ticketReviewService.moveTicketReview(ticketReviewId, clacoBookId);
 		return ApiResponse.ok();
 	}
 
