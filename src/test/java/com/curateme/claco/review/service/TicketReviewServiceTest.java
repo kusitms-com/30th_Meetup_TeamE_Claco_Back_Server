@@ -447,4 +447,45 @@ class TicketReviewServiceTest {
 		assertThat(testTicketReview.getActiveStatus()).isEqualTo(ActiveStatus.DELETED);
 
 	}
+
+	@Test
+	@DisplayName("티켓 리뷰 이동")
+	public void moveTicketReview() {
+		// Given
+		Long testId1 = 1L;
+		String testString = "test";
+		JwtMemberDetail mockMemberDetail = mock(JwtMemberDetail.class);
+		Member mockMember = mock(Member.class);
+		ClacoBook mockClacoBook = mock(ClacoBook.class);
+		ClacoBook resultClacoBook = mock(ClacoBook.class);
+		TicketReview testTicketReview = TicketReview.builder()
+			.id(testId1)
+			.member(mockMember)
+			.clacoBook(mockClacoBook)
+			.watchRound(testString)
+			.watchDate(LocalDate.now())
+			.starRate(BigDecimal.valueOf(3.5))
+			.content(testString)
+			.casting(testString)
+			.build();
+
+		when(securityContextUtil.getContextMemberInfo()).thenReturn(mockMemberDetail);
+		when(mockMemberDetail.getMemberId()).thenReturn(testId1);
+		when(memberRepository.findById(testId1)).thenReturn(Optional.of(mockMember));
+		when(ticketReviewRepository.findById(testId1)).thenReturn(Optional.of(testTicketReview));
+		when(clacoBookRepository.findById(testId1)).thenReturn(Optional.of(resultClacoBook));
+
+		// When
+		ticketReviewService.moveTicketReview(testId1, testId1);
+
+		// Then
+		verify(securityContextUtil).getContextMemberInfo();
+		verify(mockMemberDetail).getMemberId();
+		verify(memberRepository).findById(testId1);
+		verify(ticketReviewRepository).findById(testId1);
+		verify(clacoBookRepository).findById(testId1);
+
+		assertThat(testTicketReview.getClacoBook()).isEqualTo(resultClacoBook);
+
+	}
 }
