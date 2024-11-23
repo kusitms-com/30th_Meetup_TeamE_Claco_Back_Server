@@ -57,7 +57,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class TicketReviewServiceImpl implements TicketReviewService{
+public class TicketReviewServiceImpl {
 
 	private final TicketReviewRepository ticketReviewRepository;
 	private final SecurityContextUtil securityContextUtil;
@@ -71,7 +71,6 @@ public class TicketReviewServiceImpl implements TicketReviewService{
 	private final ClacoBookRepository clacoBookRepository;
 	private final S3Util s3Util;
 
-	@Override
 	public TicketReviewInfoResponse createTicketReview(TicketReviewCreateRequest request,
 		MultipartFile[] multipartFile) throws IOException {
 		// 이미지 개수 검사
@@ -181,7 +180,6 @@ public class TicketReviewServiceImpl implements TicketReviewService{
 		return response;
 	}
 
-	@Override
 	public ImageUrlVO addNewTicket(Long ticketReviewId, MultipartFile multipartFile) throws IOException {
 		// 현재 접근 멤버 조회
 		Member member = memberRepository.findById(securityContextUtil.getContextMemberInfo().getMemberId()).stream()
@@ -203,7 +201,6 @@ public class TicketReviewServiceImpl implements TicketReviewService{
 		return ImageUrlVO.fromTicketImage(ticketReview);
 	}
 
-	@Override
 	public ReviewInfoResponse readReview(Long reviewId) {
 		TicketReview ticketReview = ticketReviewRepository.findTicketReviewById(reviewId).stream()
 			.findAny()
@@ -212,7 +209,6 @@ public class TicketReviewServiceImpl implements TicketReviewService{
 		return ReviewInfoResponse.fromEntityToDetailReview(ticketReview);
 	}
 
-	@Override
 	public TicketReviewInfoResponse readTicketReview(Long ticketReviewId) {
 		// 현재 접근 멤버 조회
 		Member member = memberRepository.findById(securityContextUtil.getContextMemberInfo().getMemberId()).stream()
@@ -233,7 +229,6 @@ public class TicketReviewServiceImpl implements TicketReviewService{
 		return response;
 	}
 
-	@Override
 	public ReviewListResponse readReviewOfConcert(Long concertId, Integer page, Integer size, OrderBy orderBy) {
 		// 공연 정보 조회
 		Concert concert = concertRepository.findById(concertId).stream()
@@ -263,7 +258,6 @@ public class TicketReviewServiceImpl implements TicketReviewService{
 			.build();
 	}
 
-	@Override
 	public TicketListResponse readTicketOfClacoBook(Long clacoBookId) {
 		ClacoBook clacoBook = clacoBookRepository.findById(clacoBookId).stream()
 			.findAny()
@@ -276,7 +270,6 @@ public class TicketReviewServiceImpl implements TicketReviewService{
 		return new TicketListResponse(infoResponseList);
 	}
 
-	@Override
 	public Integer countReview(Long concertId) {
 		// 공연 조회
 		Concert concert = concertRepository.findById(concertId).stream()
@@ -286,7 +279,6 @@ public class TicketReviewServiceImpl implements TicketReviewService{
 		return ticketReviewRepository.countTicketReviewByConcert(concert);
 	}
 
-	@Override
 	public TicketReviewUpdateDto editTicketReview(TicketReviewUpdateDto request) {
 		// 접근 사용자 조회
 		Member member = memberRepository.findById(securityContextUtil.getContextMemberInfo().getMemberId()).stream()
@@ -309,7 +301,6 @@ public class TicketReviewServiceImpl implements TicketReviewService{
 		return TicketReviewUpdateDto.fromEntity(ticketReview);
 	}
 
-	@Override
 	public void deleteTicket(Long ticketReviewId) {
 		// 접근 사용자 조회
 		Member member = memberRepository.findById(securityContextUtil.getContextMemberInfo().getMemberId()).stream()
@@ -327,5 +318,26 @@ public class TicketReviewServiceImpl implements TicketReviewService{
 
 		ticketReviewRepository.delete(ticketReview);
 
+	}
+
+	public void moveTicketReview(Long ticketReviewId, Long clacoBookId) {
+		Member member = memberRepository.findById(securityContextUtil.getContextMemberInfo().getMemberId()).stream()
+			.findAny()
+			.orElseThrow(() -> new BusinessException(ApiStatus.MEMBER_NOT_FOUND));
+
+		TicketReview ticketReview = ticketReviewRepository.findById(ticketReviewId).stream()
+			.findAny()
+			.orElseThrow(() -> new BusinessException(ApiStatus.TICKET_REVIEW_NOT_FOUND));
+
+		// 소유주 조회
+		if (ticketReview.getMember() != member) {
+			throw new BusinessException(ApiStatus.MEMBER_NOT_OWNER);
+		}
+
+		ClacoBook clacoBook = clacoBookRepository.findById(clacoBookId).stream()
+			.findAny()
+			.orElseThrow(() -> new BusinessException(ApiStatus.CLACO_BOOK_NOT_FOUND));
+
+		ticketReview.updateClacoBook(clacoBook);
 	}
 }
