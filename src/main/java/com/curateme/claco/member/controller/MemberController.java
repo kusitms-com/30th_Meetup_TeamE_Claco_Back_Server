@@ -112,7 +112,7 @@ public class MemberController {
 	@PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ApiResponse<MemberInfoResponse> updateMemberInfo(
 		@RequestPart(value = "updateNickname", required = false) String updateNickname,
-		@RequestPart(value = "updateImage")MultipartFile updateImage
+		@RequestPart(value = "updateImage", required = false)MultipartFile updateImage
 	) throws IOException {
 		return ApiResponse.ok(memberService.updateMemberInfo(updateNickname, updateImage));
 	}
