@@ -10,6 +10,7 @@ import com.curateme.claco.review.domain.entity.TicketReview;
 import com.curateme.claco.review.domain.vo.ImageUrlVO;
 import com.curateme.claco.review.domain.vo.PlaceCategoryVO;
 import com.curateme.claco.review.domain.vo.TagCategoryVO;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -75,6 +76,9 @@ public class TicketReviewInfoResponse {
 	// 관람평(본문)
 	@Schema(description = "감상평", example = "공연이 재미있어요.")
 	private String content;
+	@Schema(description = "클라코 북 id", example = "1")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private Long clacoBookId;
 	// 장소평
 	@Schema(description = "장소평들")
 	private List<PlaceCategoryVO> placeReviews;
@@ -84,6 +88,10 @@ public class TicketReviewInfoResponse {
 	@Builder.Default
 	@Schema(description = "티켓 리뷰 소유주")
 	private Boolean editor = true;
+
+	public void updateClacoBookId(Long clacoBookId) {
+		this.clacoBookId = clacoBookId;
+	}
 
 	public static TicketReviewInfoResponse fromTicketReview(TicketReview ticketReview) {
 		TicketReviewInfoResponse response = new TicketReviewInfoResponse();

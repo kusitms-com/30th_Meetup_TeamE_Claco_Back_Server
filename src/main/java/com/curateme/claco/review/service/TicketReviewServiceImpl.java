@@ -176,7 +176,9 @@ public class TicketReviewServiceImpl implements TicketReviewService{
 			savedTicketReview.addReviewImage(savedReviewImage);
 		});
 
-		return TicketReviewInfoResponse.fromTicketReview(savedTicketReview);
+		TicketReviewInfoResponse response = TicketReviewInfoResponse.fromTicketReview(savedTicketReview);
+		response.updateClacoBookId(clacoBook.getId());
+		return response;
 	}
 
 	@Override
