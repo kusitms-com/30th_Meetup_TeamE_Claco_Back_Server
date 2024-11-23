@@ -70,7 +70,7 @@ public class TicketReviewController {
 		@Validated @RequestPart("request") TicketReviewCreateRequest request,
 		@RequestPart(value = "files", required = false) MultipartFile[] files) throws IOException {
 
-		return ApiResponse.ok(ticketReviewService.createTicketReview(request, files == null ? new MultipartFile[]{} : null));
+		return ApiResponse.ok(ticketReviewService.createTicketReview(request, files == null ? new MultipartFile[]{} : files));
 	}
 
 	/**
