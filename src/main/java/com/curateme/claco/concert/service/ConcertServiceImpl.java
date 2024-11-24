@@ -7,6 +7,7 @@ import com.curateme.claco.concert.domain.dto.response.ConcertCategoryResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertDetailResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertLikedResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertResponse;
+import com.curateme.claco.concert.domain.dto.response.ConcertResponseV2;
 import com.curateme.claco.concert.domain.entity.Category;
 import com.curateme.claco.concert.domain.entity.Concert;
 import com.curateme.claco.concert.domain.entity.ConcertLike;
@@ -216,7 +217,7 @@ public class ConcertServiceImpl implements ConcertService {
     }
 
     @Override
-    public List<ConcertLikedResponse> getLikedConcert(String query, String genre) {
+    public List<ConcertResponseV2> getLikedConcert(String query, String genre) {
 
         Long memberId = securityContextUtil.getContextMemberInfo().getMemberId();
 
@@ -225,7 +226,7 @@ public class ConcertServiceImpl implements ConcertService {
         // 필터링 적용
         concertLikedIds = filterConcertsByQueryAndGenre(concertLikedIds, query, genre);
 
-        List<ConcertLikedResponse> likedConcerts = new ArrayList<>();
+        List<ConcertResponseV2> likedConcerts = new ArrayList<>();
 
         concertLikedIds.forEach(concertId -> {
             Concert concert = concertRepository.findConcertById(concertId);
@@ -237,7 +238,7 @@ public class ConcertServiceImpl implements ConcertService {
                 .map(category -> new ConcertCategoryResponse(category.getCategory(), category.getImageUrl()))
                 .collect(Collectors.toList());
 
-            ConcertLikedResponse response = ConcertLikedResponse.fromEntity(concert, categoryResponses);
+            ConcertResponseV2 response = ConcertResponseV2.fromEntity(concert, categoryResponses);
             likedConcerts.add(response);
         });
 
@@ -266,11 +267,12 @@ public class ConcertServiceImpl implements ConcertService {
             concertLikedIds = concertLikedIds.stream()
                 .filter(filteredByQuery::contains)
                 .toList();
-
+            
         }
 
         // 장르로 필터링
-        if (genre != null && !genre.isEmpty()) {
+        if (!"all".equals(genre) && !genre.isEmpty()) {
+            System.out.println("concertLikedIds = " + concertLikedIds);
             concertLikedIds = concertLikedIds.stream()
                 .filter(concertId -> {
                     Concert concert = concertRepository.findConcertById(concertId);

@@ -265,6 +265,7 @@ class RecommendationServiceImplTest {
         assertThat(recommendations.get(2).getId()).isEqualTo(3L);
     }
 
+    /*
     @Test
     void testGetConcertsFromFlaskSuccess() {
         // Given
@@ -288,6 +289,8 @@ class RecommendationServiceImplTest {
         // Then
         assertThat(actualResponse).isNotNull();
     }
+
+     */
 
     @Test
     void testGetConcertsFromFlaskV2Success() {

@@ -301,7 +301,7 @@ class ConcertServiceTest {
         when(categoryRepository.findAllById(List.of(1L))).thenReturn(List.of(mockCategory));
 
         // When
-        List<ConcertLikedResponse> result = concertService.getLikedConcert(null, null);
+        List<ConcertResponseV2> result = concertService.getLikedConcert(null, null);
 
         // Then
         assertThat(result).isNotNull();

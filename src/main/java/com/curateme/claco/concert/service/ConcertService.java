@@ -5,6 +5,7 @@ import com.curateme.claco.concert.domain.dto.response.ConcertAutoCompleteRespons
 import com.curateme.claco.concert.domain.dto.response.ConcertDetailResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertLikedResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertResponse;
+import com.curateme.claco.concert.domain.dto.response.ConcertResponseV2;
 import com.curateme.claco.global.response.PageResponse;
 import java.time.LocalDate;
 import java.util.List;
@@ -22,7 +23,7 @@ public interface ConcertService {
 
     String postLikes(Long concertId);
 
-    List<ConcertLikedResponse> getLikedConcert(String query, String genre);
+    List<ConcertResponseV2> getLikedConcert(String query, String genre);
 
     List<ConcertAutoCompleteResponse> getAutoComplete(String query);
 }
