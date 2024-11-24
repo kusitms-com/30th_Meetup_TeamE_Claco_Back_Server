@@ -85,6 +85,8 @@ public class ConcertServiceImpl implements ConcertService {
             .listPageResponse(concertResponses)
             .totalCount(concertPage.getTotalElements())
             .size(concertPage.getSize())
+            .totalPage(concertPage.getTotalPages())
+            .currentPage(concertPage.getPageable().getPageNumber()+1)
             .build();
     }
 
@@ -104,6 +106,9 @@ public class ConcertServiceImpl implements ConcertService {
 
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), concertList.size());
+        int pageSize = pageable.getPageSize();
+        int totalPages = (int) Math.ceil((double) totalElements / pageSize);
+
         List<Concert> paginatedConcerts = concertList.subList(start, end);
 
         List<ConcertResponse> concertResponses = paginatedConcerts.stream()
@@ -124,6 +129,8 @@ public class ConcertServiceImpl implements ConcertService {
             .listPageResponse(concertResponses)
             .totalCount(totalElements)
             .size(pageable.getPageSize())
+            .totalPage(totalPages)
+            .currentPage(Pageable.unpaged().getPageNumber()+1)
             .build();
     }
 
@@ -161,6 +168,8 @@ public class ConcertServiceImpl implements ConcertService {
             .listPageResponse(concertResponses)
             .totalCount(concertPage.getTotalElements())
             .size(concertPage.getSize())
+            .totalPage(concertPage.getTotalPages())
+            .currentPage(concertPage.getPageable().getPageNumber()+1)
             .build();
     }
 
