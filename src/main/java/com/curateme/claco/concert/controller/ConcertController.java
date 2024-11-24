@@ -4,6 +4,7 @@ import com.curateme.claco.concert.domain.dto.response.ConcertAutoCompleteRespons
 import com.curateme.claco.concert.domain.dto.response.ConcertDetailResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertLikedResponse;
 import com.curateme.claco.concert.domain.dto.response.ConcertResponse;
+import com.curateme.claco.concert.domain.dto.response.ConcertResponseV2;
 import com.curateme.claco.concert.service.ConcertService;
 import com.curateme.claco.global.annotation.TokenRefreshedCheck;
 import com.curateme.claco.global.response.ApiResponse;
@@ -105,15 +106,16 @@ import org.springframework.web.bind.annotation.RestController;
 
         @GetMapping("/likes")
         @Operation(summary = "내가 좋아요한 공연", description = "기능명세서 화면번호 7.3.0")
-        @Parameter(name = "query", description = "검색어", required = true)
-        public ApiResponse<List<ConcertLikedResponse>> getMyConcerts(
-            @RequestParam("query") String query,
-            @RequestParam("genre") String genre
+        @Parameter(name = "query", description = "검색어")
+        public ApiResponse<List<ConcertResponseV2>> getMyConcerts(
+            @RequestParam(value = "query", required = false, defaultValue = "all") String query,
+            @RequestParam(value = "genre", required = false, defaultValue = "all") String genre
         ) {
             return ApiResponse.ok(concertService.getLikedConcert(query, genre));
         }
 
-        @GetMapping("/search")
+
+    @GetMapping("/search")
         @Operation(summary = "자동완성 API", description = "자동완성 기능으로 10개의 공연을 반환")
         public ApiResponse<List<ConcertAutoCompleteResponse>> autoCompletes(
             @RequestParam("query") String query
