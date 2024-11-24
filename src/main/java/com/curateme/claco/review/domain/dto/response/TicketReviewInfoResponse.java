@@ -79,6 +79,10 @@ public class TicketReviewInfoResponse {
 	@Schema(description = "클라코 북 id", example = "1")
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Long clacoBookId;
+	@Schema(description = "콘서트 장르 이름", example = "무용")
+	private String genreName;
+	@Schema(description = "공연 중인 여부", example = "공연 중")
+	private String concertState;
 	// 장소평
 	@Schema(description = "장소평들")
 	private List<PlaceCategoryVO> placeReviews;
@@ -118,6 +122,8 @@ public class TicketReviewInfoResponse {
 		response.runningTime = ticketReview.getConcert().getPrfruntime();
 		response.castings = ticketReview.getCasting();
 		response.createdDate = LocalDate.from(ticketReview.getCreatedAt());
+		response.genreName = ticketReview.getConcert().getGenrenm();
+		response.concertState = ticketReview.getConcert().getPrfstate();
 
 		return response;
 	}
