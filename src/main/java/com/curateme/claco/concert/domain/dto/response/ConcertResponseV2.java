@@ -39,10 +39,13 @@ public class ConcertResponseV2 {
     @Schema(description = "공연 상태", example = "공연 예정")
     private String status;
 
+    @Schema(description = "공연 포스터")
+    private String poster;
+
     private  List<ConcertCategoryResponse> categories;
 
     public static ConcertResponseV2 fromEntity(Concert concert, List<ConcertCategoryResponse> categories){
         return new ConcertResponseV2(concert.getId(), concert.getMt20id(), concert.getPrfnm(),
-            concert.getPrfpdfrom(), concert.getPrfpdto(), concert.getGenrenm(), concert.getPrfstate(), categories);
+            concert.getPrfpdfrom(), concert.getPrfpdto(), concert.getGenrenm(), concert.getPrfstate(), concert.getPoster(), categories);
     }
 }
