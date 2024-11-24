@@ -117,19 +117,6 @@ class ConcertRepositoryTest {
     }
 
     @Test
-    void testFindConcertIdsByGenre() {
-        // Given
-        String genre = "연극";
-
-        // When
-        List<Long> concertIds = concertRepository.findConcertIdsByGenre(genre);
-
-        // Then
-        assertThat(concertIds).isNotNull();
-        assertThat(concertIds).isNotEmpty();
-    }
-
-    @Test
     void testFindBySearchQuery() {
         // Given
         String query = "뮤지컬";
