@@ -292,16 +292,17 @@ class ConcertServiceTest {
             .category("웅장한")
             .imageUrl("image-url-1")
             .build();
-
+        String query = "all";
         when(securityContextUtil.getContextMemberInfo()).thenReturn(jwtMemberDetailMock);
         when(jwtMemberDetailMock.getMemberId()).thenReturn(memberId);
         when(concertLikeRepository.findConcertIdsByMemberId(memberId)).thenReturn(List.of(concertId));
         when(concertRepository.findConcertById(concertId)).thenReturn(mockConcert);
+        when(concertRepository.findConcertIdsBySearchQuery(query)).thenReturn(List.of(concertId));
         when(concertCategoryRepository.findCategoryIdsByCategoryName(concertId)).thenReturn(List.of(1L));
         when(categoryRepository.findAllById(List.of(1L))).thenReturn(List.of(mockCategory));
 
         // When
-        List<ConcertResponseV2> result = concertService.getLikedConcert(null, null);
+        List<ConcertResponseV2> result = concertService.getLikedConcert("all", "all");
 
         // Then
         assertThat(result).isNotNull();

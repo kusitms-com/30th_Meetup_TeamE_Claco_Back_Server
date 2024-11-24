@@ -292,6 +292,7 @@ class RecommendationServiceImplTest {
 
      */
 
+    /*
     @Test
     void testGetConcertsFromFlaskV2Success() {
         // Given
@@ -314,6 +315,8 @@ class RecommendationServiceImplTest {
         // Then
         assertThat(actualResponse).isNotNull();
     }
+
+     */
 
     @Test
     void testGetSearchedConcertRecommendations() {

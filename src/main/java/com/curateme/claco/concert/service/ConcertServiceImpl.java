@@ -130,7 +130,7 @@ public class ConcertServiceImpl implements ConcertService {
             .totalCount(totalElements)
             .size(pageable.getPageSize())
             .totalPage(totalPages)
-            .currentPage(Pageable.unpaged().getPageNumber()+1)
+            .currentPage(pageable.getPageNumber()+1)
             .build();
     }
 
