@@ -66,10 +66,10 @@ public class ConcertServiceImpl implements ConcertService {
         Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
 
         Page<Concert> concertPage = concertRepository.findConcertsByGenreWithPagination(genre, sortedPageable);
+        Long memberId = securityContextUtil.getContextMemberInfo().getMemberId();
 
         List<ConcertResponse> concertResponses = concertPage.getContent().stream()
             .map(concert -> {
-                // 카테고리 정보 조회 및 매핑
                 List<Long> categoryIds = concertCategoryRepository.findCategoryIdsByCategoryName(concert.getId());
                 List<Category> categoryList = categoryRepository.findAllById(categoryIds);
 
@@ -77,7 +77,13 @@ public class ConcertServiceImpl implements ConcertService {
                     .map(category -> new ConcertCategoryResponse(category.getCategory(), category.getImageUrl()))
                     .collect(Collectors.toList());
 
-                return ConcertResponse.fromEntity(concert, categoryResponses,null);
+                ConcertResponse response = ConcertResponse.fromEntity(concert, categoryResponses, null);
+
+                // 좋아요 여부 설정
+                boolean liked = concertLikeRepository.existsByConcertIdAndMemberId(concert.getId(), memberId);
+                response.setLiked(liked);
+
+                return response;
             })
             .collect(Collectors.toList());
 

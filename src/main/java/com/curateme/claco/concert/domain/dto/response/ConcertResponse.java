@@ -53,6 +53,13 @@ public class ConcertResponse {
     @Schema(description = "추천 공연 리스트")
     private List<RecommendationConcertsResponseV1> recommendationConcertsResponseV1s;
 
+    @Schema(name = "공연 좋아요 여부")
+    private Boolean liked;
+
+    public void setLiked(boolean liked) {
+        this.liked = liked;
+    }
+
     public static ConcertResponse fromEntity(Concert concert, List<ConcertCategoryResponse> categories, List<RecommendationConcertsResponseV1> recommendationConcertsResponseV1s) {
         return ConcertResponse.builder()
             .id(concert != null ? concert.getId() : null)
