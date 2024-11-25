@@ -70,7 +70,7 @@ public class RecommendationServiceImpl implements RecommendationService{
 
         List<Long> concertIds = parseConcertIdsFromJson(jsonResponse);
 
-        return getConcertDetails(concertIds);
+        return getConcertDetailsV2(concertIds, memberId);
     }
 
     // 최근 좋아요한 공연 기반 추천
@@ -220,6 +220,31 @@ public class RecommendationServiceImpl implements RecommendationService{
                 concert.getPrfpdfrom().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd (EEEE)", Locale.KOREAN)),
                 concert.getPrfpdto().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd (EEEE)", Locale.KOREAN))
             ));
+        }
+        return recommendations;
+    }
+
+    public List<RecommendationConcertsResponseV1> getConcertDetailsV2(List<Long> concertIds, Long memberId) {
+        List<RecommendationConcertsResponseV1> recommendations = new ArrayList<>();
+
+        for (Long concertId : concertIds) {
+            Concert concert = concertRepository.findConcertById(concertId);
+            Long id = concert.getId();
+
+            boolean liked = concertLikeRepository.existsByConcertIdAndMemberId(concert.getId(), memberId);
+
+            RecommendationConcertsResponseV1 recommendation = new RecommendationConcertsResponseV1(
+                id,
+                concert.getPrfnm(),
+                concert.getPoster(),
+                concert.getGenrenm(),
+                concert.getFcltynm(),
+                concert.getPrfpdfrom().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd (EEEE)", Locale.KOREAN)),
+                concert.getPrfpdto().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd (EEEE)", Locale.KOREAN))
+            );
+
+            recommendation.setLiked(liked);
+            recommendations.add(recommendation);
         }
         return recommendations;
     }

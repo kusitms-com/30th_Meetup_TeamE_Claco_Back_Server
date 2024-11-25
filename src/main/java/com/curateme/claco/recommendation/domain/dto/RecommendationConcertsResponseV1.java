@@ -31,6 +31,13 @@ public class RecommendationConcertsResponseV1 {
     @Column(name = "end_date")
     private String prfpdto;
 
+    @Schema(name = "공연 좋아요 여부")
+    private Boolean liked;
+
+    public void setLiked(boolean liked) {
+        this.liked = liked;
+    }
+
     public RecommendationConcertsResponseV1(Long id, String prfnm, String poster, String genrenm, String fcltynm, String prfpdfrom, String prfpdto) {
         this.id = id;
         this.prfnm = prfnm;

@@ -43,6 +43,11 @@ class ConcertServiceTest {
     @Test
     @DisplayName("장르 기반 콘서트 조회")
     void testGetConcertInfos() {
+
+        Long memberId = 10L;
+
+        JwtMemberDetail jwtMemberDetailMock = mock(JwtMemberDetail.class);
+
         // Given
         String genre = "Classical";
         Concert mockConcert = Concert.builder()
@@ -62,6 +67,8 @@ class ConcertServiceTest {
             .thenReturn(List.of(
                 Category.builder().id(1L).category("웅장한").imageUrl("image-url-1").build()
             ));
+        when(securityContextUtil.getContextMemberInfo()).thenReturn(jwtMemberDetailMock);
+        when(jwtMemberDetailMock.getMemberId()).thenReturn(memberId);
 
         // When
         PageResponse<ConcertResponse> result = concertService.getConcertInfos(genre, "asc", pageable);

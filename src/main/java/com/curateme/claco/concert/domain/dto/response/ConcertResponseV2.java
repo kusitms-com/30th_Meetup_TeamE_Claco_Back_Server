@@ -37,10 +37,10 @@ public class ConcertResponseV2 {
     private String genrenm;
 
     @Schema(description = "공연 상태", example = "공연 예정")
-    private String status;
+    private String prfstate;
 
     @Schema(description = "공연 포스터")
-    private String prfstate;
+    private String poster;
 
     @Schema(description = "공연 시설")
     private String fcltynm;
