@@ -47,9 +47,12 @@ public class ConcertResponseV2 {
 
     private  List<ConcertCategoryResponse> categories;
 
+    @Schema(name = "공연 좋아요 여부", description = "항상 true로 반환")
+    private Boolean liked;
+
     public static ConcertResponseV2 fromEntity(Concert concert, List<ConcertCategoryResponse> categories){
         return new ConcertResponseV2(concert.getId(), concert.getMt20id(), concert.getPrfnm(),
             concert.getPrfpdfrom(), concert.getPrfpdto(), concert.getGenrenm(), concert.getPrfstate(), concert.getPoster(),
-            concert.getFcltynm(), categories);
+            concert.getFcltynm(), categories, true);
     }
 }
