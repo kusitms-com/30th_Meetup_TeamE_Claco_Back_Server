@@ -25,16 +25,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * @fileName    : OAuthLoginSuccessHandler.java
- * @author      : 이 건
- * @date        : 2024.10.18
- * @author devkeon(devkeon123@gmail.com)
- * ===========================================================
- * DATE               AUTHOR        NOTE
- * -----------------------------------------------------------
- * 2024.10.18   	   이 건        최초 생성
- */
 @Slf4j
 @Component
 @Transactional
@@ -46,6 +36,8 @@ public class OAuthLoginSuccessHandler implements AuthenticationSuccessHandler {
 
 	@Value("${jwt.cookie.expire}")
 	private Integer COOKIE_EXPIRATION;
+	@Value("${front.url}")
+	private String frontUrl;
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -74,12 +66,11 @@ public class OAuthLoginSuccessHandler implements AuthenticationSuccessHandler {
 
 		response.setHeader("Set-Cookie", cookie.toString());
 
-		// TODO: 임시 지정
-		String redirectUrl = "http://localhost:5173/oauth/callback/main?token=" +
+		String redirectUrl = frontUrl + "/oauth/callback/main?token=" +
 			URLEncoder.encode(accessToken, StandardCharsets.UTF_8);
 
 		if (member.getRole() == Role.SOCIAL) {
-			redirectUrl = "http://localhost:5173/oauth/callback/sign-up?token=" +
+			redirectUrl = frontUrl + "/oauth/callback/sign-up?token=" +
 				URLEncoder.encode(accessToken, StandardCharsets.UTF_8);
 		} else{
 			redirectUrl += ("&nickname=" + URLEncoder.encode(member.getNickname(), StandardCharsets.UTF_8));
