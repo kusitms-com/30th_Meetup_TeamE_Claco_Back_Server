@@ -10,3 +10,5 @@ spring:
     hibernate:
       ddl-auto: update
     generate-ddl: false
+front:
+  url: ${FRONT_URL}
