@@ -21,21 +21,13 @@ import com.curateme.claco.authentication.handler.oauth.OAuthLoginFailureHandler;
 import com.curateme.claco.authentication.handler.oauth.OAuthLoginSuccessHandler;
 import com.curateme.claco.authentication.service.CustomOAuth2UserService;
 import com.curateme.claco.authentication.util.JwtTokenUtil;
+import com.curateme.claco.global.filter.ExceptionHandlerFilter;
 import com.curateme.claco.member.domain.entity.Role;
 import com.curateme.claco.member.repository.MemberRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 
-/**
- * @fileName    : SecurityConfig.java
- * @author      : 이 건
- * @date        : 2024.10.18
- * @author devkeon(devkeon123@gmail.com)
- * ===========================================================
- * DATE               AUTHOR        NOTE
- * -----------------------------------------------------------
- * 2024.10.18   	   이 건        최초 생성
- */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -46,6 +38,7 @@ public class SecurityConfig {
 	private final OAuthLoginSuccessHandler oAuthLoginSuccessHandler;
 	private final OAuthLoginFailureHandler oAuthLoginFailureHandler;
 	private final CustomOAuth2UserService customOAuth2UserService;
+	private final ObjectMapper objectMapper;
 
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -87,6 +80,7 @@ public class SecurityConfig {
 					)
 			);
 		httpSecurity.addFilterBefore(jwtAuthenticationFilter(), LogoutFilter.class);
+		httpSecurity.addFilterBefore(exceptionHandlerFilter(), JwtAuthenticationFilter.class);
 
 		return httpSecurity.build();
 
@@ -95,6 +89,11 @@ public class SecurityConfig {
 	@Bean
 	public JwtAuthenticationFilter jwtAuthenticationFilter() {
 		return new JwtAuthenticationFilter(jwtTokenUtil, memberRepository);
+	}
+
+	@Bean
+	public ExceptionHandlerFilter exceptionHandlerFilter() {
+		return new ExceptionHandlerFilter(objectMapper);
 	}
 
 	@Bean
