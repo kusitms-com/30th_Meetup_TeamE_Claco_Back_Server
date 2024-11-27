@@ -26,4 +26,6 @@ public interface ConcertService {
     List<ConcertResponseV2> getLikedConcert(String query, String genre);
 
     List<ConcertAutoCompleteResponse> getAutoComplete(String query);
+
+    String getS3PosterUrl(String KopisURL);
 }

@@ -115,14 +115,20 @@ import org.springframework.web.bind.annotation.RestController;
         }
 
 
-    @GetMapping("/search")
-        @Operation(summary = "자동완성 API", description = "자동완성 기능으로 10개의 공연을 반환")
-        public ApiResponse<List<ConcertAutoCompleteResponse>> autoCompletes(
-            @RequestParam("query") String query
+        @GetMapping("/search")
+            @Operation(summary = "자동완성 API", description = "자동완성 기능으로 10개의 공연을 반환")
+            public ApiResponse<List<ConcertAutoCompleteResponse>> autoCompletes(
+                @RequestParam("query") String query
+            ){
+                return ApiResponse.ok(concertService.getAutoComplete(query));
+            }
+
+        @GetMapping("/posters")
+        @Operation(summary = "KOPIS Poster", description = "Kopis API Poster 다운로드")
+        public ApiResponse<String> getPosters(
+            @RequestParam("KopisURL") String KopisURL
         ){
-
-            return ApiResponse.ok(concertService.getAutoComplete(query));
+            return ApiResponse.ok(concertService.getS3PosterUrl(KopisURL));
         }
-
 }
 
