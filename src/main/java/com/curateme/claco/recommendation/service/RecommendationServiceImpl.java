@@ -146,23 +146,29 @@ public class RecommendationServiceImpl implements RecommendationService{
         List<RecommendationConcertResponseV2> recommendationResponses = new ArrayList<>();
 
         for (Long recUserId : recUserIds) {
-            ClacoBook clacoBook = clacoBookRepository.findByMemberId(recUserId)
-                .orElseThrow(() -> new BusinessException(ApiStatus.CLACO_BOOK_NOT_FOUND));
+            List<ClacoBook> clacoBooks = clacoBookRepository.findByMemberId(recUserId);
 
-            TicketReview ticketReview = clacoBookRepository.findRandomTicketReviewByClacoBookId(clacoBook.getId())
-                .orElseThrow(() -> new BusinessException(ApiStatus.TICKET_REVIEW_NOT_FOUND));
+            if (clacoBooks.isEmpty()) {
+                throw new BusinessException(ApiStatus.CLACO_BOOK_NOT_FOUND);
+            }
 
-            TicketReviewSummaryResponse ticketReviewSummaryResponse = ticketReviewRepository.findSummaryById(ticketReview.getId());
+            for (ClacoBook clacoBook : clacoBooks) {
+                TicketReview ticketReview = clacoBookRepository.findRandomTicketReviewByClacoBookId(clacoBook.getId())
+                    .orElseThrow(() -> new BusinessException(ApiStatus.TICKET_REVIEW_NOT_FOUND));
 
-            TicketInfoResponse ticketInfoResponse = TicketInfoResponse.fromEntity(ticketReview);
+                TicketReviewSummaryResponse ticketReviewSummaryResponse = ticketReviewRepository.findSummaryById(ticketReview.getId());
 
-            recommendationResponses.add(
-                RecommendationConcertResponseV2.from(ticketInfoResponse, ticketReviewSummaryResponse)
-            );
+                TicketInfoResponse ticketInfoResponse = TicketInfoResponse.fromEntity(ticketReview);
+
+                recommendationResponses.add(
+                    RecommendationConcertResponseV2.from(ticketInfoResponse, ticketReviewSummaryResponse)
+                );
+            }
         }
 
         return recommendationResponses;
     }
+
 
 
     @Override
