@@ -68,9 +68,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				.orElseThrow(() -> new BusinessException(ApiStatus.REFRESH_TOKEN_NOT_FOUND));
 
 			response.setHeader("Authorization", GRANT_TYPE + accessToken);
-			response.setHeader("Set-Cookie", refreshToken);
 
-			// access token 만료 흐름
+		// access token 만료 흐름
 		} catch (ExpiredJwtException e) {
 
 			log.info("[AccessTokenExpire] -> accessToken: {}", accessToken);
