@@ -310,12 +310,11 @@ public class ConcertServiceImpl implements ConcertService {
 
                 return rootNode.get("s3_url").asText();
             } else {
-                System.err.println("추천시스템 오류 발생. Status code: " + response.getStatusCode());
+                return response.getBody();
             }
         } catch (Exception e) {
-            System.err.println("추천시스템 실패: " + e.getMessage());
+            return e.getMessage();
         }
-        return null;
     }
 
 
