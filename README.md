@@ -1,10 +1,10 @@
 # Claco 메인 서버 레포지토리
 
 ## 🧑‍💻 R&R
-| 이름  | 역할                                                                                               |
-|-----|--------------------------------------------------------------------------------------------------|
-| 이건  | 아키텍처 설계, ERD 설계, 메인 서버 인프라 및 CI/CD 구축, <br> 인증/인가, 모니터링 시스템 구축, 티켓/리뷰 기능,<br> 클라코북 기능, 회원 관련 기능  |
-| 정희찬 | ERD 설계, AI 및 배치 서버 인프라 및 CI/CD 구축, <br> 추천 AI 모델 구현, 배치 기능(데이터 로드) 구축, <br> 공연 기능, 공연 및 티켓 추천 기능 |
+| Profile | Name | Role |
+| :---: | :---: | :---: |
+| <a href="https://github.com/devkeon"><img src="https://avatars.githubusercontent.com/u/121371840?v=4" height="120px"></a> | 이건(개발리드) <br> **devkeon**| 아키텍처 설계, ERD 설계, 메인 서버 인프라 및 CI/CD 구축, <br> 인증/인가, 모니터링 시스템 구축, 티켓/리뷰 기능,<br> 클라코북 기능, 회원 관련 기능|
+| <a href="https://github.com/anselmo228"><img src="https://avatars.githubusercontent.com/u/24919880?v=4" height="120px"></a> | 정희찬 <br> **anselmo**| ERD 설계, AI 및 배치 서버 인프라 및 CI/CD 구축, <br> 추천 AI 모델 구현, 배치 기능(데이터 로드) 구축, <br> 공연 기능, 공연 및 티켓 추천 기능|
 
 ## 개발 내용
 
