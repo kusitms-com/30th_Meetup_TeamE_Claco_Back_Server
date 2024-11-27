@@ -137,7 +137,6 @@ public class RecommendationServiceImpl implements RecommendationService{
         // Flask API call
         String FLASK_API_URL = URL + "/recommendations/clacobooks/";
         String jsonResponse = getConcertsFromFlaskV2(member.getId(), FLASK_API_URL);
-        System.out.println("jsonResponse = " + jsonResponse);
 
         List<Long> recUserIds = parseConcertIdsFromJson(jsonResponse).stream()
             .limit(3)
@@ -153,7 +152,9 @@ public class RecommendationServiceImpl implements RecommendationService{
             }
 
             for (ClacoBook clacoBook : clacoBooks) {
-                TicketReview ticketReview = clacoBookRepository.findRandomTicketReviewByClacoBookId(clacoBook.getId())
+                TicketReview ticketReview = clacoBookRepository.findRandomTicketReviewsByClacoBookId(clacoBook.getId())
+                    .stream()
+                    .findFirst()
                     .orElseThrow(() -> new BusinessException(ApiStatus.TICKET_REVIEW_NOT_FOUND));
 
                 TicketReviewSummaryResponse ticketReviewSummaryResponse = ticketReviewRepository.findSummaryById(ticketReview.getId());
