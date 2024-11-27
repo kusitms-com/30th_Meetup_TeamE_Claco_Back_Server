@@ -2,10 +2,8 @@ package com.curateme.claco.authentication.filter;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,7 +15,6 @@ import com.curateme.claco.global.exception.BusinessException;
 import com.curateme.claco.global.response.ApiStatus;
 import com.curateme.claco.member.domain.entity.Member;
 import com.curateme.claco.member.repository.MemberRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -28,16 +25,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * @fileName    : JwtAuthenticationFilter.java
- * @author      : 이 건
- * @date        : 2024.10.18
- * @author devkeon(devkeon123@gmail.com)
- * ===========================================================
- * DATE               AUTHOR        NOTE
- * -----------------------------------------------------------
- * 2024.10.18   	   이 건        최초 생성
- */
 @Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -76,12 +63,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 
-			// String refreshToken = jwtTokenUtil.extractRefreshToken(request).stream()
-			// 	.findAny()
-			// 	.orElseThrow(() -> new BusinessException(ApiStatus.REFRESH_TOKEN_NOT_FOUND));
+			String refreshToken = jwtTokenUtil.extractRefreshToken(request).stream()
+				.findAny()
+				.orElseThrow(() -> new BusinessException(ApiStatus.REFRESH_TOKEN_NOT_FOUND));
 
 			response.setHeader("Authorization", GRANT_TYPE + accessToken);
-			// response.setHeader("Set-Cookie", refreshToken);
+			response.setHeader("Set-Cookie", refreshToken);
 
 			// access token 만료 흐름
 		} catch (ExpiredJwtException e) {
