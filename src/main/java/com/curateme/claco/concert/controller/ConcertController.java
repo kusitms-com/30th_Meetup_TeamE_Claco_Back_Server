@@ -55,9 +55,9 @@ import org.springframework.web.bind.annotation.RestController;
     public ApiResponse<PageResponse<ConcertResponse>> filterConcerts(
         @RequestParam(value = "minPrice", defaultValue = "0") Double minPrice,
         @RequestParam(value = "maxPrice", defaultValue = "10000000") Double maxPrice,
-        @RequestParam(value = "area", defaultValue = "all") String area,
+        @RequestParam(value = "area", required = false) List<String> area,
         @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy.MM.dd") LocalDate startDate,
-        @RequestParam(value = "endDate", defaultValue = "9999.12.31") @DateTimeFormat(pattern = "yyyy.MM.dd") LocalDate endDate,
+        @RequestParam(value = "endDate", required = false, defaultValue = "9999.12.31") @DateTimeFormat(pattern = "yyyy.MM.dd") LocalDate endDate,
         @RequestParam(value = "direction", defaultValue = "asc") String direction,
         @RequestParam(value = "page") int page,
         @RequestParam(value = "size", defaultValue = "9") int size,
@@ -70,6 +70,9 @@ import org.springframework.web.bind.annotation.RestController;
             startDate = LocalDate.now();
         }
 
+        if (area == null || area.isEmpty()) {
+            area = null;
+        }
         return ApiResponse.ok(concertService.getConcertInfosWithFilter(minPrice, maxPrice, area, startDate, endDate, direction, categories, pageable));
     }
 
