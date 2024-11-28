@@ -66,7 +66,6 @@ public class RecommendationServiceImpl implements RecommendationService{
         Long memberId = securityContextUtil.getContextMemberInfo().getMemberId();
 
         String jsonResponse = getConcertsFromFlask(memberId, topn, FLASK_API_URL);
-        System.out.println("jsonResponse = " + jsonResponse);
 
         List<Long> concertIds = parseConcertIdsFromJson(jsonResponse);
 
@@ -107,7 +106,6 @@ public class RecommendationServiceImpl implements RecommendationService{
             String FLASK_API_URL = URL + "/recommendations/items/";
             int topn = 2;
             String jsonResponse = getConcertsFromFlask(concertId, topn, FLASK_API_URL);
-            System.out.println("jsonResponse = " + jsonResponse);
 
             List<Long> concertIds = parseConcertIdsFromJson(jsonResponse);
 
@@ -155,7 +153,7 @@ public class RecommendationServiceImpl implements RecommendationService{
                 TicketReview ticketReview = clacoBookRepository.findRandomTicketReviewsByClacoBookId(clacoBook.getId())
                     .stream()
                     .findFirst()
-                    .orElseThrow(null);
+                    .orElse(null);
 
                 if (ticketReview == null) {
                     continue;
@@ -186,7 +184,6 @@ public class RecommendationServiceImpl implements RecommendationService{
         String FLASK_API_URL = URL + "/recommendations/items/";
         int topn = 3;
         String jsonResponse = getConcertsFromFlask(concertId, topn, FLASK_API_URL);
-        System.out.println("jsonResponse = " + jsonResponse);
 
         List<Long> concertIds = parseConcertIdsFromJson(jsonResponse);
 
@@ -210,7 +207,6 @@ public class RecommendationServiceImpl implements RecommendationService{
                     concertIds.add(concertId);
                 }
             } catch (Exception e) {
-                System.err.println("Error parsing recommendations: " + e.getMessage());
             }
         }
         return concertIds;
@@ -275,12 +271,11 @@ public class RecommendationServiceImpl implements RecommendationService{
             if (response.getStatusCode().is2xxSuccessful()) {
                 return response.getBody();
             } else {
-                System.err.println("추천시스템 오류 발생. Status code: " + response.getStatusCode());
+                return response.getStatusCode().toString();
             }
         } catch (Exception e) {
-            System.err.println("추천시스템 실패.: " + e.getMessage());
+            return e.getMessage();
         }
-        return null;
     }
 
     public String getConcertsFromFlaskV2(Long Id, String FLASK_API_URL) {
@@ -296,12 +291,11 @@ public class RecommendationServiceImpl implements RecommendationService{
             if (response.getStatusCode().is2xxSuccessful()) {
                 return response.getBody();
             } else {
-                System.err.println("추천시스템 오류 발생. Status code: " + response.getStatusCode());
+                return response.getStatusCode().toString();
             }
         } catch (Exception e) {
-            System.err.println("추천시스템 실패.: " + e.getMessage());
+            return e.getMessage();
         }
-        return null;
     }
 
 }
