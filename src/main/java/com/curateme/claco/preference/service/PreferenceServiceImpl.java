@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -258,6 +260,8 @@ public class PreferenceServiceImpl implements PreferenceService {
 
 
 	public void sendPreferencesToAI(Long userId, List<String> preferences) {
+		Logger logger = LoggerFactory.getLogger(this.getClass());
+
 		// Prepare JSON body for Flask API
 		String FLASK_API_URL = URL + "/users/preferences";
 		Map<String, Object> body = new HashMap<>();
@@ -272,12 +276,12 @@ public class PreferenceServiceImpl implements PreferenceService {
 		try {
 			ResponseEntity<String> response = restTemplate.exchange(FLASK_API_URL, HttpMethod.POST, requestEntity, String.class);
 			if (response.getStatusCode().is2xxSuccessful()) {
-				System.out.println("취향 전송이 완료 되었습니다: " + response.getBody());
+				logger.info("취향 전송이 완료되었습니다: {}", response.getBody());
 			} else {
-				System.err.println("취향 전송에 실패 했습니다. Status code: " + response.getStatusCode());
+				logger.warn("취향 전송에 실패했습니다. Status code: {}", response.getStatusCode());
 			}
 		} catch (Exception e) {
-			System.err.println("취향 전송에 실패 했습니다: " + e.getMessage());
+			logger.error("취향 전송에 실패했습니다: {}", e.getMessage(), e);
 		}
 	}
 }
