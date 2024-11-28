@@ -74,8 +74,6 @@ public class ConcertServiceImpl implements ConcertService {
     @Override
     public PageResponse<ConcertResponse> getConcertInfos(String genre, String direction, Pageable pageable) {
 
-        System.out.println("Genre received: " + genre);
-
         Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by("prfpdfrom").ascending() : Sort.by("prfpdfrom").descending();
         Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
 
@@ -330,7 +328,6 @@ public class ConcertServiceImpl implements ConcertService {
 
         // 장르로 필터링
         if (!"all".equals(genre) && !genre.isEmpty()) {
-            System.out.println("concertLikedIds = " + concertLikedIds);
             concertLikedIds = concertLikedIds.stream()
                 .filter(concertId -> {
                     Concert concert = concertRepository.findConcertById(concertId);
