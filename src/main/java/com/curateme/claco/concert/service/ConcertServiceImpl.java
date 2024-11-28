@@ -112,7 +112,7 @@ public class ConcertServiceImpl implements ConcertService {
 
     @Override
     public PageResponse<ConcertResponse> getConcertInfosWithFilter(Double minPrice, Double maxPrice,
-        String area, LocalDate startDate, LocalDate endDate, String direction, List<String> categories, Pageable pageable) {
+        List<String> area, LocalDate startDate, LocalDate endDate, String direction, List<String> categories, Pageable pageable) {
 
         Comparator<Concert> comparator = direction.equalsIgnoreCase("asc")
             ? Comparator.comparing(Concert::getPrfpdfrom)

@@ -155,7 +155,11 @@ public class RecommendationServiceImpl implements RecommendationService{
                 TicketReview ticketReview = clacoBookRepository.findRandomTicketReviewsByClacoBookId(clacoBook.getId())
                     .stream()
                     .findFirst()
-                    .orElseThrow(() -> new BusinessException(ApiStatus.TICKET_REVIEW_NOT_FOUND));
+                    .orElseThrow(null);
+
+                if (ticketReview == null) {
+                    continue;
+                }
 
                 TicketReviewSummaryResponse ticketReviewSummaryResponse = ticketReviewRepository.findSummaryById(ticketReview.getId());
 
@@ -167,7 +171,9 @@ public class RecommendationServiceImpl implements RecommendationService{
             }
         }
 
-        return recommendationResponses;
+        return recommendationResponses.stream()
+            .limit(3)
+            .collect(Collectors.toList());
     }
 
 
