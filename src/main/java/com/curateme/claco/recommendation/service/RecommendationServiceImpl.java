@@ -137,7 +137,6 @@ public class RecommendationServiceImpl implements RecommendationService{
         // Flask API call
         String FLASK_API_URL = URL + "/recommendations/clacobooks/";
         String jsonResponse = getConcertsFromFlaskV2(member.getId(), FLASK_API_URL);
-        System.out.println("jsonResponse = " + jsonResponse);
 
         List<Long> recUserIds = parseConcertIdsFromJson(jsonResponse).stream()
             .limit(3)
@@ -146,23 +145,37 @@ public class RecommendationServiceImpl implements RecommendationService{
         List<RecommendationConcertResponseV2> recommendationResponses = new ArrayList<>();
 
         for (Long recUserId : recUserIds) {
-            ClacoBook clacoBook = clacoBookRepository.findByMemberId(recUserId)
-                .orElseThrow(() -> new BusinessException(ApiStatus.CLACO_BOOK_NOT_FOUND));
+            List<ClacoBook> clacoBooks = clacoBookRepository.findByMemberId(recUserId);
 
-            TicketReview ticketReview = clacoBookRepository.findRandomTicketReviewByClacoBookId(clacoBook.getId())
-                .orElseThrow(() -> new BusinessException(ApiStatus.TICKET_REVIEW_NOT_FOUND));
+            if (clacoBooks.isEmpty()) {
+                throw new BusinessException(ApiStatus.CLACO_BOOK_NOT_FOUND);
+            }
 
-            TicketReviewSummaryResponse ticketReviewSummaryResponse = ticketReviewRepository.findSummaryById(ticketReview.getId());
+            for (ClacoBook clacoBook : clacoBooks) {
+                TicketReview ticketReview = clacoBookRepository.findRandomTicketReviewsByClacoBookId(clacoBook.getId())
+                    .stream()
+                    .findFirst()
+                    .orElseThrow(null);
 
-            TicketInfoResponse ticketInfoResponse = TicketInfoResponse.fromEntity(ticketReview);
+                if (ticketReview == null) {
+                    continue;
+                }
 
-            recommendationResponses.add(
-                RecommendationConcertResponseV2.from(ticketInfoResponse, ticketReviewSummaryResponse)
-            );
+                TicketReviewSummaryResponse ticketReviewSummaryResponse = ticketReviewRepository.findSummaryById(ticketReview.getId());
+
+                TicketInfoResponse ticketInfoResponse = TicketInfoResponse.fromEntity(ticketReview);
+
+                recommendationResponses.add(
+                    RecommendationConcertResponseV2.from(ticketInfoResponse, ticketReviewSummaryResponse)
+                );
+            }
         }
 
-        return recommendationResponses;
+        return recommendationResponses.stream()
+            .limit(3)
+            .collect(Collectors.toList());
     }
+
 
 
     @Override

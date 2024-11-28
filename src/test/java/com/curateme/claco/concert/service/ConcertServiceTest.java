@@ -95,7 +95,7 @@ class ConcertServiceTest {
 
         // Mock repository responses
         when(concertRepository.findConcertsByFiltersWithoutPaging(
-            eq("서울특별시"),
+            eq(null),
             eq(LocalDate.of(2023, 1, 1)),
             eq(LocalDate.of(2024, 12, 31)),
             eq(categories)))
@@ -114,7 +114,7 @@ class ConcertServiceTest {
 
         // When
         PageResponse<ConcertResponse> result = concertService.getConcertInfosWithFilter(
-            0.0, 100.0, "서울특별시",
+            0.0, 100.0, null,
             LocalDate.of(2023, 1, 1), LocalDate.of(2024, 12, 31),
             "asc", categories, pageable);
 

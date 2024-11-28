@@ -1,6 +1,7 @@
 package com.curateme.claco.clacobook.repository;
 
 import com.curateme.claco.review.domain.entity.TicketReview;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -40,9 +41,9 @@ public interface ClacoBookRepository extends JpaRepository<ClacoBook, Long> {
 
 	@EntityGraph(attributePaths = {"member", "ticketReviews"})
 	@Query("SELECT c FROM ClacoBook c WHERE c.member.id = :memberId")
-	Optional<ClacoBook> findByMemberId(@Param("memberId") Long memberId);
+	List<ClacoBook> findByMemberId(@Param("memberId") Long memberId);
 
 	@Query("SELECT tr FROM TicketReview tr WHERE tr.clacoBook.id = :clacoBookId ORDER BY function('RAND')")
-	Optional<TicketReview> findRandomTicketReviewByClacoBookId(@Param("clacoBookId") Long clacoBookId);
+	List<TicketReview> findRandomTicketReviewsByClacoBookId(@Param("clacoBookId") Long clacoBookId);
 
 }

@@ -49,13 +49,13 @@ public interface ConcertRepository extends JpaRepository<Concert,Long> {
 
     @Query("SELECT c FROM Concert c " +
         "LEFT JOIN c.categories cat " +
-        "WHERE (:area = 'all' OR c.area = :area) " +
+        "WHERE (:area IS NULL OR c.area IN :area) " +
         "AND c.prfpdto BETWEEN :startDate AND :endDate " +
         "AND (:categories IS NULL OR EXISTS (" +
         "    SELECT 1 FROM ConcertCategory cc " +
         "    WHERE cc.concert = c AND cc.category.category IN :categories))")
     List<Concert> findConcertsByFiltersWithoutPaging(
-        @Param("area") String area,
+        @Param("area") List<String> area,
         @Param("startDate") LocalDate startDate,
         @Param("endDate") LocalDate endDate,
         @Param("categories") List<String> categories);

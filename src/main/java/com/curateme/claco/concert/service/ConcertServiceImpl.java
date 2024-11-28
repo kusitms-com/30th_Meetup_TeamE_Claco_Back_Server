@@ -26,20 +26,31 @@ import com.curateme.claco.recommendation.service.RecommendationServiceImpl;
 import com.curateme.claco.review.domain.dto.response.TicketReviewSimpleResponse;
 import com.curateme.claco.review.domain.entity.TicketReview;
 import com.curateme.claco.review.repository.TicketReviewRepository;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @Service
@@ -55,6 +66,9 @@ public class ConcertServiceImpl implements ConcertService {
     private final SecurityContextUtil securityContextUtil;
     private final TicketReviewRepository ticketReviewRepository;
     private final RecommendationServiceImpl recommendationServiceImpl;
+
+    @Value("${cloud.ai.url}")
+    private String URL;
 
 
     @Override
@@ -98,7 +112,7 @@ public class ConcertServiceImpl implements ConcertService {
 
     @Override
     public PageResponse<ConcertResponse> getConcertInfosWithFilter(Double minPrice, Double maxPrice,
-        String area, LocalDate startDate, LocalDate endDate, String direction, List<String> categories, Pageable pageable) {
+        List<String> area, LocalDate startDate, LocalDate endDate, String direction, List<String> categories, Pageable pageable) {
 
         Comparator<Concert> comparator = direction.equalsIgnoreCase("asc")
             ? Comparator.comparing(Concert::getPrfpdfrom)
@@ -272,6 +286,35 @@ public class ConcertServiceImpl implements ConcertService {
         return concerts.stream()
             .map(ConcertAutoCompleteResponse::fromEntity)
             .toList();
+    }
+
+    public String getS3PosterUrl(String KopisURL) {
+        String urlWithUserId = URL + "/download/posters";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, String> body = new HashMap<>();
+        body.put("image_url", KopisURL);
+
+        HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(body, headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        try {
+
+            ResponseEntity<String> response = restTemplate.exchange(urlWithUserId, HttpMethod.POST, requestEntity, String.class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode rootNode = objectMapper.readTree(response.getBody());
+
+                return rootNode.get("s3_url").asText();
+            } else {
+                return response.getBody();
+            }
+        } catch (Exception e) {
+            return e.getMessage();
+        }
     }
 
 
